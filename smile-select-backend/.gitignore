@@ -1,78 +1,33 @@
-# Maven and target directories
+HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Java class and project files
-*.class
-*.jar
-*.war
-*.ear
-*.log
-*.out
-hs_err_pid*
-
-# STS (Spring Tool Suite)
+### STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings/
+.settings
 .springBeans
 .sts4-cache
 
-# IntelliJ IDEA
-.idea/
+### IntelliJ IDEA ###
+.idea
 *.iws
 *.iml
 *.ipr
-out/
 
-# NetBeans
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-
-# Gradle
-.gradle/
-/build/
+build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# Eclipse
-.metadata/
-bin/
-*.bak
-*.swp
-*~.nib
-**/Thumbs.db
-.DS_Store
-*.orig
-*.rej
-*.swo
-
-# Visual Studio Code
+### VS Code ###
 .vscode/
-
-# Node.js, Vue, and NPM files
-node_modules/
-dist/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Log files
-logs/
-*.log
-*.out
-*.err
-
-# OS-generated files
-.DS_Store
-Thumbs.db
-
-# Ignore HELP.md in the root directory
-HELP.md
