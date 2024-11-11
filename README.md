@@ -1,8 +1,8 @@
-# DIT356-group1 (Name TBD)
+# SmileSelect
 
 <h3>Table of Content </h3>
 
-- [Name TBD](https://git.chalmers.se/courses/dit355/2024/student_teams/dit356_2024_01/dit356-group1#dit356-group1)
+- [SmileSelect](https://git.chalmers.se/courses/dit355/2024/student_teams/dit356_2024_01/dit356-group1#dit356-group1)
   * [Synopsis & Motivation](#synopsis-motivation)
   * [Dependencies & Requirements](#dependencies-requirements)
   * [Installation & Usage](#installation-usage)
@@ -12,11 +12,11 @@
 
 ## <a id="synopsis-motivation"></a>Synopsis & Motivation 
 
-Hawk Toothie is a web-based application designed to streamline the process of finding and booking dentist appointments for residents in Gothenburg. Given the high demand for dental care and limited availability at many clinics, patients often face a time-consuming process involving searches and phone calls with low success rates. Hawk Toothie simplifies this experience by offering a responsive interface where users can view available appointment slots on a navigable map, select their preferred time windows, and book or cancel appointments with ease. 
+SmileSelect is a web-based application designed to streamline the process of finding and booking dentist appointments for residents in Gothenburg. Given the high demand for dental care and limited availability at many clinics, patients often face a time-consuming process involving searches and phone calls with low success rates. SmileSelect simplifies this experience by offering a responsive interface where users can view available appointment slots on a navigable map, select their preferred time windows, and book or cancel appointments with ease. 
 
 The application employs a robust distributed system architecture using MQTT-based middleware to manage, update, and communicate appointment availability in real time, ensuring that users and clinics stay informed. This setup enhances fault tolerance, maintains data accuracy, and allows for seamless updates, ultimately making the dental booking experience more efficient and accessible while supporting better dental care access across the community.
 
-Hawk Toothie: Spit-acular dental care, just book and prepare!
+SmileSelect: Smile-tacular dental care, just book and prepare!
 
 ## <a id="dependencies-requirements"></a>Dependencies & Requirements
 
@@ -44,4 +44,4 @@ Hawk Toothie: Spit-acular dental care, just book and prepare!
 
     -------------------------------------------------------
 
-    _NAME TBD - DIT356 H24 - University of Gothenburg, Sweden_
+    _SmileSelect - DIT356 H24 - University of Gothenburg, Sweden_
