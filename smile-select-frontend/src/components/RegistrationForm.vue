@@ -6,6 +6,7 @@
       type="text"
       id="first_name_patient"
       name="first_name"
+      v-model="formData.firstName"
       required
     /><br /><br />
 
@@ -14,17 +15,24 @@
       type="text"
       id="last_name_patient"
       name="last_name"
+      v-model="formData.lastName"
       required
     /><br /><br />
 
     <label for="email_patient">Email:</label>
-    <input type="email" id="email_patient" name="email" required /><br /><br />
+    <input
+      type="email"
+      id="email_patient" 
+      name="email" 
+      v-model="formData.email"
+      required /><br /><br />
 
     <label for="password_patient">Password:</label>
     <input
       type="password"
       id="password_patient"
       name="password"
+      v-model="formData.password"
       minlength="6"
       maxlength="16"
       required
@@ -35,23 +43,28 @@
       type="date"
       id="dob_patient"
       name="date_of_birth"
+      v-model="formData.dateOfBirth"
       required
     /><br /><br />
 
-    <button @click="submitPatient">Register as Patient</button>
+    <button type="submit">Register as Patient</button>
   </form>
+  <p>({ text }) </p> <!-- Displays response message -->
 </template>
 
 <script>
+
+import axios from '../axios.js'
+
 export default {
   data() {
     return {
       formData: {
-        first_name: '',
-        last_name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
-        date_of_birth: '',
+        dateOfBirth: '',
       },
       text: '',
     };
@@ -59,11 +72,12 @@ export default {
   methods: {
     async submitPatient() {
       try {
-        const response = await this.$axios.post(
+        const response = await axios.post(
           '/accounts/patients',
           this.formData
         );
         this.text = response.data;
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
         this.text = 'Error occurred while fetching data';
