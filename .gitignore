@@ -56,3 +56,5 @@ pnpm-debug.log*
 
 # NetBeans specific files
 /nbproject/private/
+
+/smile-select-frontend/dist
