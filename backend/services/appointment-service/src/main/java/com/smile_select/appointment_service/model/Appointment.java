@@ -1,14 +1,10 @@
-package main.java.com.smile_select.appointment_service.model;
+package com.smile_select.appointment_service.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import main.java.com.smile_select.account_service.model.Dentist;
-import main.java.com.smile_select.account_service.model.Patient;
 import jakarta.persistence.Column;
 import java.time.LocalDateTime;
 
@@ -20,13 +16,11 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    @JoinColumn(name = "patient_id", referencedColumnName = "id", nullable = true)
-    private Patient patient;
+    @Column(name = "patient_id", nullable = false)
+    private long patientId;
 
-    @ManyToOne
-    @JoinColumn(name = "dentist_id", referencedColumnName = "id", nullable = false)
-    private Dentist dentist;
+    @Column(name = "dentist_id", nullable = false)
+    private long dentistId;
 
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
@@ -37,9 +31,9 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(Patient patient, Dentist dentist, LocalDateTime startTime, LocalDateTime endTime) {
-        this.patient = patient;
-        this.dentist = dentist;
+    public Appointment(long patientId, long dentistId, LocalDateTime startTime, LocalDateTime endTime) {
+        this.patientId = patientId;
+        this.dentistId = dentistId;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -52,20 +46,20 @@ public class Appointment {
         this.id = id;
     }
 
-    public Patient getPatient() {
-        return patient;
+    public long getPatientId() {
+        return patientId;
     }
 
-    public void setPatient(Patient patient) {
-        this.patient = patient;
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
     }
 
-    public Dentist getDentist() {
-        return dentist;
+    public long getDentistId() {
+        return dentistId;
     }
 
-    public void setDentist(Dentist dentist) {
-        this.dentist = dentist;
+    public void setDentistId(long dentistId) {
+        this.dentistId = dentistId;
     }
 
     public LocalDateTime getStartTime() {
@@ -83,6 +77,8 @@ public class Appointment {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
+
+    
 
   
 }
