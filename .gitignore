@@ -1,0 +1,58 @@
+# Node.js dependencies
+node_modules/
+
+# Build directories and generated files
+/dist
+/build/
+target/
+/nbbuild/
+/nbdist/
+/dist/
+/nbproject/private/
+/.nb-gradle/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Environment variable files
+.env
+.env.local
+.env.*.local
+
+# macOS system files
+.DS_Store
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Eclipse and STS specific files
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# IntelliJ IDEA specific files
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans specific files
+/nbproject/private/
