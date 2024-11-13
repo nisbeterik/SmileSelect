@@ -59,7 +59,10 @@ export default {
   methods: {
     async submitPatient() {
       try {
-        const response = await this.$axios.post('/patients', this.formData);
+        const response = await this.$axios.post(
+          '/accounts/patients',
+          this.formData
+        );
         this.text = response.data;
       } catch (error) {
         console.error('Error fetching data:', error);
