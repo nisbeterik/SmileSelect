@@ -1,6 +1,5 @@
 package com.smile_select.account_service.controller;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,11 +8,11 @@ import com.smile_select.account_service.model.Patient;
 // Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api
 @RestController
-@RequestMapping("/api/accounts/patients")
+@RequestMapping("/api/accounts")
 public class PatientController {
 
-    @PostMapping
-    public ResponseEntity<String> registerPatient (@RequestBody Patient patient) {
+    @PostMapping("/patients")
+    public ResponseEntity<String> registerPatient(@RequestBody Patient patient) {
         // Simulate saving the patient data
         System.out.println("Received paetinet registration data: " + patient);
 
