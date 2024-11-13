@@ -3,14 +3,14 @@
 </template>
 
 <script>
-import DemoView from './components/DemoView.vue'
+import DemoView from './components/DemoView.vue';
 
 export default {
   name: 'App',
   components: {
-    DemoView
-  }
-}
+    DemoView,
+  },
+};
 </script>
 
 <style>
