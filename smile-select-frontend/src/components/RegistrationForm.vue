@@ -1,6 +1,6 @@
 <template>
   <h1>Patient Registration</h1>
-  <form action="/register-patient" method="post">
+  <form @submit.prevent="submitPatient">
     <label for="first_name_patient">First Name:</label>
     <input
       type="text"
@@ -47,26 +47,23 @@ export default {
   data() {
     return {
       formData: {
-        first_name: "",
-        last_name: "",
-        email: "",
-        password: "",
-        date_of_birth: "",
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        date_of_birth: '',
       },
-      text: "",
+      text: '',
     };
   },
   methods: {
     async submitPatient() {
       try {
-        const response = await this.$axios.post(
-          "/register-patient",
-          this.formData
-        );
+        const response = await this.$axios.post('/patients', this.formData);
         this.text = response.data;
       } catch (error) {
-        console.error("Error fetching data:", error);
-        this.text = "Error occurred while fetching data";
+        console.error('Error fetching data:', error);
+        this.text = 'Error occurred while fetching data';
       }
     },
   },
