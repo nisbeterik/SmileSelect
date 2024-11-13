@@ -10,7 +10,6 @@ import com.smile_select.account_service.model.Patient;
 @RestController
 @RequestMapping("/api/accounts")
 public class PatientController {
-
     @PostMapping("/patients")
     public ResponseEntity<String> registerPatient(@RequestBody Patient patient) {
         // Simulate saving the patient data
