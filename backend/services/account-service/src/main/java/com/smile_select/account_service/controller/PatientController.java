@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class PatientController {
 
+    @PostMapping("/register-patient")
     public ResponseEntity<String> registerPatient (@RequestBody Patient patient) {
         // Simulate saving the patient data
         System.out.println("Received paetinet registration data: " + patient);
