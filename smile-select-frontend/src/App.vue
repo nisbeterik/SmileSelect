@@ -1,14 +1,14 @@
 <template>
-  <MapPage></MapPage>
+  <create-appointment></create-appointment>
 </template>
 
 <script>
-import MapPage from './components/MapPage.vue';
+import CreateAppointment from './components/CreateAppointment.vue';
 
 export default {
   name: 'App',
   components: {
-    MapPage,
+    CreateAppointment,
   },
 };
 </script>
