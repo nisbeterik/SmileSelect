@@ -20,8 +20,8 @@ public class LoginController {
     @Autowired
     private DentistService dentistService;
 
-    @PostMaping("/dentist")
-    public ReponseEntity<?> loginDentist(@RequestBody Map<String, String> credentials) {
+    @PostMapping("/dentist")
+    public ResponseEntity<?> loginDentist(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
