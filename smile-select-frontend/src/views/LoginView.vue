@@ -53,6 +53,21 @@ export default {
   },
   methods: {
     async handleLogin() {
+      // Validate email and password on the client side
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!this.email) {
+        this.emailError = 'Email is required';
+        return;
+      } else if (!emailPattern.test(this.email)) {
+        this.emailError = 'Please enter a valid email';
+        return;
+      }
+
+      if (!this.password) {
+        this.passwordError = 'Password is required';
+        return;
+      }
+
       try {
         const endpoint = `/api/login/${this.role}`; // Dynamically choose endpoint based on role
         const response = await axios.post(endpoint, {

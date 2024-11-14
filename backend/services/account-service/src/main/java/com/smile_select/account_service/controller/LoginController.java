@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class LoginController {
     private PatientService patientService;
 
     @PostMapping("/dentist")
-    public ResponseEntity<?> loginDentist(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginDentist(@Valid @RequestBody LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
@@ -39,7 +39,7 @@ public class LoginController {
     }
 
     @PostMapping("/patient")
-    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginPatient(@Valid @RequestBody LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 
