@@ -1,4 +1,4 @@
-package main.java.com.smile_select.account_service.dto;
+package com.smile_select.account_service.dto;
 
 public class LoginRequest {
     private String email;

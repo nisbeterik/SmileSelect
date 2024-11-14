@@ -1,10 +1,10 @@
-package main.java.com.smile_select.account_service.controller;
+package com.smile_select.account_service.controller;
 
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.model.Dentist;
 import com.smile_select.account_service.service.PatientService;
 
-import main.java.com.smile_select.account_service.dto.LoginRequest;
+import com.smile_select.account_service.dto.LoginRequest;
 
 import com.smile_select.account_service.service.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
