@@ -3,7 +3,6 @@ package com.smile_select.account_service.service;
 import com.smile_select.account_service.model.Dentist;
 import com.smile_select.account_service.repository.DentistRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 

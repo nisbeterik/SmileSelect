@@ -23,15 +23,30 @@ public class LoginController {
     @Autowired
     private DentistService dentistService;
 
+    @Autowired
+    private PatientService patientService;
+
     @PostMapping("/dentist")
     public ResponseEntity<?> loginDentist(@RequestBody LoginRequest loginRequest) {
-    String email = loginRequest.getEmail();
-    String password = loginRequest.getPassword();
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
 
-    Optional<Dentist> dentist = dentistService.findDentistByEmail(email);
-    if (dentist.isPresent() && dentistService.checkPassword(dentist.get(), password)) {
-        return ResponseEntity.ok("Login Successful");
+        Optional<Dentist> dentist = dentistService.findDentistByEmail(email);
+        if (dentist.isPresent() && dentistService.checkPassword(dentist.get(), password)) {
+            return ResponseEntity.ok("Login Successful");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-}
+
+    @PostMapping("/patient")
+    public ResponseEntity<?> loginPatient(@RequestBody LoginRequest loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+
+        Optional<Patient> patient = patientService.findPatientByEmail(email);
+        if (patient.isPresent() && patientService.checkPassword(patient.get(), password)) {
+            return ResponseEntity.ok("Login Successful");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    }
 }
