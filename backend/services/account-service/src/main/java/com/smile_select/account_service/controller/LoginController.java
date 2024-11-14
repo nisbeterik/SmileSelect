@@ -24,12 +24,11 @@ public class LoginController {
     public ResponseEntity<?> loginDentist(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
-
-        Optional<main.java.com.smile_select.account_service.model.Dentist> dentist = dentistService
-                .findDentistByEmail(email);
-        if (dentist.isPresent() && dentist.get().getPassword().equals(password)) {
+    
+        Optional<Dentist> dentist = dentistService.findDentistByEmail(email);
+        if (dentist.isPresent() && dentistService.checkPassword(dentist.get(), password)) {
             return ResponseEntity.ok("Login Successful");
         }
-        return ReponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }
