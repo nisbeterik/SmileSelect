@@ -33,7 +33,7 @@ public class LoginController {
 
         Optional<Dentist> dentist = dentistService.findDentistByEmail(email);
         if (dentist.isPresent() && dentistService.checkPassword(dentist.get(), password)) {
-            return ResponseEntity.ok("Login Successful");
+            return ResponseEntity.ok("Dentist Login Successful");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
@@ -45,7 +45,7 @@ public class LoginController {
 
         Optional<Patient> patient = patientService.findPatientByEmail(email);
         if (patient.isPresent() && patientService.checkPassword(patient.get(), password)) {
-            return ResponseEntity.ok("Login Successful");
+            return ResponseEntity.ok("Patient Login Successful");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }

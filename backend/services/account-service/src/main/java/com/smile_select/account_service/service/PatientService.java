@@ -1,6 +1,5 @@
 package com.smile_select.account_service.service;
 
-import com.smile_select.account_service.model.Dentist;
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;

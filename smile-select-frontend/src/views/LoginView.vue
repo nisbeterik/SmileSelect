@@ -3,6 +3,14 @@
     <h2>Login</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" v-model="role" required>
+          <option value="patient">Patient</option>
+          <option value="dentist">Dentist</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="email">Email</label>
         <input
           type="email"
@@ -39,20 +47,30 @@ export default {
     return {
       email: '',
       password: '',
+      role: 'patient', // Default to patient
       errorMessage: '',
     };
   },
   methods: {
     async handleLogin() {
       try {
-        const response = await axios.post('/api/login', {
+        const endpoint = `/api/login/${this.role}`; // Dynamically choose endpoint based on role
+        const response = await axios.post(endpoint, {
           email: this.email,
           password: this.password,
         });
-        console.log('Login Successful', response.data);
+
+        console.log(`${this.role} Login Successful`, response.data);
+
+        // Redirect to the dashboard or specific page based on role
+        if (this.role === 'patient') {
+          this.$router.push('/patient-dashboard');
+        } else {
+          this.$router.push('/dentist-dashboard');
+        }
       } catch (error) {
         this.errorMessage = error.response?.data?.message || 'Login failed';
-        console.error('Error during login:', error);
+        console.error(`Error during ${this.role} login:`, error);
       }
     },
   },
