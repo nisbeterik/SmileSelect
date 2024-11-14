@@ -1,25 +1,16 @@
 <template>
-  <DemoView></DemoView>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-import DemoView from "./components/RegistrationForm.vue";
+import RegistationForm from "./components/RegistrationForm.vue";
 
 export default {
   name: "App",
   components: {
-    DemoView,
+    RegistationForm,
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
