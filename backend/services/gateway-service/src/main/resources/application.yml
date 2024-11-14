@@ -1,29 +1,29 @@
 server:
-  port: 8080  # Port for the gateway service
+  port: 8080 # Port for the gateway service
 
 spring:
   application:
     name: gateway-service
-  main: 
+  main:
     web-application-type: reactive
 
   cloud:
     gateway:
       routes:
         - id: account-service
-          uri: http://localhost:8081  # Static URL for account-service
+          uri: http://localhost:8081 # Static URL for account-service
           predicates:
             - Path=/api/accounts/**
 
-        - id: notification-service
-          uri: http://localhost:8082  # Static URL for notification-service
-          predicates:
-            - Path=/api/notifications/**
-
         - id: appointment-service
-          uri: http://localhost:8083 # Static URL for appointment-service
+          uri: http://localhost:8082 # Static URL for notification-service
           predicates:
             - Path=/api/appointments/**
+
+        - id: notification-service
+          uri: http://localhost:8083 # Static URL for appointment-service
+          predicates:
+            - Path=/api/notifications/**
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
