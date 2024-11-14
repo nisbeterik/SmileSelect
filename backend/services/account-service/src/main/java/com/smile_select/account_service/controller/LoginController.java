@@ -17,12 +17,12 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class LoginController {
 
-    // @PostMapping("/login")
-    // public ResponseEntity<?> login(@RequestBody LoginRequest LoginRequest) {
-    // // Placeholder logic
-    // if ("placeholderuser@mail.com".equals(loginRequest.getEmail())) {
-    //
-    // }
-    // }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest LoginRequest) {
+        // Placeholder logic
+        if ("placeholderuser@mail.com".equals(loginRequest.getEmail())) {
+
+        }
+    }
 
 }
