@@ -25,7 +25,7 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
-        if (appointment.getDentistId() == 0) {
+        if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
         Appointment createdAppointment = appointmentService.createAppointment(appointment);
