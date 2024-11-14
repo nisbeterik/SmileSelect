@@ -3,6 +3,9 @@ package main.java.com.smile_select.account_service.controller;
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.model.Dentist;
 import com.smile_select.account_service.service.PatientService;
+
+import main.java.com.smile_select.account_service.dto.LoginRequest;
+
 import com.smile_select.account_service.service.DentistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,14 +24,14 @@ public class LoginController {
     private DentistService dentistService;
 
     @PostMapping("/dentist")
-    public ResponseEntity<?> loginDentist(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String password = credentials.get("password");
-    
-        Optional<Dentist> dentist = dentistService.findDentistByEmail(email);
-        if (dentist.isPresent() && dentistService.checkPassword(dentist.get(), password)) {
-            return ResponseEntity.ok("Login Successful");
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    public ResponseEntity<?> loginDentist(@RequestBody LoginRequest loginRequest) {
+    String email = loginRequest.getEmail();
+    String password = loginRequest.getPassword();
+
+    Optional<Dentist> dentist = dentistService.findDentistByEmail(email);
+    if (dentist.isPresent() && dentistService.checkPassword(dentist.get(), password)) {
+        return ResponseEntity.ok("Login Successful");
     }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+}
 }
