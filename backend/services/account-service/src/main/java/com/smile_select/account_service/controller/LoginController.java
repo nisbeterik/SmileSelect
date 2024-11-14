@@ -1,4 +1,4 @@
-package main.java.com.smile_select.account_service.controller;
+package com.smile_select.account_service.controller;
 
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.model.Dentist;
@@ -17,12 +17,12 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class LoginController {
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest LoginRequest){
-        //Placeholder logic
-        if("placeholderuser@mail.com".equals(loginRequest.getEmail())){
-
-        }
-    }
+    // @PostMapping("/login")
+    // public ResponseEntity<?> login(@RequestBody LoginRequest LoginRequest) {
+    // // Placeholder logic
+    // if ("placeholderuser@mail.com".equals(loginRequest.getEmail())) {
+    //
+    // }
+    // }
 
 }

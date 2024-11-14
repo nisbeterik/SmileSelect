@@ -1,4 +1,5 @@
 <template>
+<div>
   <h1>Patient Registration</h1>
   <form @submit.prevent="submitPatient">
     <label for="first_name_patient">First Name:</label>
@@ -49,7 +50,8 @@
 
     <button type="submit">Register as Patient</button>
   </form>
-  <p>({ text }) </p> <!-- Displays response message -->
+  <p> {{ text }} </p>
+</div>
 </template>
 
 <script>
@@ -78,6 +80,7 @@ export default {
         );
         this.text = response.data;
         console.log(response.data);
+        this.tex = "Successfully created account!"
       } catch (error) {
         console.error('Error fetching data:', error);
         this.text = 'Error occurred while fetching data';
