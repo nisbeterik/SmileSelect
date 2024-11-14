@@ -1,14 +1,14 @@
 <template>
-  <DemoView></DemoView>
+  <MapPage></MapPage>
 </template>
 
 <script>
-import DemoView from './components/DemoView.vue';
+import MapPage from './components/MapPage.vue';
 
 export default {
   name: 'App',
   components: {
-    DemoView,
+    MapPage,
   },
 };
 </script>
