@@ -13,13 +13,13 @@ import com.smile_select.account_service.repository.PatientRepository;
 // Sets the base path for all endpoints in this controller to /api/accounts
 @RestController
 @RequestMapping("/api/accounts")
-public class RegistrationController {
+public class PatientRegistrationController {
 
     @Autowired
     private PatientRepository patientRepository;
 
     // Inject Patient Repository
-    public RegistrationController(PatientRepository patientRepository) {
+    public PatientRegistrationController(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
 
