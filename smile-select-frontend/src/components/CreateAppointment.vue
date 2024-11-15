@@ -14,24 +14,32 @@
           <strong>{{ selectedSlot.date }}</strong>
         </div>
 
-        <div>
+        <div class="time-input-group">
           <label for="startTime">Start:</label>
-          <input
-            type="time"
-            v-model="selectedSlot.startTime"
-            step="300"
-            required
-          />
+          <div class="time-controls">
+            <input
+              type="time"
+              v-model="selectedSlot.startTime"
+              step="300"
+              required
+            />
+            <button class="time-btn" @click="adjustTime('start', -5)">-</button>
+            <button class="time-btn" @click="adjustTime('start', 5)">+</button>
+          </div>
         </div>
 
-        <div>
+        <div class="time-input-group">
           <label for="endTime">End:</label>
-          <input
-            type="time"
-            v-model="selectedSlot.endTime"
-            step="300"
-            required
-          />
+          <div class="time-controls">
+            <input
+              type="time"
+              v-model="selectedSlot.endTime"
+              step="300"
+              required
+            />
+            <button class="time-btn" @click="adjustTime('end', -5)">-</button>
+            <button class="time-btn" @click="adjustTime('end', 5)">+</button>
+          </div>
         </div>
 
         <button @click="saveAppointment">Save Appointment</button>
@@ -61,10 +69,10 @@ export default {
         selectable: true,
         selectHelper: true,
         select: this.handleSelect,
-        slotMinTime: '07:00:00', // Week view starts at time
-        slotMaxTime: '19:00:00', // // Week view ends at time
-        slotDuration: '00:15:00', // Duration between slots
-        snapDuration: '00:05:00', // Click-and-drag snap duration
+        slotMinTime: '07:00:00',
+        slotMaxTime: '19:00:00',
+        slotDuration: '00:15:00',
+        snapDuration: '00:05:00',
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',
@@ -77,17 +85,52 @@ export default {
         endTime: '',
         date: null,
       },
+      HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
     };
   },
   methods: {
+    adjustTime(type, minutes) {
+      const timeString =
+        type === 'start'
+          ? this.selectedSlot.startTime
+          : this.selectedSlot.endTime;
+      const [hours, mins] = timeString.split(':').map(Number);
+
+      const date = new Date();
+      date.setHours(hours, mins + minutes);
+
+      const newHours = date.getHours().toString().padStart(2, '0');
+      const newMinutes = date.getMinutes().toString().padStart(2, '0');
+      const newTime = `${newHours}:${newMinutes}`;
+
+      if (newTime >= '07:00' && newTime <= '19:00') {
+        if (type === 'start') {
+          this.selectedSlot.startTime = newTime;
+
+          if (newTime >= this.selectedSlot.endTime) {
+            date.setMinutes(date.getMinutes() + 30);
+            this.selectedSlot.endTime = `${date
+              .getHours()
+              .toString()
+              .padStart(2, '0')}:${date
+              .getMinutes()
+              .toString()
+              .padStart(2, '0')}`;
+          }
+        } else {
+          if (newTime > this.selectedSlot.startTime) {
+            this.selectedSlot.endTime = newTime;
+          }
+        }
+      }
+    },
+
     handleSelect(info) {
-      // Necessary to know if user is currently in week or month view
       const calendarApi = this.$refs.calendar.getApi();
       const isWeekView = calendarApi.view.type === 'timeGridWeek';
 
       const formatTime = (date) => date.toTimeString().slice(0, 5);
 
-      // Format the date as "<Weekday> 14-11-2024"
       const formattedDate = info.start.toLocaleDateString('en-GB', {
         weekday: 'long',
         day: '2-digit',
@@ -97,11 +140,9 @@ export default {
 
       this.selectedSlot.date = formattedDate;
 
-      // If user is in week view, no default time is set
       if (isWeekView) {
         this.selectedSlot.startTime = formatTime(info.start);
         this.selectedSlot.endTime = formatTime(info.end);
-        // If user is in month view, a default time is set
       } else {
         this.selectedSlot.startTime = '08:00';
         this.selectedSlot.endTime = '10:00';
@@ -110,20 +151,21 @@ export default {
       this.showModal = true;
     },
 
-    // Closes modal and resets the selected slot
     cancelAppointment() {
       this.showModal = false;
       this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
 
-    saveAppointment() {
-      console.log(
-        `Appointment saved for ${this.selectedSlot.date} from ${this.selectedSlot.startTime} to ${this.selectedSlot.endTime}`
-      );
+    async saveAppointment() {
+      try {
+        var newAppointment = {dentistId: `${this.HARDCODED_DENTIST_ID}`, startTime: `${this.startTime}`, endTime: `${this.endTime}`}
+        const response = await this.$axios.post('/appointments', newAppointment);
+        console.log("New appointment successfully poster", response.data)
+      } catch(error){
+        console.error('Error saving appointment:', error.response?.data || error.message);
+      }
 
-      // ADD LOGIC HERE FOR PERSISTENCE
-
-      // Pushes new appointment event
+      // Event is currently unused
       this.calendarOptions.events.push({
         title: 'New Appointment',
         start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
@@ -131,6 +173,10 @@ export default {
       });
 
       this.cancelAppointment();
+    },
+
+    loadAppointments() {
+      // TODO: ADD LOGIC HERE FOR LOADING EXISTING APPOINTMENTS FOR THE LOGGED IN DENTIST
     },
   },
 };
@@ -154,6 +200,33 @@ export default {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+}
+
+.time-input-group {
+  margin: 10px 0;
+}
+
+.time-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.time-btn:hover {
+  background-color: #e0e0e0;
 }
 
 button {
