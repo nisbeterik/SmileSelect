@@ -5,7 +5,7 @@
 
   // Use ESLint to automatically fix linting issues on save
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
 
   // Specify the default formatter (Prettier is commonly used)
@@ -23,6 +23,7 @@
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "java.configuration.updateBuildConfiguration": "automatic",
   "eslint.workingDirectories": [
         {"mode": "auto"}
  ],
