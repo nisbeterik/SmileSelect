@@ -58,3 +58,4 @@ pnpm-debug.log*
 /nbproject/private/
 
 /smile-select-frontend/dist
+.vscode/settings.json
