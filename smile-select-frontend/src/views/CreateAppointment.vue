@@ -54,6 +54,7 @@ import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+
 const bookedColor = '#FF5733';
 const availableColor = '#28A745';
 
@@ -69,7 +70,8 @@ export default {
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
         initialView: 'timeGridWeek',
-        weekends: true,
+        firstDay: 1,
+        weekends: false,
         eventOverlap: false,
         events: [],
         selectable: true,
@@ -80,9 +82,15 @@ export default {
         slotDuration: '00:15:00',
         snapDuration: '00:05:00',
         headerToolbar: {
-          left: 'prev,next today',
+          left: 'prev,next today,toggleWeekends',
           center: 'title',
           right: 'prev,next,dayGridMonth,timeGridWeek',
+        },
+        customButtons: {
+          toggleWeekends: {
+            text: 'Toggle Weekends',
+            click: this.toggleWeekends, // Call your custom method
+          },
         },
       },
       showModal: false,
@@ -95,6 +103,14 @@ export default {
     };
   },
   methods: {
+    toggleWeekends() {
+      const weekendsStatus = this.calendarOptions.weekends;
+      if (weekendsStatus === true) {
+        this.calendarOptions.weekends = false;
+      } else {
+        this.calendarOptions.weekends = true;
+      }
+    },
     adjustTime(type, minutes) {
       const timeString =
         type === 'start'
@@ -132,8 +148,12 @@ export default {
     },
 
     checkOverlap(selectedSlot) {
-      const selectedStart = new Date(`${selectedSlot.date}T${selectedSlot.startTime}:00`);
-      const selectedEnd = new Date(`${selectedSlot.date}T${selectedSlot.endTime}:00`);
+      const selectedStart = new Date(
+        `${selectedSlot.date}T${selectedSlot.startTime}:00`
+      );
+      const selectedEnd = new Date(
+        `${selectedSlot.date}T${selectedSlot.endTime}:00`
+      );
 
       const overlaps = this.calendarOptions.events.some((event) => {
         const eventStart = new Date(event.start);
@@ -146,7 +166,7 @@ export default {
         );
       });
 
-      if (overlaps){
+      if (overlaps) {
         alert('Selected time overlaps with an existing appointment!');
       }
 
@@ -191,7 +211,7 @@ export default {
       try {
         const overlap = this.checkOverlap(this.selectedSlot);
         if (overlap) {
-          this.cancelAppointment()
+          this.cancelAppointment();
           return;
         }
 
