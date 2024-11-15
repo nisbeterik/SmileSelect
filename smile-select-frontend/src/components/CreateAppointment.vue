@@ -81,8 +81,8 @@ export default {
       },
       showModal: false,
       selectedSlot: {
-        startTime: '',
-        endTime: '',
+        startTime: null,
+        endTime: null,
         date: null,
       },
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
@@ -131,14 +131,14 @@ export default {
 
       const formatTime = (date) => date.toTimeString().slice(0, 5);
 
-      const formattedDate = info.start.toLocaleDateString('en-GB', {
-        weekday: 'long',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      });
+      const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
 
-      this.selectedSlot.date = formattedDate;
+      this.selectedSlot.date = formatDate(info.start);
 
       if (isWeekView) {
         this.selectedSlot.startTime = formatTime(info.start);
@@ -158,11 +158,37 @@ export default {
 
     async saveAppointment() {
       try {
-        var newAppointment = {dentistId: `${this.HARDCODED_DENTIST_ID}`, startTime: `${this.startTime}`, endTime: `${this.endTime}`}
-        const response = await this.$axios.post('/appointments', newAppointment);
-        console.log("New appointment successfully poster", response.data)
-      } catch(error){
-        console.error('Error saving appointment:', error.response?.data || error.message);
+        const formatToLocalDateTime = (date, time) => {
+          return `${date}T${time}:00`;
+        };
+
+        const startDateTime = formatToLocalDateTime(
+          this.selectedSlot.date,
+          this.selectedSlot.startTime
+        );
+        const endDateTime = formatToLocalDateTime(
+          this.selectedSlot.date,
+          this.selectedSlot.endTime
+        );
+
+        var newAppointment = {
+          dentistId: `${this.HARDCODED_DENTIST_ID}`,
+          startTime: `${startDateTime}`,
+          endTime: `${endDateTime}`,
+        };
+
+        const response = await this.$axios.post(
+          '/appointments',
+          newAppointment
+        );
+
+        console.log('New appointment successfully poster', response.data);
+
+      } catch (error) {
+        console.error(
+          'Error saving appointment:',
+          error.response?.data || error.message
+        );
       }
 
       // Event is currently unused
