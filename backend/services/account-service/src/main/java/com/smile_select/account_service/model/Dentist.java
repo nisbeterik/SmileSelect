@@ -6,8 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
-import java.util.Date;
-import javax.annotation.processing.Generated;
 
 @Entity
 @Table(name = "dentist")
