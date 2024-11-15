@@ -23,5 +23,8 @@
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "java.configuration.updateBuildConfiguration": "automatic"
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "eslint.workingDirectories": [
+        {"mode": "auto"}
+ ],
 }
