@@ -131,6 +131,28 @@ export default {
       }
     },
 
+    checkOverlap(selectedSlot) {
+      const selectedStart = new Date(`${selectedSlot.date}T${selectedSlot.startTime}:00`);
+      const selectedEnd = new Date(`${selectedSlot.date}T${selectedSlot.endTime}:00`);
+
+      const overlaps = this.calendarOptions.events.some((event) => {
+        const eventStart = new Date(event.start);
+        const eventEnd = new Date(event.end);
+
+        return (
+          (selectedStart >= eventStart && selectedStart < eventEnd) ||
+          (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
+          (selectedStart <= eventStart && selectedEnd >= eventEnd)
+        );
+      });
+
+      if (overlaps){
+        alert('Selected time overlaps with an existing appointment!');
+      }
+
+      return overlaps;
+    },
+
     handleSelect(info) {
       const calendarApi = this.$refs.calendar.getApi();
       const isWeekView = calendarApi.view.type === 'timeGridWeek';
@@ -154,27 +176,10 @@ export default {
         this.selectedSlot.endTime = '10:00';
       }
 
-      // Check for overlapping events
-      const overlaps = this.calendarOptions.events.some((event) => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-
-        const selectedStart = new Date(info.start);
-        const selectedEnd = new Date(info.end);
-
-        return (
-          (selectedStart >= eventStart && selectedStart < eventEnd) ||
-          (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
-          (selectedStart <= eventStart && selectedEnd >= eventEnd)
-        );
-      });
-
-      if (overlaps) {
-        alert('This time slot overlaps with an existing appointment.');
-        return;
+      const overlap = this.checkOverlap(this.selectedSlot);
+      if (!overlap) {
+        this.showModal = true;
       }
-
-      this.showModal = true;
     },
 
     cancelAppointment() {
@@ -184,6 +189,12 @@ export default {
 
     async saveAppointment() {
       try {
+        const overlap = this.checkOverlap(this.selectedSlot);
+        if (overlap) {
+          this.cancelAppointment()
+          return;
+        }
+
         const formatToLocalDateTime = (date, time) => {
           return `${date}T${time}:00`;
         };
@@ -209,7 +220,7 @@ export default {
           title: 'Available',
           start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
           end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
-          backgroundColor: availableColor
+          backgroundColor: availableColor,
         });
       } catch (error) {
         alert('Error saving appointment');
@@ -227,26 +238,22 @@ export default {
         var response = await this.$axios.get('/appointments');
         var existingAppointments = response.data;
 
-        console.log(existingAppointments);
-
         Object.values(existingAppointments).forEach((appointment) => {
-          var appointmentColor = bookedColor
-          var appointmentTitle = 'Booked'
+          var appointmentColor = bookedColor;
+          var appointmentTitle = 'Booked';
 
-          if (appointment.patientId === null){
-            appointmentColor = availableColor
-            appointmentTitle = 'Available'
+          if (appointment.patientId === null) {
+            appointmentColor = availableColor;
+            appointmentTitle = 'Available';
           }
 
           this.calendarOptions.events.push({
             title: appointmentTitle,
             start: `${appointment.startTime}`,
             end: `${appointment.endTime}`,
-            backgroundColor: appointmentColor
+            backgroundColor: appointmentColor,
           });
         });
-
-        console.log;
       } catch (error) {
         console.error(
           'Error saving appointment:',
