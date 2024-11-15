@@ -80,7 +80,7 @@ export default {
         );
         this.text = response.data;
         console.log(response.data);
-        this.tex = "Successfully created account!"
+        this.text = "Successfully created account!"
       } catch (error) {
         console.error('Error fetching data:', error);
         this.text = 'Error occurred while fetching data';
