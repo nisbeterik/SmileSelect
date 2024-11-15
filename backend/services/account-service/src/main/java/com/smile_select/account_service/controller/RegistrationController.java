@@ -1,6 +1,5 @@
 package com.smile_select.account_service.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.repository.PatientRepository;
 
 // Marks the class as a RESTful controller
-// Sets the base path for all endpoints in this controller to /api
+// Sets the base path for all endpoints in this controller to /api/accounts
 @RestController
 @RequestMapping("/api/accounts")
 public class RegistrationController {
