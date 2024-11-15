@@ -65,6 +65,7 @@ export default {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
         initialView: 'timeGridWeek',
         weekends: true,
+        eventOverlap: false,
         events: [],
         selectable: true,
         selectHelper: true,
@@ -148,6 +149,26 @@ export default {
         this.selectedSlot.endTime = '10:00';
       }
 
+      // Check for overlapping events
+      const overlaps = this.calendarOptions.events.some((event) => {
+        const eventStart = new Date(event.start);
+        const eventEnd = new Date(event.end);
+
+        const selectedStart = new Date(info.start);
+        const selectedEnd = new Date(info.end);
+
+        return (
+          (selectedStart >= eventStart && selectedStart < eventEnd) || 
+          (selectedEnd > eventStart && selectedEnd <= eventEnd) || 
+          (selectedStart <= eventStart && selectedEnd >= eventEnd)
+        );
+      });
+
+      if (overlaps) {
+        alert('This time slot overlaps with an existing appointment.');
+        return;
+      }
+
       this.showModal = true;
     },
 
@@ -177,26 +198,20 @@ export default {
           endTime: `${endDateTime}`,
         };
 
-        const response = await this.$axios.post(
-          '/appointments',
-          newAppointment
-        );
+        await this.$axios.post('/appointments', newAppointment);
 
-        console.log('New appointment successfully poster', response.data);
-
+        this.calendarOptions.events.push({
+          title: 'Open Appointment',
+          start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
+          end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
+        });
       } catch (error) {
+        alert('Error saving appointment');
         console.error(
           'Error saving appointment:',
           error.response?.data || error.message
         );
       }
-
-      // Event is currently unused
-      this.calendarOptions.events.push({
-        title: 'New Appointment',
-        start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
-        end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
-      });
 
       this.cancelAppointment();
     },
