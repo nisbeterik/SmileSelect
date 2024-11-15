@@ -54,10 +54,15 @@ import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+const bookedColor = '#FF5733';
+const availableColor = '#28A745';
 
 export default {
   components: {
     FullCalendar,
+  },
+  mounted() {
+    this.loadAppointments();
   },
   data() {
     return {
@@ -158,8 +163,8 @@ export default {
         const selectedEnd = new Date(info.end);
 
         return (
-          (selectedStart >= eventStart && selectedStart < eventEnd) || 
-          (selectedEnd > eventStart && selectedEnd <= eventEnd) || 
+          (selectedStart >= eventStart && selectedStart < eventEnd) ||
+          (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
           (selectedStart <= eventStart && selectedEnd >= eventEnd)
         );
       });
@@ -201,9 +206,10 @@ export default {
         await this.$axios.post('/appointments', newAppointment);
 
         this.calendarOptions.events.push({
-          title: 'Open Appointment',
+          title: 'Available',
           start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
           end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
+          backgroundColor: availableColor
         });
       } catch (error) {
         alert('Error saving appointment');
@@ -216,8 +222,37 @@ export default {
       this.cancelAppointment();
     },
 
-    loadAppointments() {
-      // TODO: ADD LOGIC HERE FOR LOADING EXISTING APPOINTMENTS FOR THE LOGGED IN DENTIST
+    async loadAppointments() {
+      try {
+        var response = await this.$axios.get('/appointments');
+        var existingAppointments = response.data;
+
+        console.log(existingAppointments);
+
+        Object.values(existingAppointments).forEach((appointment) => {
+          var appointmentColor = bookedColor
+          var appointmentTitle = 'Booked'
+
+          if (appointment.patientId === null){
+            appointmentColor = availableColor
+            appointmentTitle = 'Available'
+          }
+
+          this.calendarOptions.events.push({
+            title: appointmentTitle,
+            start: `${appointment.startTime}`,
+            end: `${appointment.endTime}`,
+            backgroundColor: appointmentColor
+          });
+        });
+
+        console.log;
+      } catch (error) {
+        console.error(
+          'Error saving appointment:',
+          error.response?.data || error.message
+        );
+      }
     },
   },
 };
