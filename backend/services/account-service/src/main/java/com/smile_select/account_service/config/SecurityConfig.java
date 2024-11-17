@@ -37,10 +37,13 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login/**", "/api/register/**").permitAll() // Public endpoints
-                        .anyRequest().authenticated() // Protect all other endpoints
-                )
-                .httpBasic(httpBasic -> httpBasic.disable()); // Disable default basic auth
+                        .requestMatchers(
+                                "/api/accounts/login/**",
+                                "/api/accounts/patients", // Allow POST registration
+                                "/api/accounts/patients/**" // Allow GET and other operations
+                        ).permitAll()
+                        .anyRequest().authenticated())
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         // Add JWT authentication filter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
