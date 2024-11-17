@@ -2,7 +2,7 @@
 node_modules/
 
 # Build directories and generated files
-/dist
+/dist/
 /build/
 target/
 /nbbuild/
