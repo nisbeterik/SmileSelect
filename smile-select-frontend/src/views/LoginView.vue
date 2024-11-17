@@ -69,7 +69,7 @@ export default {
       }
 
       try {
-        const endpoint = `/api/login/${this.role}`; // Dynamically choose endpoint based on role
+        const endpoint = `/accounts/login/${this.role}`; // Dynamically choose endpoint based on role
         const response = await axios.post(endpoint, {
           email: this.email,
           password: this.password,
