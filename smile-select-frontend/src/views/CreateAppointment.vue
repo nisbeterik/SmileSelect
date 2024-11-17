@@ -6,7 +6,11 @@
       @select="handleSelect"
     />
 
-    <div v-if="showModal" class="modal" @click.self="cancelAppointment">
+    <div
+      v-if="showCreateAppointmentModal"
+      class="modal"
+      @click.self="cancelAppointment"
+    >
       <div class="modal-content">
         <h3>Create Appointment</h3>
 
@@ -46,6 +50,16 @@
         <button @click="cancelAppointment">Cancel</button>
       </div>
     </div>
+
+    <div v-if="showAppointmentDetailsModal" class="modal" @click.self="closeEventModal">
+      <div class="modal-content">
+        <h3>Appointment Details:</h3>
+        <p><strong>Title:</strong> {{ selectedEvent.title }}</p>
+        <p><strong>Start:</strong> {{ selectedEvent.start }}</p>
+        <p><strong>End:</strong> {{ selectedEvent.end }}</p>
+        <button @click="closeEventModal">Close</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -66,7 +80,7 @@ export default {
     this.loadAppointments();
     this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
   },
-  beforeUnmount(){
+  beforeUnmount() {
     clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
   },
   data() {
@@ -80,6 +94,8 @@ export default {
         events: [],
         selectable: true,
         select: this.handleSelect,
+        eventClick: this.handleEventClick,
+        selectedEvent: null,
         slotMinTime: '07:00:00',
         slotMaxTime: '19:00:00',
         slotDuration: '00:15:00',
@@ -92,18 +108,19 @@ export default {
         customButtons: {
           toggleWeekends: {
             text: 'Toggle Weekends',
-            click: this.toggleWeekends, // Call your custom method
+            click: this.toggleWeekends,
           },
         },
       },
-      showModal: false,
+      showCreateAppointmentModal: false,
+      showAppointmentDetailsModal: false,
       selectedSlot: {
         startTime: null,
         endTime: null,
         date: null,
       },
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
-      intervalId: null
+      intervalId: null,
     };
   },
   methods: {
@@ -202,13 +219,33 @@ export default {
 
       const overlap = this.checkOverlap(this.selectedSlot);
       if (!overlap) {
-        this.showModal = true;
+        this.showCreateAppointmentModal = true;
       }
     },
 
     cancelAppointment() {
-      this.showModal = false;
+      this.showCreateAppointmentModal = false;
       this.selectedSlot = { startTime: '', endTime: '', date: null };
+    },
+
+    handleEventClick(info) {
+      const event = info.event;
+
+      // TODO: Query database for patient details here
+
+      this.selectedEvent = {
+        id: event.id,
+        title: event.title,
+        start: event.start.toISOString(),
+        end: event.end ? event.end.toISOString() : null,
+      };
+
+      this.showAppointmentDetailsModal = true;
+    },
+
+    closeEventModal() {
+      this.selectedEvent = null;
+      this.showAppointmentDetailsModal = false;
     },
 
     async saveAppointment() {
@@ -246,7 +283,7 @@ export default {
           end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
           backgroundColor: availableColor,
         });
-        console.log("Appointment saved")
+        console.log('Appointment saved');
       } catch (error) {
         alert('Error saving appointment');
         console.error(
@@ -280,7 +317,7 @@ export default {
             backgroundColor: appointmentColor,
           });
         });
-        console.log("Appointments fetched")
+        console.log('Appointments fetched');
       } catch (error) {
         console.error(
           'Error saving appointment:',
