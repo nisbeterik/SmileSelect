@@ -95,7 +95,6 @@ export default {
         selectable: true,
         select: this.handleSelect,
         eventClick: this.handleEventClick,
-        selectedEvent: null,
         slotMinTime: '07:00:00',
         slotMaxTime: '19:00:00',
         slotDuration: '00:15:00',
@@ -119,6 +118,7 @@ export default {
         endTime: null,
         date: null,
       },
+      selectedEvent: null,
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
       intervalId: null,
     };
@@ -231,13 +231,13 @@ export default {
     handleEventClick(info) {
       const event = info.event;
 
-      // TODO: Query database for patient details here
+      // TODO: Query database for patient details here and add to event
 
       this.selectedEvent = {
         id: event.id,
         title: event.title,
         start: event.start.toISOString(),
-        end: event.end ? event.end.toISOString() : null,
+        end: event.end.toISOString(),
       };
 
       this.showAppointmentDetailsModal = true;
