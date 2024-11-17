@@ -64,6 +64,10 @@ export default {
   },
   mounted() {
     this.loadAppointments();
+    this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
+  },
+  beforeUnmount(){
+    clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
   },
   data() {
     return {
@@ -75,7 +79,6 @@ export default {
         eventOverlap: false,
         events: [],
         selectable: true,
-        selectHelper: true,
         select: this.handleSelect,
         slotMinTime: '07:00:00',
         slotMaxTime: '19:00:00',
@@ -100,6 +103,7 @@ export default {
         date: null,
       },
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
+      intervalId: null
     };
   },
   methods: {
@@ -242,6 +246,7 @@ export default {
           end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
           backgroundColor: availableColor,
         });
+        console.log("Appointment saved")
       } catch (error) {
         alert('Error saving appointment');
         console.error(
@@ -255,6 +260,7 @@ export default {
 
     async loadAppointments() {
       try {
+        this.calendarOptions.events = [];
         var response = await this.$axios.get('/appointments');
         var existingAppointments = response.data;
 
@@ -274,6 +280,7 @@ export default {
             backgroundColor: appointmentColor,
           });
         });
+        console.log("Appointments fetched")
       } catch (error) {
         console.error(
           'Error saving appointment:',
