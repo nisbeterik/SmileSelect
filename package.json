@@ -8,5 +8,8 @@
     "globals": "^15.12.0",
     "prettier": "^3.3.3",
     "vue-eslint-parser": "^9.4.3"
+  },
+  "dependencies": {
+    "jakarta": "^0.0.1"
   }
 }
