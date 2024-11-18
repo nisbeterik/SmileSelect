@@ -1,5 +1,6 @@
 package com.smile_select.appointment_service.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -14,17 +15,17 @@ import com.smile_select.appointment_service.repository.AppointmentRepository;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    
+
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository){
+    public AppointmentService(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public Appointment createAppointment(Appointment appointment){
+    public Appointment createAppointment(Appointment appointment) {
         return appointmentRepository.save(appointment);
     }
 
-    public List<Appointment> getAllAppointments(){
+    public List<Appointment> getAllAppointments() {
         return appointmentRepository.findAll();
     }
 
@@ -32,8 +33,16 @@ public class AppointmentService {
         return appointmentRepository.findById(id);
     }
 
-    public List<Appointment> getAppointmentsAfterStartTime(LocalDateTime startTime){
-        return appointmentRepository.findByStartTimeAfter(startTime);
+    public List<Appointment> getAppointmentsAfterDate(LocalDate startDate) {
+        return appointmentRepository.findByStartTimeDateAfter(startDate);
+    }
+
+    public List<Appointment> getAppointmentsBeforeDate(LocalDate endDate) {
+        return appointmentRepository.findByStartTimeDateBefore(endDate);
+    }
+
+    public List<Appointment> getAppointmentsBetweenDates(LocalDate startDate, LocalDate endDate) {
+        return appointmentRepository.findByStartTimeDateBetween(startDate, endDate);
     }
 
 }

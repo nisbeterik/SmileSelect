@@ -1,10 +1,8 @@
 package com.smile_select.appointment_service.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.service.AppointmentService;
 
@@ -42,30 +39,33 @@ public class AppointmentController {
 
     @GetMapping
     public ResponseEntity<?> getAppointments(
-            @RequestParam(value = "startTime", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate) {
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
 
         List<Appointment> appointments;
 
-        // If a full LocalDateTime string is passed, including hh:mm:ss
-        if (startTime != null) {
-            appointments = appointmentService.getAppointmentsAfterStartTime(startTime);
+        // If both startDate and endDate are provided, query appointments between dates
+        if (startDate != null && endDate != null) {
+            appointments = appointmentService.getAppointmentsBetweenDates(startDate, endDate);
         }
-
-        // If only a date is passed
+        // If only startDate is provided, query appointments after the given date
         else if (startDate != null) {
-            LocalDateTime startDateTime = startDate.atStartOfDay(); // Converts LocalDate to LocalDateTime (midnight)
-            appointments = appointmentService.getAppointmentsAfterStartTime(startDateTime);
+            appointments = appointmentService.getAppointmentsAfterDate(startDate);
         }
-
-        // If no query params are passed
+        // If only endDate is provided, query appointments before the given date
+        else if (endDate != null) {
+            appointments = appointmentService.getAppointmentsBeforeDate(endDate);
+        }
+        // If no query params are passed, fetch all appointments
         else {
             appointments = appointmentService.getAllAppointments();
         }
 
+        // If no appointments are found
         if (appointments.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No appointments found");
         }
+
         return ResponseEntity.status(HttpStatus.OK).body(appointments);
     }
 
