@@ -354,10 +354,11 @@ export default {
       this.cancelAppointment();
     },
 
+    // TODO: Make this method load only appointments for the logged in dentist instead of all appointments
     async loadAppointments() {
       try {
         this.calendarOptions.events = [];
-        var response = await this.$axios.get('/appointments');
+        var response = await this.$axios.get(`/appointments/dentist/${this.HARDCODED_DENTIST_ID}`); // PLACEHOLDER ID
         var existingAppointments = response.data;
 
         Object.values(existingAppointments).forEach((appointment) => {
