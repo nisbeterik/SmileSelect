@@ -6,7 +6,11 @@
       @select="handleSelect"
     />
 
-    <div v-if="showModal" class="modal" @click.self="cancelAppointment">
+    <div
+      v-if="showCreateAppointmentModal"
+      class="modal"
+      @click.self="cancelAppointment"
+    >
       <div class="modal-content">
         <h3>Create Appointment</h3>
 
@@ -46,6 +50,41 @@
         <button @click="cancelAppointment">Cancel</button>
       </div>
     </div>
+
+    <div
+      v-if="showAppointmentDetailsModal"
+      class="modal"
+      @click.self="closeEventModal"
+    >
+      <div class="modal-content">
+        <h3>Appointment Details:</h3>
+        <p>
+          <strong>Status:</strong><br />
+          {{ selectedEvent.status }}
+        </p>
+        <p>
+          <strong>Date:</strong><br />
+          {{ selectedEvent.date }}
+        </p>
+        <p>
+          <strong>Time:</strong><br />
+          {{ selectedEvent.time }}
+        </p>
+        <div
+          v-if="selectedEvent.patientId && selectedEvent.patientId !== 'null'"
+        >
+          <p>
+            <strong>Patient Name:</strong><br />
+            {{ selectedEvent.patientName }}
+          </p>
+          <p>
+            <strong>Patient Email:</strong><br />
+            {{ selectedEvent.patientEmail }}
+          </p>
+        </div>
+        <button @click="closeEventModal">Close</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -55,41 +94,69 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+const bookedColor = '#FF5733';
+const availableColor = '#28A745';
+
 export default {
   components: {
     FullCalendar,
+  },
+  mounted() {
+    this.loadAppointments();
+    this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
+  },
+  beforeUnmount() {
+    clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
   },
   data() {
     return {
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
         initialView: 'timeGridWeek',
-        weekends: true,
+        firstDay: 1,
+        weekends: false,
         eventOverlap: false,
         events: [],
         selectable: true,
-        selectHelper: true,
         select: this.handleSelect,
+        eventClick: this.handleEventClick,
         slotMinTime: '07:00:00',
         slotMaxTime: '19:00:00',
         slotDuration: '00:15:00',
         snapDuration: '00:05:00',
         headerToolbar: {
-          left: 'prev,next today',
+          left: 'prev,next today,toggleWeekends',
           center: 'title',
           right: 'prev,next,dayGridMonth,timeGridWeek',
         },
+        customButtons: {
+          toggleWeekends: {
+            text: 'Toggle Weekends',
+            click: this.toggleWeekends,
+          },
+        },
       },
-      showModal: false,
+      showCreateAppointmentModal: false,
+      showAppointmentDetailsModal: false,
       selectedSlot: {
         startTime: null,
         endTime: null,
         date: null,
       },
+      selectedEvent: null,
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
+      intervalId: null,
     };
   },
   methods: {
+    toggleWeekends() {
+      const weekendsStatus = this.calendarOptions.weekends;
+      if (weekendsStatus === true) {
+        this.calendarOptions.weekends = false;
+      } else {
+        this.calendarOptions.weekends = true;
+      }
+    },
     adjustTime(type, minutes) {
       const timeString =
         type === 'start'
@@ -126,59 +193,128 @@ export default {
       }
     },
 
-    handleSelect(info) {
-      const calendarApi = this.$refs.calendar.getApi();
-      const isWeekView = calendarApi.view.type === 'timeGridWeek';
+    checkOverlap(selectedSlot) {
+      const selectedStart = new Date(
+        `${selectedSlot.date}T${selectedSlot.startTime}:00`
+      );
+      const selectedEnd = new Date(
+        `${selectedSlot.date}T${selectedSlot.endTime}:00`
+      );
 
-      const formatTime = (date) => date.toTimeString().slice(0, 5);
-
-      const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-
-      this.selectedSlot.date = formatDate(info.start);
-
-      if (isWeekView) {
-        this.selectedSlot.startTime = formatTime(info.start);
-        this.selectedSlot.endTime = formatTime(info.end);
-      } else {
-        this.selectedSlot.startTime = '08:00';
-        this.selectedSlot.endTime = '10:00';
-      }
-
-      // Check for overlapping events
       const overlaps = this.calendarOptions.events.some((event) => {
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
 
-        const selectedStart = new Date(info.start);
-        const selectedEnd = new Date(info.end);
-
         return (
-          (selectedStart >= eventStart && selectedStart < eventEnd) || 
-          (selectedEnd > eventStart && selectedEnd <= eventEnd) || 
+          (selectedStart >= eventStart && selectedStart < eventEnd) ||
+          (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
           (selectedStart <= eventStart && selectedEnd >= eventEnd)
         );
       });
 
       if (overlaps) {
-        alert('This time slot overlaps with an existing appointment.');
-        return;
+        alert('Selected time overlaps with an existing appointment!');
       }
 
-      this.showModal = true;
+      return overlaps;
+    },
+
+    formatTime(date) {
+      return date.toTimeString().slice(0, 5);
+    },
+
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
+    handleSelect(info) {
+      const calendarApi = this.$refs.calendar.getApi();
+      const isWeekView = calendarApi.view.type === 'timeGridWeek';
+
+      this.selectedSlot.date = this.formatDate(info.start);
+
+      if (isWeekView) {
+        this.selectedSlot.startTime = this.formatTime(info.start);
+        this.selectedSlot.endTime = this.formatTime(info.end);
+      } else {
+        this.selectedSlot.startTime = '08:00';
+        this.selectedSlot.endTime = '10:00';
+      }
+
+      const overlap = this.checkOverlap(this.selectedSlot);
+      if (!overlap) {
+        this.showCreateAppointmentModal = true;
+      }
     },
 
     cancelAppointment() {
-      this.showModal = false;
+      this.showCreateAppointmentModal = false;
       this.selectedSlot = { startTime: '', endTime: '', date: null };
+    },
+
+    async getPatientInfo(patientId) {
+      try {
+        const response = await this.$axios.get(
+          `/accounts/patients/${patientId}`
+        );
+        return response.data;
+      } catch (error) {
+        console.error(
+          'Error retrieving patient:',
+          error.response?.data || error.message
+        );
+      }
+    },
+
+    async handleEventClick(info) {
+      const event = info.event;
+      const eventTime =
+        this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
+      const patientId = event.extendedProps?.patientId;
+
+      this.selectedEvent = {
+        id: event.id,
+        status: event.title,
+        date: this.formatDate(event.start),
+        time: eventTime,
+      };
+
+      if (patientId && patientId !== 'null') {
+        try {
+          const patient = await this.getPatientInfo(patientId);
+          if (patient) {
+            this.selectedEvent = {
+              ...this.selectedEvent,
+              patientId,
+              patientName: `${patient.firstName} ${patient.lastName}`,
+              patientEmail: patient.email,
+            };
+          }
+        } catch (error) {
+          console.error('Failed to fetch patient details:', error);
+        }
+      }
+
+      console.log(this.selectedEvent);
+      this.showAppointmentDetailsModal = true;
+    },
+
+    closeEventModal() {
+      this.selectedEvent = null;
+      this.showAppointmentDetailsModal = false;
     },
 
     async saveAppointment() {
       try {
+        const overlap = this.checkOverlap(this.selectedSlot);
+        if (overlap) {
+          this.cancelAppointment();
+          return;
+        }
+
         const formatToLocalDateTime = (date, time) => {
           return `${date}T${time}:00`;
         };
@@ -201,10 +337,12 @@ export default {
         await this.$axios.post('/appointments', newAppointment);
 
         this.calendarOptions.events.push({
-          title: 'Open Appointment',
+          title: 'Available',
           start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
           end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
+          backgroundColor: availableColor,
         });
+        console.log('Appointment saved');
       } catch (error) {
         alert('Error saving appointment');
         console.error(
@@ -216,8 +354,36 @@ export default {
       this.cancelAppointment();
     },
 
-    loadAppointments() {
-      // TODO: ADD LOGIC HERE FOR LOADING EXISTING APPOINTMENTS FOR THE LOGGED IN DENTIST
+    async loadAppointments() {
+      try {
+        this.calendarOptions.events = [];
+        var response = await this.$axios.get('/appointments');
+        var existingAppointments = response.data;
+
+        Object.values(existingAppointments).forEach((appointment) => {
+          var appointmentColor = bookedColor;
+          var appointmentTitle = 'Booked';
+
+          if (appointment.patientId === null) {
+            appointmentColor = availableColor;
+            appointmentTitle = 'Available';
+          }
+
+          this.calendarOptions.events.push({
+            title: appointmentTitle,
+            start: `${appointment.startTime}`,
+            end: `${appointment.endTime}`,
+            patientId: `${appointment.patientId}`,
+            backgroundColor: appointmentColor,
+          });
+        });
+        console.log('Appointments fetched');
+      } catch (error) {
+        console.error(
+          'Error saving appointment:',
+          error.response?.data || error.message
+        );
+      }
     },
   },
 };
