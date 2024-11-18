@@ -50,4 +50,8 @@ public class AppointmentService {
         return appointmentRepository.findByDentistId(dentistId);
     }
 
+    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+
 }

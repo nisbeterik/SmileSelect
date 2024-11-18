@@ -90,6 +90,16 @@ public class AppointmentController {
         return ResponseEntity.status(HttpStatus.OK).body(appointments);
     }
 
+    @GetMapping(value = "/patient/{patientId}")
+    public ResponseEntity<?> getAppointmentsByPatientId(@PathVariable("patientId") Long patientId) {
+        List<Appointment> appointments = appointmentService.getAppointmentsByPatientId(patientId);
+        if (appointments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("There are no appointments associated with that patient ID");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(appointments);
+    }
+
     @PatchMapping
     public ResponseEntity<?> updateAppointmentDetails(@RequestBody Appointment incompleteAppointment) {
         Optional<Appointment> optionalAppointment = appointmentService
