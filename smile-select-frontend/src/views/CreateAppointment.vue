@@ -354,6 +354,7 @@ export default {
       this.cancelAppointment();
     },
 
+    // TODO: Make this method load only appointments for the logged in dentist instead of all appointments
     async loadAppointments() {
       try {
         this.calendarOptions.events = [];
