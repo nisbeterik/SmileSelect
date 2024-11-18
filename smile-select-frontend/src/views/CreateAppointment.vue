@@ -51,7 +51,11 @@
       </div>
     </div>
 
-    <div v-if="showAppointmentDetailsModal" class="modal" @click.self="closeEventModal">
+    <div
+      v-if="showAppointmentDetailsModal"
+      class="modal"
+      @click.self="closeEventModal"
+    >
       <div class="modal-content">
         <h3>Appointment Details:</h3>
         <p><strong>Title:</strong> {{ selectedEvent.title }}</p>
@@ -194,24 +198,26 @@ export default {
       return overlaps;
     },
 
+    formatTime(date) {
+      return date.toTimeString().slice(0, 5);
+    },
+
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
     handleSelect(info) {
       const calendarApi = this.$refs.calendar.getApi();
       const isWeekView = calendarApi.view.type === 'timeGridWeek';
 
-      const formatTime = (date) => date.toTimeString().slice(0, 5);
-
-      const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-
-      this.selectedSlot.date = formatDate(info.start);
+      this.selectedSlot.date = this.formatDate(info.start);
 
       if (isWeekView) {
-        this.selectedSlot.startTime = formatTime(info.start);
-        this.selectedSlot.endTime = formatTime(info.end);
+        this.selectedSlot.startTime = this.formatTime(info.start);
+        this.selectedSlot.endTime = this.formatTime(info.end);
       } else {
         this.selectedSlot.startTime = '08:00';
         this.selectedSlot.endTime = '10:00';
@@ -314,6 +320,7 @@ export default {
             title: appointmentTitle,
             start: `${appointment.startTime}`,
             end: `${appointment.endTime}`,
+            patientId: `${appointment.patientId}`,
             backgroundColor: appointmentColor,
           });
         });
