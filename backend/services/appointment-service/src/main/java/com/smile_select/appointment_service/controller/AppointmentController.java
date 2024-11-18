@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,7 @@ public class AppointmentController {
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
-        Appointment createdAppointment = appointmentService.createAppointment(appointment);
+        Appointment createdAppointment = appointmentService.save(appointment);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 
@@ -76,6 +77,38 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no appointment with that ID");
         }
         return ResponseEntity.status(HttpStatus.OK).body(appointment);
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> updateAppointmentDetails(@RequestBody Appointment incompleteAppointment) {
+        Optional<Appointment> optionalAppointment = appointmentService
+                .getAppointmentById(incompleteAppointment.getId());
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+
+            if (incompleteAppointment.getDentistId() != null) {
+                appointment.setDentistId(incompleteAppointment.getDentistId()); 
+            }
+
+            if (incompleteAppointment.getPatientId() != null) {
+                appointment.setPatientId(incompleteAppointment.getPatientId()); 
+            }
+
+            if (incompleteAppointment.getStartTime() != null) {
+                appointment.setStartTime(incompleteAppointment.getStartTime());
+            }
+
+            if (incompleteAppointment.getEndTime() != null) {
+                appointment.setEndTime(incompleteAppointment.getEndTime());
+            }
+
+            appointmentService.save(appointment);
+
+            return ResponseEntity.ok(appointment);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
     }
 
 }

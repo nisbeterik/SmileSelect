@@ -21,7 +21,7 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public Appointment createAppointment(Appointment appointment) {
+    public Appointment save(Appointment appointment) {
         return appointmentRepository.save(appointment);
     }
 
