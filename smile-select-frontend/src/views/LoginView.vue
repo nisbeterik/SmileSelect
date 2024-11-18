@@ -47,45 +47,25 @@ export default {
     return {
       email: '',
       password: '',
-      role: 'patient', // Default to patient
+      role: 'patient', // Default to patient role
       errorMessage: '',
     };
   },
   methods: {
     async handleLogin() {
-      // Validate email and password on the client side
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!this.email) {
-        this.emailError = 'Email is required';
-        return;
-      } else if (!emailPattern.test(this.email)) {
-        this.emailError = 'Please enter a valid email';
-        return;
-      }
-
-      if (!this.password) {
-        this.passwordError = 'Password is required';
-        return;
-      }
-
       try {
-        const endpoint = `/accounts/login/${this.role}`; // Dynamically choose endpoint based on role
+        const endpoint = `/accounts/login/${this.role}`;
         const response = await axios.post(endpoint, {
           email: this.email,
           password: this.password,
         });
+        console.log('Login Successful:', response.data);
 
-        console.log(`${this.role} Login Successful`, response.data);
-
-        // Redirect to the dashboard or specific page based on role
-        if (this.role === 'patient') {
-          this.$router.push('/patient-dashboard');
-        } else {
-          this.$router.push('/dentist-dashboard');
-        }
+        // Emit success event to parent component
+        this.$emit('loginSuccess');
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Login failed';
-        console.error(`Error during ${this.role} login:`, error);
+        this.errorMessage = 'Login failed. Please try again.';
+        console.error('Login Error:', error);
       }
     },
   },
