@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import com.smile_select.account_service.model.Dentist;
 import com.smile_select.account_service.repository.DentistRepository;
 
-//Marks the class as a RESTful controller 
+// Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api/accounts
 @RestController
 @RequestMapping("/api/accounts")
@@ -27,6 +27,7 @@ public class DentistRegistrationController {
         this.dentistRepository = dentistRepository;
     }
 
+    // POST/Create a dentist
     @PostMapping("/dentists")
     public ResponseEntity<String> registerDentist(@RequestBody Dentist dentist) {
         dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
@@ -41,10 +42,17 @@ public class DentistRegistrationController {
         return new ResponseEntity<>("Dentist registered successfully!", HttpStatus.CREATED);
     }
 
+    // GET all dentists
     @GetMapping("/dentists")
     public ResponseEntity<List<Dentist>> getAllDentists() {
         List<Dentist> dentists = dentistRepository.findAll();
         // Return all dentists in JSON format
         return new ResponseEntity<>(dentists, HttpStatus.OK);
     }
+
+    // TODO - GET all /dentists
+    // TODO - GET /dentists/{id}
+    // TODO - PUT /dentists/{id}
+    // TODO - DELETE /dentists/{id}
+
 }
