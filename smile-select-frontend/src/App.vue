@@ -7,14 +7,11 @@
 </template>
 
 <script>
-import RegistrationForm from "@/views/RegistrationForm.vue";
-
 import MapPage from './components/MapPage.vue';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    RegistrationForm,
     MapPage,
   },
 };
