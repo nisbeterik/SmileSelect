@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: 'PatientDashboard',
+  name: 'DentistDashboard',
 };
 </script>

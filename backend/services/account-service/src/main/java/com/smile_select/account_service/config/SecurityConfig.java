@@ -39,8 +39,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/accounts/login/**",
-                                "/api/accounts/patients", // Allow POST registration
-                                "/api/accounts/patients/**" // Allow GET and other operations
+                                "/api/accounts/patients", // Allow POST registration for patients
+                                "/api/accounts/patients/**", // Allow GET and other operations for patients
+                                "/api/accounts/dentists", // Allow POST registration for dentists
+                                "/api/accounts/dentists/**" // Allow GET and other operations for dentists
                         ).permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(httpBasic -> httpBasic.disable());

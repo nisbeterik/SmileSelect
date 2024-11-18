@@ -7,7 +7,7 @@
         <button @click="navigateTo('/dentist-registration')">Dentist Registration Form</button>
         <button @click="navigateTo('/create-appointment')">Create Appointment</button>
         <button @click="navigateTo('/map')">Map Page</button>
-        <button @click="navigateTo('/login')">Login</button>
+        <button @click="navigateTo('/auth')">Login</button>
       </div>
     </div>
   </template>
