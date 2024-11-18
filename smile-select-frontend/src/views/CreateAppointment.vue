@@ -58,9 +58,30 @@
     >
       <div class="modal-content">
         <h3>Appointment Details:</h3>
-        <p><strong>Title:</strong> {{ selectedEvent.title }}</p>
-        <p><strong>Start:</strong> {{ selectedEvent.start }}</p>
-        <p><strong>End:</strong> {{ selectedEvent.end }}</p>
+        <p>
+          <strong>Status:</strong><br />
+          {{ selectedEvent.status }}
+        </p>
+        <p>
+          <strong>Date:</strong><br />
+          {{ selectedEvent.date }}
+        </p>
+        <p>
+          <strong>Time:</strong><br />
+          {{ selectedEvent.time }}
+        </p>
+        <div
+          v-if="selectedEvent.patientId && selectedEvent.patientId !== 'null'"
+        >
+          <p>
+            <strong>Patient Name:</strong><br />
+            {{ selectedEvent.patientName }}
+          </p>
+          <p>
+            <strong>Patient Email:</strong><br />
+            {{ selectedEvent.patientEmail }}
+          </p>
+        </div>
         <button @click="closeEventModal">Close</button>
       </div>
     </div>
@@ -234,18 +255,50 @@ export default {
       this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
 
-    handleEventClick(info) {
-      const event = info.event;
+    async getPatientInfo(patientId) {
+      try {
+        const response = await this.$axios.get(
+          `/accounts/patients/${patientId}`
+        );
+        return response.data;
+      } catch (error) {
+        console.error(
+          'Error retrieving patient:',
+          error.response?.data || error.message
+        );
+      }
+    },
 
-      // TODO: Query database for patient details here and add to event
+    async handleEventClick(info) {
+      const event = info.event;
+      const eventTime =
+        this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
+      const patientId = event.extendedProps?.patientId;
 
       this.selectedEvent = {
         id: event.id,
-        title: event.title,
-        start: event.start.toISOString(),
-        end: event.end.toISOString(),
+        status: event.title,
+        date: this.formatDate(event.start),
+        time: eventTime,
       };
 
+      if (patientId && patientId !== 'null') {
+        try {
+          const patient = await this.getPatientInfo(patientId);
+          if (patient) {
+            this.selectedEvent = {
+              ...this.selectedEvent,
+              patientId,
+              patientName: `${patient.firstName} ${patient.lastName}`,
+              patientEmail: patient.email,
+            };
+          }
+        } catch (error) {
+          console.error('Failed to fetch patient details:', error);
+        }
+      }
+
+      console.log(this.selectedEvent);
       this.showAppointmentDetailsModal = true;
     },
 
