@@ -13,16 +13,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api")
-public class LoginController {
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest LoginRequest) {
-        // Placeholder logic
-        if ("placeholderuser@mail.com".equals(loginRequest.getEmail())) {
-
-        }
-    }
-
-}
+// @RestController
+// @RequestMapping("/api")
+// public class LoginController {
+//
+// @PostMapping("/login")
+// public ResponseEntity<?> login(@RequestBody LoginRequest LoginRequest) {
+// // Placeholder logic
+// if ("placeholderuser@mail.com".equals(loginRequest.getEmail())) {
+//
+// }
+// }
+//
+// }
