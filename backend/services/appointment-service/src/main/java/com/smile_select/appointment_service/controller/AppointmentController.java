@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,11 +89,11 @@ public class AppointmentController {
             Appointment appointment = optionalAppointment.get();
 
             if (incompleteAppointment.getDentistId() != null) {
-                appointment.setDentistId(incompleteAppointment.getDentistId()); 
+                appointment.setDentistId(incompleteAppointment.getDentistId());
             }
 
             if (incompleteAppointment.getPatientId() != null) {
-                appointment.setPatientId(incompleteAppointment.getPatientId()); 
+                appointment.setPatientId(incompleteAppointment.getPatientId());
             }
 
             if (incompleteAppointment.getStartTime() != null) {
@@ -106,6 +107,17 @@ public class AppointmentController {
             appointmentService.save(appointment);
 
             return ResponseEntity.ok(appointment);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deleteAppointment(@PathVariable("id") Long id) {
+        Optional<Appointment> appointment = appointmentService.getAppointmentById(id);
+        if (appointment.isPresent()) {
+            appointmentService.deleteAppointment(id);
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }

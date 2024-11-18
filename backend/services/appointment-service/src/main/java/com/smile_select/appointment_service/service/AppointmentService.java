@@ -45,4 +45,8 @@ public class AppointmentService {
         return appointmentRepository.findByStartTimeDateBetween(startDate, endDate);
     }
 
+    public void deleteAppointment(Long id){
+        appointmentRepository.deleteById(id);
+    }
+
 }
