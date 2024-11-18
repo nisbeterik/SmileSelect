@@ -1,5 +1,6 @@
 package com.smile_select.appointment_service.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,10 @@ public class AppointmentService {
 
     public Optional<Appointment> getAppointmentById(Long id) {
         return appointmentRepository.findById(id);
+    }
+
+    public List<Appointment> getAppointmentsAfterStartTime(LocalDateTime startTime){
+        return appointmentRepository.findByStartTimeAfter(startTime);
     }
 
 }
