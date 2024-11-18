@@ -2,7 +2,6 @@ package com.smile_select.appointment_service.repository;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +19,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE DATE(a.startTime) BETWEEN :startDate AND :endDate")
     public List<Appointment> findByStartTimeDateBetween(@Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    public List<Appointment> findByDentistId(Long dentistId);
 
 }

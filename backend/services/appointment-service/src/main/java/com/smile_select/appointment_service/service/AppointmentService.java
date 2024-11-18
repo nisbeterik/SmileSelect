@@ -1,13 +1,10 @@
 package com.smile_select.appointment_service.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.repository.AppointmentRepository;
 
@@ -45,8 +42,12 @@ public class AppointmentService {
         return appointmentRepository.findByStartTimeDateBetween(startDate, endDate);
     }
 
-    public void deleteAppointment(Long id){
+    public void deleteAppointment(Long id) {
         appointmentRepository.deleteById(id);
+    }
+
+    public List<Appointment> getAppointmentsByDentistId(Long dentistId) {
+        return appointmentRepository.findByDentistId(dentistId);
     }
 
 }
