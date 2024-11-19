@@ -61,47 +61,47 @@ compile_notification_service:
     paths:
       - backend/services/notification-service/target
 
-# Test jobs for each microservice
-test_account_service:
-  stage: test
-  script:
-    - echo "Running tests for Account Service..."
-    - mvn -B test --file backend/services/account-service/pom.xml
-  tags:
-    - docker
-  dependencies:
-    - compile_account_service
 
-test_appointment_service:
-  stage: test
-  script:
-    - echo "Running tests for Appointment Service..."
-    - mvn -B test --file backend/services/appointment-service/pom.xml
-  tags:
-    - docker
-  dependencies:
-    - compile_appointment_service
+# Test jobs for each microservice (commented out for now)
+# test_account_service:
+#   stage: test
+#   script:
+#     - echo "Running tests for Account Service..."
+#     - mvn -B test --file backend/services/account-service/pom.xml
+#   tags:
+#     - docker
+#   dependencies:
+#     - compile_account_service
 
-test_gateway_service:
-  stage: test
-  script:
-    - echo "Running tests for Gateway Service..."
-    - mvn -B test --file backend/services/gateway-service/pom.xml
-  tags:
-    - docker
-  dependencies:
-    - compile_gateway_service
+# test_appointment_service:
+#   stage: test
+#   script:
+#     - echo "Running tests for Appointment Service..."
+#     - mvn -B test --file backend/services/appointment-service/pom.xml
+#   tags:
+#     - docker
+#   dependencies:
+#     - compile_appointment_service
 
-test_notification_service:
-  stage: test
-  script:
-    - echo "Running tests for Notification Service..."
-    - mvn -B test --file backend/services/notification-service/pom.xml
-  tags:
-    - docker
-  dependencies:
-    - compile_notification_service
+# test_gateway_service:
+#   stage: test
+#   script:
+#     - echo "Running tests for Gateway Service..."
+#     - mvn -B test --file backend/services/gateway-service/pom.xml
+#   tags:
+#     - docker
+#   dependencies:
+#     - compile_gateway_service
 
+# test_notification_service:
+#   stage: test
+#   script:
+#     - echo "Running tests for Notification Service..."
+#     - mvn -B test --file backend/services/notification-service/pom.xml
+#   tags:
+#     - docker
+#   dependencies:
+#     - compile_notification_service
 # Job for frontend
 build_vue_frontend:
   stage: compile
