@@ -58,7 +58,7 @@ public class DentistRegistrationController {
 
     /**
      * GET /dentists/{id} - Get a dentist by their ID.
-     * @param id The ID of the dentist.
+     * @param id - The ID of the dentist.
      * @return The details of the dentist, or a 404 Not Found status if not found.
      */
     @GetMapping("/dentists/{id}")
@@ -75,7 +75,7 @@ public class DentistRegistrationController {
 
     /**
      * Updates an existing dentist's information
-     * @param id the ID of the dentist to be updated
+     * @param id - the ID of the dentist to be updated
      * @param dentist the Dentist object with updated information
      * @return ResponseEntity with a message indicating the outcome of the update operation
      */
@@ -106,6 +106,21 @@ public class DentistRegistrationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist not found");
         }
     }
-    // TODO - DELETE /dentists/{id}
 
+
+    /**
+     * Deletes the dentist with the specified ID.
+     * @param id - the ID of the dentist to delete
+     * @return a ResponseEntity containing a success message if the dentist was deleted,
+     *     or a not found message if no dentist with the specified ID exists
+     */
+    @DeleteMapping("/dentists/{id}")
+    public ResponseEntity<String> deleteDentist(@PathVariable Long id) {
+        if (dentistRepository.existsById(id)) {
+            dentistRepository.deleteById(id);
+            return ResponseEntity.ok("Dentist deleteded successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist not found");
+        }
+    }
 }
