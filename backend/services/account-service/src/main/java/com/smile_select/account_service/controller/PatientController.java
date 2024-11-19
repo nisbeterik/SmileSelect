@@ -6,11 +6,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.smile_select.account_service.exception.ResourceNotFoundException;
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.repository.PatientRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 // Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api/accounts
@@ -46,12 +50,22 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPatientById(@PathVariable("id") Long id) {
-        Optional<Patient> patient = patientRepository.findById(id);
+    public ResponseEntity<?> getPatientById(@PathVariable("id") Long id, HttpServletRequest request) {
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (patient.isPresent()) {
-            return new ResponseEntity<>(patient, HttpStatus.OK);
+        Optional<Patient> patient = patientRepository.findById(id);
+        if (patient.isEmpty() || !patient.get().getEmail().equals(userEmail)) {
+            throw new ResourceNotFoundException("Provided patient not found or Access denied");
         }
-        return new ResponseEntity<>("Patient not found", HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(patient.get(), HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePatientDetails(@PathVariable("id") Long id) {
+        return null;
+
+    }
+
+    // add endpoint for updating password
 }
