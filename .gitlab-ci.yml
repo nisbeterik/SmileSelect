@@ -5,97 +5,95 @@ stages:
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-
 cache:
   paths:
     - .m2/repository
-
 
 default:
   image: maven:3.9.9-eclipse-temurin-21
 
 # Compile jobs for each microservice
-compile_account-service:
+compile_account_service:
   stage: compile
   script:
-    - echo "Compiling Microservice 1..."
-    - mvn -B clean compile --file microservice1/pom.xml
+    - echo "Compiling Account Service..."
+    - mvn -B clean compile --file backend/services/account-service/pom.xml
   tags:
     - docker
   artifacts:
     paths:
-      - microservice1/target
+      - backend/services/account-service/target
 
-compile_appointment-service:
+compile_appointment_service:
   stage: compile
   script:
-    - echo "Compiling Microservice 2..."
-    - mvn -B clean compile --file microservice2/pom.xml
+    - echo "Compiling Appointment Service..."
+    - mvn -B clean compile --file backend/services/appointment-service/pom.xml
   tags:
     - docker
   artifacts:
     paths:
-      - microservice2/target
+      - backend/services/appointment-service/target
 
-compile_gateway-service:
+compile_gateway_service:
   stage: compile
   script:
-    - echo "Compiling Microservice 3..."
-    - mvn -B clean compile --file microservice3/pom.xml
+    - echo "Compiling Gateway Service..."
+    - mvn -B clean compile --file backend/services/gateway-service/pom.xml
   tags:
     - docker
   artifacts:
     paths:
-      - microservice3/target
+      - backend/services/gateway-service/target
 
-compile_notification-service:
+compile_notification_service:
   stage: compile
   script:
-    - echo "Compiling Microservice 4..."
-    - mvn -B clean compile --file microservice4/pom.xml
+    - echo "Compiling Notification Service..."
+    - mvn -B clean compile --file backend/services/notification-service/pom.xml
   tags:
     - docker
   artifacts:
     paths:
-      - microservice4/target
+      - backend/services/notification-service/target
 
 # Test jobs for each microservice
-test_microservice1:
+test_account_service:
   stage: test
   script:
-    - echo "Running tests for Microservice 1..."
-    - mvn -B test --file microservice1/pom.xml
+    - echo "Running tests for Account Service..."
+    - mvn -B test --file backend/services/account-service/pom.xml
   tags:
     - docker
   dependencies:
-    - compile_microservice1
+    - compile_account_service
 
-test_microservice2:
+test_appointment_service:
   stage: test
   script:
-    - echo "Running tests for Microservice 2..."
-    - mvn -B test --file microservice2/pom.xml
+    - echo "Running tests for Appointment Service..."
+    - mvn -B test --file backend/services/appointment-service/pom.xml
   tags:
     - docker
   dependencies:
-    - compile_microservice2
+    - compile_appointment_service
 
-test_microservice3:
+test_gateway_service:
   stage: test
   script:
-    - echo "Running tests for Microservice 3..."
-    - mvn -B test --file microservice3/pom.xml
+    - echo "Running tests for Gateway Service..."
+    - mvn -B test --file backend/services/gateway-service/pom.xml
   tags:
     - docker
   dependencies:
-    - compile_microservice3
+    - compile_gateway_service
 
-test_microservice4:
+test_notification_service:
   stage: test
   script:
-    - echo "Running tests for Microservice 4..."
-    - mvn -B test --file microservice4/pom.xml
+    - echo "Running tests for Notification Service..."
+    - mvn -B test --file backend/services/notification-service/pom.xml
   tags:
     - docker
   dependencies:
-    - compile_microservice4
+    - compile_notification_service
