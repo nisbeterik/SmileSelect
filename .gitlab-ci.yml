@@ -1,0 +1,101 @@
+stages:
+  - compile
+  - test
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+
+cache:
+  paths:
+    - .m2/repository
+
+
+default:
+  image: maven:3.9.9-eclipse-temurin-21
+
+# Compile jobs for each microservice
+compile_account-service:
+  stage: compile
+  script:
+    - echo "Compiling Microservice 1..."
+    - mvn -B clean compile --file microservice1/pom.xml
+  tags:
+    - docker
+  artifacts:
+    paths:
+      - microservice1/target
+
+compile_appointment-service:
+  stage: compile
+  script:
+    - echo "Compiling Microservice 2..."
+    - mvn -B clean compile --file microservice2/pom.xml
+  tags:
+    - docker
+  artifacts:
+    paths:
+      - microservice2/target
+
+compile_gateway-service:
+  stage: compile
+  script:
+    - echo "Compiling Microservice 3..."
+    - mvn -B clean compile --file microservice3/pom.xml
+  tags:
+    - docker
+  artifacts:
+    paths:
+      - microservice3/target
+
+compile_notification-service:
+  stage: compile
+  script:
+    - echo "Compiling Microservice 4..."
+    - mvn -B clean compile --file microservice4/pom.xml
+  tags:
+    - docker
+  artifacts:
+    paths:
+      - microservice4/target
+
+# Test jobs for each microservice
+test_microservice1:
+  stage: test
+  script:
+    - echo "Running tests for Microservice 1..."
+    - mvn -B test --file microservice1/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_microservice1
+
+test_microservice2:
+  stage: test
+  script:
+    - echo "Running tests for Microservice 2..."
+    - mvn -B test --file microservice2/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_microservice2
+
+test_microservice3:
+  stage: test
+  script:
+    - echo "Running tests for Microservice 3..."
+    - mvn -B test --file microservice3/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_microservice3
+
+test_microservice4:
+  stage: test
+  script:
+    - echo "Running tests for Microservice 4..."
+    - mvn -B test --file microservice4/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_microservice4
