@@ -18,7 +18,7 @@ import com.smile_select.account_service.repository.DentistRepository;
  */
 @RestController
 @RequestMapping("/api/accounts")
-public class DentistRegistrationController {
+public class DentistController {
 
     @Autowired
     private DentistRepository dentistRepository;
