@@ -33,9 +33,10 @@ public class JwtUtil {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return !claims.getExpiration().before(new Date());
         } catch (Exception e) {
+            System.err.println("Token validation error: " + e.getMessage());
             return false;
         }
     }
