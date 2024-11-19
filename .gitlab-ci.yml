@@ -98,15 +98,15 @@ test_notification_service:
   dependencies:
     - compile_notification_service
 
-  # Job for frontend
-  build_vue_frontend:
-    stage: compile
-    image: node:18
-    script:
-      - echo "Installing dependencies for Vue.js frontend..."
-      - cd smile-select-frontend
-      - npm install
-      - echo "Building Vue.js frontend..."
-      - npm run build
-    tags:
-      - docker
+# Job for frontend
+build_vue_frontend:
+  stage: compile
+  image: node:18
+  script:
+    - echo "Installing dependencies for Vue.js frontend..."
+    - cd smile-select-frontend
+    - npm install
+    - echo "Building Vue.js frontend..."
+    - npm run build
+  tags:
+    - docker
