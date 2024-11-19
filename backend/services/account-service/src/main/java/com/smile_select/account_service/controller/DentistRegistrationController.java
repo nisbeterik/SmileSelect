@@ -3,6 +3,7 @@ package com.smile_select.account_service.controller;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,7 +71,41 @@ public class DentistRegistrationController {
         }
     }
 
-    // TODO - PUT /dentists/{id}
+
+
+    /**
+     * Updates an existing dentist's information
+     * @param id the ID of the dentist to be updated
+     * @param dentist the Dentist object with updated information
+     * @return ResponseEntity with a message indicating the outcome of the update operation
+     */
+    @PutMapping("/dentists/{id}")
+    public ResponseEntity<String> updateDentist (
+            @PathVariable Long id,
+            @Valid @RequestBody Dentist dentist) {
+        Optional<Dentist> existingDentistOpt = dentistRepository.findById(id);
+
+        if (existingDentistOpt.isPresent()) {
+            Dentist existingDentist = existingDentistOpt.get();
+            existingDentist.setFirstName(dentist.getFirstName());
+            existingDentist.setLastName(dentist.getLastName());
+            existingDentist.setEmail(dentist.getEmail());
+            if (!dentist.getPassword().isEmpty()) {
+                existingDentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
+            }
+            existingDentist.setLongitude(dentist.getLongitude());
+            existingDentist.setLatitude(dentist.getLatitude());
+            existingDentist.setStreet(dentist.getStreet());
+            existingDentist.setZip(dentist.getZip());
+            existingDentist.setCity(dentist.getCity());
+            existingDentist.setHouseNumber(dentist.getHouseNumber());
+            dentistRepository.save(existingDentist);
+
+            return ResponseEntity.ok("Dentist updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist not found");
+        }
+    }
     // TODO - DELETE /dentists/{id}
 
 }
