@@ -50,15 +50,14 @@ public class PatientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPatientById(@PathVariable("id") Long id, HttpServletRequest request) {
+    public ResponseEntity<?> getPatientById(@PathVariable("id") Long id) {
         String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Optional<Patient> patient = patientRepository.findById(id);
-        if (patient.isEmpty() || !patient.get().getEmail().equals(userEmail)) {
-            throw new ResourceNotFoundException("Provided patient not found or Access denied");
-        }
-
-        return new ResponseEntity<>(patient.get(), HttpStatus.OK);
+    
+        Patient patient = patientRepository.findById(id)
+                .filter(p -> p.getEmail().equals(userEmail))
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
+    
+        return new ResponseEntity<>(patient, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
