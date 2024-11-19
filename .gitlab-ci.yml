@@ -21,6 +21,7 @@ compile_account_service:
   tags:
     - docker
   artifacts:
+    expire_in: 1 week
     paths:
       - backend/services/account-service/target
 
@@ -32,6 +33,7 @@ compile_appointment_service:
   tags:
     - docker
   artifacts:
+    expire_in: 1 week
     paths:
       - backend/services/appointment-service/target
 
@@ -43,6 +45,7 @@ compile_gateway_service:
   tags:
     - docker
   artifacts:
+    expire_in: 1 week
     paths:
       - backend/services/gateway-service/target
 
@@ -54,6 +57,7 @@ compile_notification_service:
   tags:
     - docker
   artifacts:
+    expire_in: 1 week
     paths:
       - backend/services/notification-service/target
 
@@ -110,3 +114,7 @@ build_vue_frontend:
     - npm run build
   tags:
     - docker
+  artifacts:
+      expire_in: 1 week
+      paths:
+        - smile-select-frontend/dist
