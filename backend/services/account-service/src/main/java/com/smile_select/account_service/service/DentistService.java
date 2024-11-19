@@ -13,16 +13,21 @@ public class DentistService {
     @Autowired
     private DentistRepository dentistRepository;
 
+    // Password Encrypter
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    // Find Dentist by Email
     public Optional<Dentist> findDentistByEmail(String email){
         return dentistRepository.findByEmail(email);
     }
 
+    // Save Dentist to Database
     public Dentist saveDentist(Dentist dentist){
         dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
         return dentistRepository.save(dentist);
     }
+
+    // Check encrypted password for Dentist
     public boolean checkPassword(Dentist dentist, String rawPassword) {
         return passwordEncoder.matches(rawPassword, dentist.getPassword());
     }
