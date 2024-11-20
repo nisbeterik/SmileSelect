@@ -9,6 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import PatientDashboard from '@/views/PatientDashboard.vue';
 import DentistDashboard from '@/views/DentistDashboard.vue';
 import AuthPage from "@/views/AuthPage.vue";
+import SlotsPage from "@/views/SlotsPage.vue";
 
 const routes = [
   { path: "/", name: "Home", component: HomePage },
@@ -19,6 +20,7 @@ const routes = [
   { path: "/dentist-registration", name: "DentistRegistration", component: DentistRegistrationForm },
   { path: "/create-appointment", name: "CreateAppointment", component: CreateAppointment },
   { path: "/map", name: "Map", component: MapPage },
+  { path: "/available-slots", name: "SlotsPage", component: SlotsPage}
 ];
 
 const router = createRouter({
