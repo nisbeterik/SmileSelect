@@ -1,4 +1,4 @@
-package main.java.com.smile_select.auth_service.config;
+package com.smile_select.auth_service.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

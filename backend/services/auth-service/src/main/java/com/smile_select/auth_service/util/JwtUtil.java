@@ -1,4 +1,15 @@
-package main.java.com.smile_select.auth_service.util;
+package com.smile_select.auth_service.util;
+
+import java.util.Date;
+
+import org.springframework.stereotype.Component;
+
+import com.smile_select.auth_service.config.JwtConfig;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
