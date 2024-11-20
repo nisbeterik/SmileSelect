@@ -23,4 +23,5 @@ public class DentistUpdateDTO {
     private String street;
     private int zip;
     private String city;
+    private String houseNumber;
 }

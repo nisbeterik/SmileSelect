@@ -1,5 +1,7 @@
 package com.smile_select.account_service.service;
 
+import com.smile_select.account_service.dto.DentistUpdateDTO;
+import com.smile_select.account_service.exception.ResourceNotFoundException;
 import com.smile_select.account_service.model.Dentist;
 import com.smile_select.account_service.repository.DentistRepository;
 import org.springframework.stereotype.Service;
@@ -21,53 +23,67 @@ public class DentistService {
     // Password Encrypter
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Find Dentist by Email
-    public Optional<Dentist> findDentistByEmail(String email){
+    public Optional<Dentist> findDentistByEmail(String email) {
         return dentistRepository.findByEmail(email);
     }
 
-    // Save Dentist to Database
-    public Dentist saveDentist(Dentist dentist){
+    public Dentist saveDentist(Dentist dentist) {
+        // Hash the password before saving a dentist
         dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
         return dentistRepository.save(dentist);
     }
 
-    // Check encrypted password for Dentist
     public boolean checkPassword(Dentist dentist, String rawPassword) {
         return passwordEncoder.matches(rawPassword, dentist.getPassword());
     }
 
-    // Find all dentists
     public List<Dentist> getAllDentists() {
         return dentistRepository.findAll();
     }
 
-    // Find Dentist by id
-    public Optional<Dentist> getDentistById(Long id) {
-        return dentistRepository.findById(id);
+    public Dentist getDentistById(Long id, String userEmail) {
+        return dentistRepository.findById(id)
+                .filter(dentist -> dentist.getEmail().equals(userEmail))
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found or access denied for ID: " + id));
     }
 
-    // Update Dentist by id
-    public Optional<Dentist> updateDentist(Long id, Dentist dentist) {
-        return dentistRepository.findById(id).map(existingDentist -> {
-            existingDentist.setFirstName(dentist.getFirstName());
-            existingDentist.setLastName(dentist.getLastName());
-            existingDentist.setEmail(dentist.getEmail());
-            if (!dentist.getPassword().isEmpty()) {
-                existingDentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
-            }
-            existingDentist.setLongitude(dentist.getLongitude());
-            existingDentist.setLatitude(dentist.getLatitude());
-            existingDentist.setStreet(dentist.getStreet());
-            existingDentist.setZip(dentist.getZip());
-            existingDentist.setCity(dentist.getCity());
-            existingDentist.setHouseNumber(dentist.getHouseNumber());
-            return dentistRepository.save(existingDentist);
-        });
+    public Dentist updateDentist(Long id, DentistUpdateDTO dentistUpdateDTO, String userEmail) {
+        Dentist dentist = getDentistById(id, userEmail);
+        if (dentistUpdateDTO.getFirstName() != null) {
+            dentist.setFirstName(dentistUpdateDTO.getFirstName());
+        }
+        if (dentistUpdateDTO.getLastName() != null) {
+            dentist.setLastName(dentistUpdateDTO.getLastName());
+        }
+        if (dentistUpdateDTO.getEmail() != null) {
+            dentist.setEmail(dentistUpdateDTO.getEmail());
+        }
+        if (dentistUpdateDTO.getPassword() != null && !dentistUpdateDTO.getPassword().isEmpty()) {
+            dentist.setPassword(passwordEncoder.encode(dentistUpdateDTO.getPassword()));
+        }
+        if (dentistUpdateDTO.getLongitude() != 0) {
+            dentist.setLongitude(dentistUpdateDTO.getLongitude());
+        }
+        if (dentistUpdateDTO.getLatitude() != 0) {
+            dentist.setLatitude(dentistUpdateDTO.getLatitude());
+        }
+        if (dentistUpdateDTO.getStreet() != null) {
+            dentist.setStreet(dentistUpdateDTO.getStreet());
+        }
+        if (dentistUpdateDTO.getZip() != 0) {
+            dentist.setZip(dentistUpdateDTO.getZip());
+        }
+        if (dentistUpdateDTO.getCity() != null) {
+            dentist.setCity(dentistUpdateDTO.getCity());
+        }
+        if (dentistUpdateDTO.getHouseNumber() != null) {
+            dentist.setHouseNumber(dentistUpdateDTO.getHouseNumber());
+        }
+        return dentistRepository.save(dentist);
     }
 
-    // Delete Dentist by id
-    public void deleteDentist(Long id) {
-        dentistRepository.deleteById(id);
+    public void deleteDentistById(Long id, String userEmail) {
+        Dentist dentist = getDentistById(id, userEmail);
+        dentistRepository.delete(dentist);
     }
 }
