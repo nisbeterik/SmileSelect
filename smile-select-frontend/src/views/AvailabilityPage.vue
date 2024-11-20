@@ -1,7 +1,7 @@
 <template>
-    <div class='demo-app'>
-      <div class='demo-app-sidebar'>
-        <div class='demo-app-sidebar-section'>
+    <div class='availability-app'>
+      <div class='availability-sidebar'>
+        <div class='availability-sidebar-section'>
           <h2>Instructions</h2>
           <ul>
             <li>Select dates and you will be prompted to create a new event</li>
@@ -9,7 +9,7 @@
             <li>Click an event to delete it</li>
           </ul>
         </div>
-        <div class='demo-app-sidebar-section'>
+        <div class='availability-sidebar-section'>
           <h2>All Events ({{ currentEvents.length }})</h2>
           <ul>
             <li v-for='event in currentEvents' :key='event.id'>
@@ -19,9 +19,9 @@
           </ul>
         </div>
       </div>
-      <div class='demo-app-main'>
+      <div class='availability-main'>
         <FullCalendar
-          class='demo-app-calendar'
+          class='availability-calendar'
           :options='calendarOptions'
         >
           <template v-slot:eventContent='arg'>
@@ -50,7 +50,7 @@
           plugins: [
             dayGridPlugin,
             timeGridPlugin,
-            interactionPlugin // needed for dateClick
+            interactionPlugin 
           ],
           headerToolbar: {
             left: 'prev,next today',
@@ -58,7 +58,23 @@
             right: 'dayGridMonth,timeGridWeek'
           },
           initialView: 'dayGridMonth',
-          events: [], 
+          events: [
+  {
+    title: 'Meeting with Client',
+    start: '2024-11-18T09:00:00',
+    end: '2024-11-18T10:00:00'
+  },
+  {
+    title: 'Project Discussion',
+    start: '2024-11-20T14:00:00',
+    end: '2024-11-20T15:00:00'
+  },
+  {
+    title: 'Team Sync-Up',
+    start: '2024-11-22T11:00:00',
+    end: '2024-11-22T12:00:00'
+  }
+], 
           editable: true,
           selectable: true,
           selectMirror: true,
@@ -72,22 +88,6 @@
       }
     },
     methods: {
-      handleDateSelect(selectInfo) {
-        let title = prompt('Please enter a new title for your event')
-        let calendarApi = selectInfo.view.calendar
-  
-        calendarApi.unselect() // clear date selection
-  
-        if (title) {
-          calendarApi.addEvent({
-            id: "",
-            title,
-            start: selectInfo.startStr,
-            end: selectInfo.endStr,
-            allDay: selectInfo.allDay
-          })
-        }
-      },
       handleEventClick(clickInfo) {
         if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
           clickInfo.event.remove()
@@ -120,25 +120,25 @@
     margin-right: 3px;
   }
   
-  .demo-app {
+  .availability-app {
     display: flex;
     min-height: 100%;
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
     font-size: 14px;
   }
   
-  .demo-app-sidebar {
+  .availability-sidebar {
     width: 300px;
     line-height: 1.5;
     background: #eaf9ff;
     border-right: 1px solid #d3e2e8;
   }
   
-  .demo-app-sidebar-section {
+  .availability-sidebar-section {
     padding: 2em;
   }
   
-  .demo-app-main {
+  .availability-main {
     flex-grow: 1;
     padding: 3em;
   }
