@@ -38,7 +38,7 @@ public class AuthService {
         }
 
         // Generate JWT token
-        String token = jwtUtil.generateToken(email);
+        String token = jwtUtil.generateToken(email, role);
 
         userResponse.setToken(token); // Add token to the response
         userResponse.setPassword(null); // Hide the password

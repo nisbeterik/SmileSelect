@@ -1,4 +1,4 @@
-package main.java.com.smile_select.auth_service.exception;
+package com.smile_select.auth_service.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

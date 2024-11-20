@@ -1,4 +1,4 @@
-package main.java.com.smile_select.auth_service.dto;
+package com.smile_select.auth_service.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,4 +10,14 @@ public class UserResponseDTO {
     private String role;
     private String token; // JWT token
     private String password; // Used internally, but will be hidden in responses
+
+    public UserResponseDTO(String email, String role, String token, String password) {
+        this.email = email;
+        this.role = role;
+        this.token = token;
+        this.password = password;
+    }
+
+    public UserResponseDTO() {
+    }
 }

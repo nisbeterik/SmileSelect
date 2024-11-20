@@ -1,4 +1,4 @@
-package main.java.com.smile_select.auth_service.mock;
+package com.smile_select.auth_service.mock;
 
 import com.smile_select.auth_service.dto.UserResponseDTO;
 import org.springframework.stereotype.Service;
