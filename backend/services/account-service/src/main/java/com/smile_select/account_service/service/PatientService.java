@@ -1,5 +1,6 @@
 package com.smile_select.account_service.service;
 
+import com.smile_select.account_service.dto.PatientUpdateDTO;
 import com.smile_select.account_service.exception.ResourceNotFoundException;
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.repository.PatientRepository;
@@ -54,6 +55,25 @@ public class PatientService {
     public void deletePatientById(Long id, String userEmail) {
         Patient patient = getPatientById(id, userEmail);
         patientRepository.delete(patient);
+    }
+
+    // Update patient details
+    public void updatePatientDetails(Long id, String userEmail, PatientUpdateDTO updateDetails) {
+        Patient patient = getPatientById(id, userEmail);
+
+        if (updateDetails.getFirstName() != null) {
+            patient.setFirstName(updateDetails.getFirstName());
+        }
+        if (updateDetails.getLastName() != null) {
+            patient.setLastName(updateDetails.getLastName());
+        }
+        if (updateDetails.getEmail() != null) {
+            patient.setEmail(updateDetails.getEmail());
+        }
+        if (updateDetails.getDateOfBirth() != null) {
+            patient.setDateOfBirth(updateDetails.getDateOfBirth());
+        }
+        patientRepository.save(patient);
     }
 
 }

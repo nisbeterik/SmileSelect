@@ -1,27 +1,19 @@
 package com.smile_select.account_service.controller;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import com.smile_select.account_service.dto.PatientDTO;
-import com.smile_select.account_service.exception.ResourceNotFoundException;
 import com.smile_select.account_service.model.Patient;
-import com.smile_select.account_service.repository.PatientRepository;
 import com.smile_select.account_service.service.PatientService;
 import com.smile_select.account_service.dto.PatientUpdateDTO;
-
-import java.util.List;
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
 
 // Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api/accounts
@@ -66,10 +58,13 @@ public class PatientController {
         return ResponseEntity.ok(patients);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updatePatientDetails(@PathVariable("id") Long id) {
-        return null;
-        // TODO
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updatePatientDetails(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody PatientUpdateDTO updateDetails) {
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        patientService.updatePatientDetails(id, userEmail, updateDetails);
+        return ResponseEntity.ok("Patient details updated successfully");
     }
 
     // Delete a patient
