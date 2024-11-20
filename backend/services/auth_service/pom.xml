@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.smile-select</groupId>
-	<artifactId>account-service</artifactId>
+	<artifactId>auth-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>account-service</name>
-	<description>Notification Service for Smile Select</description>
+	<name>auth-service</name>
+	<description>Auth Service for Smile Select</description>
 	<url/>
 	<licenses>
 		<license/>
