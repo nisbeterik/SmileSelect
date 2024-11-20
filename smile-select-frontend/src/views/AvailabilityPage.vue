@@ -44,6 +44,10 @@
     components: {
       FullCalendar,
     },
+
+    mounted() {
+        this.loadSlots();
+    },
     data() {
       return {
         calendarOptions: {
@@ -53,23 +57,26 @@
             interactionPlugin 
           ],
           headerToolbar: {
-            left: 'prev,next today',
+            left: 'prev, next, today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek'
           },
           initialView: 'dayGridMonth',
           events: [
   {
+    id: '1',
     title: 'Meeting with Client',
     start: '2024-11-18T09:00:00',
     end: '2024-11-18T10:00:00'
   },
   {
+    id: '2',
     title: 'Project Discussion',
     start: '2024-11-20T14:00:00',
     end: '2024-11-20T15:00:00'
   },
   {
+    id: '3',
     title: 'Team Sync-Up',
     start: '2024-11-22T11:00:00',
     end: '2024-11-22T12:00:00'
@@ -89,13 +96,22 @@
     },
     methods: {
       handleEventClick(clickInfo) {
-        if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-          clickInfo.event.remove()
+        if (confirm(`Are you sure you want to book '${clickInfo.event.title}'`)) {
+          let data = {
+            id: clickInfo.event.id
+          }
+          this.bookAppointment(data);
         }
       },
       handleEvents(events) {
         this.currentEvents = events
       },
+      loadSlots(){
+        console.log('placeholder');
+      },
+      bookAppointment(slotInfo){
+        console.log(slotInfo);
+      }
     }
   })
   </script>
