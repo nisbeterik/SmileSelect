@@ -36,6 +36,17 @@ compile_appointment_service:
     expire_in: 1 week
     paths:
       - backend/services/appointment-service/target
+compile_auth_service:
+  stage: compile
+  script:
+    - echo "Compiling Authentication Service..."
+    - mvn -B clean compile --file backend/services/auth-service/pom.xml
+  tags:
+    - docker
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - backend/services/auth-service/target
 
 compile_gateway_service:
   stage: compile
@@ -82,6 +93,16 @@ compile_notification_service:
 #     - docker
 #   dependencies:
 #     - compile_appointment_service
+
+# test_auth_service:
+#   stage: test
+#   script:
+#     - echo "Running tests for Authentication Service..."
+#     - mvn -B test --file backend/services/auth-service/pom.xml
+#   tags:
+#     - docker
+#   dependencies:
+#     - compile_auth_service
 
 # test_gateway_service:
 #   stage: test
