@@ -1,6 +1,7 @@
-package main.java.com.smile_select.auth_service.filter;
+package com.smile_select.auth_service.filter;
 
 import com.smile_select.auth_service.util.JwtUtil;
+import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal( @NonNull HttpServletRequest request,
+    @NonNull HttpServletResponse response,
+    @NonNull FilterChain chain)
             throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -37,8 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                final String grantedRole = role;
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        email, null, List.of(() -> role) // Store role as granted authority
+                        email, null, List.of(() -> grantedRole) // Store role as granted authority
                 );
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);

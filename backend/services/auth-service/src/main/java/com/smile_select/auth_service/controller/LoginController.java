@@ -1,4 +1,4 @@
-package main.java.com.smile_select.auth_service.controller;
+package com.smile_select.auth_service.controller;
 
 import com.smile_select.auth_service.dto.LoginRequest;
 import com.smile_select.auth_service.dto.UserResponseDTO;
