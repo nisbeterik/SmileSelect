@@ -3,6 +3,7 @@ package com.smile_select.account_service.config;
 import com.smile_select.account_service.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,10 +41,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/accounts/login/**",
                                 "/api/accounts/patients", // Allow POST registration for patients
-                                "/api/accounts/patients/**", // Allow GET and other operations for patients
-                                "/api/accounts/dentists", // Allow POST registration for dentists
-                                "/api/accounts/dentists/**" // Allow GET and other operations for dentists
+                                "/api/accounts/dentists"  // Allow POST registration for dentists
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/accounts/patients/{id}")
+                            .authenticated() // Protect GET /api/accounts/patients/{id}
+                        .requestMatchers("/api/accounts/patients/**").permitAll() // Allow other patient-related routes
                         .anyRequest().authenticated())
                 .httpBasic(httpBasic -> httpBasic.disable());
 

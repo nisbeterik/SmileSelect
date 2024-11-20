@@ -10,7 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.Column;
-import java.util.Date;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "patient")
@@ -37,6 +38,6 @@ public class Patient {
     private String password;
 
     @Column(name = "date_of_birth")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
 }
