@@ -10,16 +10,6 @@
           </ul>
         </div>
         <div class='demo-app-sidebar-section'>
-          <label>
-            <input
-              type='checkbox'
-              :checked='calendarOptions.weekends'
-              @change='handleWeekendsToggle'
-            />
-            toggle weekends
-          </label>
-        </div>
-        <div class='demo-app-sidebar-section'>
           <h2>All Events ({{ currentEvents.length }})</h2>
           <ul>
             <li v-for='event in currentEvents' :key='event.id'>
@@ -65,7 +55,7 @@
           headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            right: 'dayGridMonth,timeGridWeek'
           },
           initialView: 'dayGridMonth',
           events: [], 
@@ -73,7 +63,7 @@
           selectable: true,
           selectMirror: true,
           dayMaxEvents: true,
-          weekends: true,
+          weekends: false,
           select: this.handleDateSelect,
           eventClick: this.handleEventClick,
           eventsSet: this.handleEvents
@@ -82,9 +72,6 @@
       }
     },
     methods: {
-      handleWeekendsToggle() {
-        this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
-      },
       handleDateSelect(selectInfo) {
         let title = prompt('Please enter a new title for your event')
         let calendarApi = selectInfo.view.calendar
