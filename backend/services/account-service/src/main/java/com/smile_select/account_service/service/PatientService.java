@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +29,7 @@ public class PatientService {
     }
 
     public Patient savePatient(Patient patient) {
+        // Hash the password before saving a patient
         patient.setPassword(passwordEncoder.encode(patient.getPassword()));
         return patientRepository.save(patient);
     }
@@ -36,11 +38,22 @@ public class PatientService {
         return passwordEncoder.matches(rawPassword, patient.getPassword());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
-        Patient patient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
-        return new ResponseEntity<>(patient, HttpStatus.OK);
+    // Get all patients
+    public List<Patient> getAllPatients() {
+        return patientRepository.findAll();
+    }
+
+    // Retrieve patient by ID
+    public Patient getPatientById(Long id, String userEmail) {
+        return patientRepository.findById(id)
+                .filter(patient -> patient.getEmail().equals(userEmail))
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
+    }
+
+    // Delete a patient
+    public void deletePatientById(Long id, String userEmail) {
+        Patient patient = getPatientById(id, userEmail);
+        patientRepository.delete(patient);
     }
 
 }
