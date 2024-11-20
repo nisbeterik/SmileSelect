@@ -1,20 +1,26 @@
 package com.smile_select.account_service.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import com.smile_select.account_service.exception.ResourceNotFoundException;
 import com.smile_select.account_service.model.Patient;
 import com.smile_select.account_service.repository.PatientRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 // Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api/accounts
 @RestController
-@RequestMapping("/api/accounts")
-public class PatientRegistrationController {
+@RequestMapping("/api/accounts/patients")
+public class PatientController {
 
     @Autowired
     private PatientRepository patientRepository;
@@ -22,12 +28,7 @@ public class PatientRegistrationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Inject Patient Repository
-    public PatientRegistrationController(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
-    }
-
-    @PostMapping("/patients")
+    @PostMapping
     public ResponseEntity<String> registerPatient(@RequestBody Patient patient) {
         patient.setPassword(passwordEncoder.encode(patient.getPassword()));
 
@@ -41,10 +42,29 @@ public class PatientRegistrationController {
         return new ResponseEntity<>("Patient registered successfully!", HttpStatus.CREATED);
     }
 
-    @GetMapping("/patients")
+    @GetMapping
     public ResponseEntity<List<Patient>> getAllPatients() {
         List<Patient> patients = patientRepository.findAll();
         // Return all patients in JSON format
         return new ResponseEntity<>(patients, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPatientById(@PathVariable("id") Long id) {
+        String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    
+        Patient patient = patientRepository.findById(id)
+                .filter(p -> p.getEmail().equals(userEmail))
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
+    
+        return new ResponseEntity<>(patient, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePatientDetails(@PathVariable("id") Long id) {
+        return null;
+
+    }
+
+    // add endpoint for updating password
 }
