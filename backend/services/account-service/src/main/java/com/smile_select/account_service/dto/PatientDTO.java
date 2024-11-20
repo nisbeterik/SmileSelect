@@ -1,7 +1,5 @@
 package com.smile_select.account_service.dto;
 
-import java.time.LocalDate;
-
 public class PatientDTO {
     private Long id;
     private String firstName;
