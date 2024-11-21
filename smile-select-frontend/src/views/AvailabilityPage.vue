@@ -4,20 +4,21 @@
         <div class='availability-sidebar-section'>
           <h2>Instructions</h2>
           <ul>
-            <li>Select dates and you will be prompted to create a new event</li>
-            <li>Drag, drop, and resize events</li>
-            <li>Click an event to delete it</li>
+            <li>Click an available slot to book it</li>
           </ul>
         </div>
         <div class='availability-sidebar-section'>
-          <h2>All Events ({{ currentEvents.length }})</h2>
-          <ul>
-            <li v-for='event in currentEvents' :key='event.id'>
-              <b>{{ event.startStr }}</b>
-              <i>{{ event.title }}</i>
-            </li>
-          </ul>
-        </div>
+        <h2>Select Dentist</h2>
+          <div v-if="dentists.length">
+            <select v-model="selectedDentistId" class="dentist-dropdown">
+              <option v-for="dentist in dentists" :key="dentist.id" :value="dentist.id">
+                {{ dentist.firstName }} {{ dentist.lastName }}
+              </option>
+            </select>
+            <p v-if="selectedDentist">Selected Dentist: {{ selectedDentist.firstName }} {{ selectedDentist.lastName }}</p>
+          </div>
+        <p v-else>No dentists available.</p>
+      </div>
       </div>
       <div class='availability-main'>
         <FullCalendar
@@ -39,6 +40,8 @@
   import dayGridPlugin from '@fullcalendar/daygrid'
   import timeGridPlugin from '@fullcalendar/timegrid'
   import interactionPlugin from '@fullcalendar/interaction'
+
+  import axios from '@/axios';
   
   export default defineComponent({
     components: {
@@ -61,23 +64,23 @@
             center: 'title',
             right: 'dayGridMonth,timeGridWeek'
           },
-          initialView: 'dayGridMonth',
+          initialView: 'timeGridWeek',
           events: [
   {
     id: '1',
-    title: 'Meeting with Client',
+    title: 'Dentist Appointment',
     start: '2024-11-18T09:00:00',
     end: '2024-11-18T10:00:00'
   },
   {
     id: '2',
-    title: 'Project Discussion',
+    title: 'Dentist Appointment',
     start: '2024-11-20T14:00:00',
     end: '2024-11-20T15:00:00'
   },
   {
     id: '3',
-    title: 'Team Sync-Up',
+    title: 'Dentist Appointment',
     start: '2024-11-22T11:00:00',
     end: '2024-11-22T12:00:00'
   }
@@ -91,7 +94,7 @@
           eventClick: this.handleEventClick,
           eventsSet: this.handleEvents
         },
-        currentEvents: [],
+        dentists: [],
       }
     },
     methods: {
@@ -106,8 +109,20 @@
       handleEvents(events) {
         this.currentEvents = events
       },
-      loadSlots(){
-        console.log('placeholder');
+      async loadSlots(){
+        try {
+          const response = await axios.get('/accounts/dentists');
+          this.dentists = response.data;
+          if (this.dentists.length > 0) {
+            console.log(this.dentists[0]);
+            console.log(`First Dentist: ${this.dentists[0].firstName} ${this.dentists[0].lastName}`);
+          } else {
+            console.log("No dentists found.");
+          }
+        } catch (error) {
+          console.error('Error retrieving dentists:', error);
+        }
+        
       },
       bookAppointment(slotInfo){
         console.log(slotInfo);
@@ -132,7 +147,7 @@
     padding: 0;
   }
   
-  b { /* used for event dates/times */
+  b { 
     margin-right: 3px;
   }
   
@@ -159,7 +174,7 @@
     padding: 3em;
   }
   
-  .fc { /* the calendar root */
+  .fc { 
     max-width: 1100px;
     margin: 0 auto;
   }
