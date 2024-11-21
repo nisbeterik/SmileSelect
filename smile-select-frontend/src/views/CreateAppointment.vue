@@ -5,16 +5,6 @@
       :options="calendarOptions"
       @select="handleSelect"
     />
-
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-      <label>
-        <input type="checkbox" v-model="multiSlotMode" /> Allow Multiple Timeslots
-      </label>
-      <button v-if="multiSlotMode && selectedSlots.length" @click="createMultipleTimeSlots">
-        Create Time Slots
-      </button>
-    </div>
-
     <div
       v-if="showCreateAppointmentModal"
       class="modal"
@@ -120,7 +110,7 @@ export default {
   },
   data() {
     return {
-      multislotmode: false, // Tracks if multi-slot mode is active    
+      multiSlotMode: false, // Tracks if multi-slot mode is active    
       selectedSlots: [],
       selectedEventId: null,
       calendarOptions: {
@@ -139,7 +129,7 @@ export default {
         slotDuration: '00:15:00',
         snapDuration: '00:05:00',
         headerToolbar: {
-          left: 'prev,next today,toggleWeekends',
+          left: 'prev,next today,toggleWeekends multiSlotMode,createTimeSlots',
           center: 'title',
           right: 'prev,next,dayGridMonth,timeGridWeek',
         },
@@ -151,7 +141,11 @@ export default {
           multiSlotMode: {
             text: 'MultiSlotMode',
             click: this.toggleMultiSlotMode,
-          }
+          },
+          createTimeSlots: {
+            text: 'Create Time Slots',
+            click: this.createMultipleTimeSlots
+          },
         },
       },
       showCreateAppointmentModal: false,
@@ -167,12 +161,16 @@ export default {
     };
   },
   methods: {
-    toggleMultiSlotMode(){
-      if (this.multislotmode == false){
-        this.multislotmode == true;
+
+    toggleMultiSlotMode() {
+      if (this.multiSlotMode === true) {
+        this.multiSlotMode = false;
       } else {
-        this.multislotmode == false; 
+        this.multiSlotMode = true;
       }
+      
+      //switch
+      console.log(this.multiSlotMode)
     },
     toggleWeekends() {
       const weekendsStatus = this.calendarOptions.weekends;
@@ -256,22 +254,67 @@ export default {
     },
 
     handleSelect(info) {
-      const calendarApi = this.$refs.calendar.getApi();
-      const isWeekView = calendarApi.view.type === 'timeGridWeek';
+      if (this.multiSlotMode == true) {
+        const slot = {
+          date: this.formatDate(info.start),
+          startTime: this.formatTime(info.start),
+          endTime: this.formatTime(info.end),
+        };
 
-      this.selectedSlot.date = this.formatDate(info.start);
+        this.selectedSlots.push(slot);
 
-      if (isWeekView) {
-        this.selectedSlot.startTime = this.formatTime(info.start);
-        this.selectedSlot.endTime = this.formatTime(info.end);
-      } else {
-        this.selectedSlot.startTime = '08:00';
-        this.selectedSlot.endTime = '10:00';
+      } else { //single slot creating
+
+        const calendarApi = this.$refs.calendar.getApi();
+        const isWeekView = calendarApi.view.type === 'timeGridWeek';
+
+        this.selectedSlot.date = this.formatDate(info.start);
+
+        if (isWeekView) {
+          this.selectedSlot.startTime = this.formatTime(info.start);
+          this.selectedSlot.endTime = this.formatTime(info.end);
+        } else {
+          this.selectedSlot.startTime = '08:00';
+          this.selectedSlot.endTime = '10:00';
+        }
+
+        const overlap = this.checkOverlap(this.selectedSlot);
+        if (!overlap) {
+          this.showCreateAppointmentModal = true;
+        }
       }
+    },
 
-      const overlap = this.checkOverlap(this.selectedSlot);
-      if (!overlap) {
-        this.showCreateAppointmentModal = true;
+    async createMultipleTimeSlots() {
+      try {
+        const formatToLocalDateTime = (date, time) => `${date}T${time}:00`;
+
+        const newAppointments = this.selectedSlots.map((slot) => ({
+          dentistId: `${this.HARDCODED_DENTIST_ID}`,
+          startTime: formatToLocalDateTime(slot.date, slot.startTime),
+          endTime: formatToLocalDateTime(slot.date, slot.endTime),
+        }));
+
+        await Promise.all(
+          newAppointments.map((appointment) =>
+            this.$axios.post('/appointments', appointment)
+          )
+        );
+
+        newAppointments.forEach((appointment) => {
+          this.calendarOptions.events.push({
+            id: appointment.id,
+            title: 'Available',
+            start: appointment.startTime,
+            end: appointment.endTime,
+            backgroundColor: availableColor,
+          });
+        });
+
+        this.selectedSlots = []; // Clear selected slots
+      } catch (error) {
+        console.error('Error creating time slots:', error);
+        alert('Failed to create time slots.');
       }
     },
 
@@ -446,6 +489,11 @@ export default {
 <style scoped>
 :root {
   --selected-event-color: #333333; /* Default color for the selected event */
+}
+.active-button {
+  background-color: #007bff; /* Highlight color */
+  color: white;
+  border-color: #0056b3;
 }
 
 .modal {
