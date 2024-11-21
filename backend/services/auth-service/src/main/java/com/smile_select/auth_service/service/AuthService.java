@@ -13,13 +13,19 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     @Autowired
-    private MockUserService mockUserService;
+    private RestTemplate restTemplate;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Value("${patient.service.url}")
+    private String patientServiceUrl;
+
+    @Value("${dentist.service.url}")
+    private String dentistServiceUrl;
 
     public UserResponseDTO loginUser(LoginRequest loginRequest) {
         String email = loginRequest.getEmail();
@@ -28,12 +34,11 @@ public class AuthService {
 
         System.out.println("Attempting login for email: " + email + ", role: " + role);
 
-        // Retrieve mock user data
-        UserResponseDTO userResponse = mockUserService.findUserByEmail(email, role);
-        if (userResponse == null) {
-            System.err.println("No user found for email: " + email + " and role: " + role);
-            throw new ResourceNotFoundException("Invalid credentials for " + role);
-        }
+        // Determine which service to query based on the role
+        String serviceUrl = getServiceUrlByRole(role);
+
+        // Fetch user data from the appropriate service
+        UserResponseDTO userResponse = fetchUserByEmail(serviceUrl, email, role);
 
         // Verify password
         if (!passwordEncoder.matches(password, userResponse.getPassword())) {
@@ -46,5 +51,25 @@ public class AuthService {
         userResponse.setToken(token);
         userResponse.setPassword(null); // Hide password in the response
         return userResponse;
+    }
+
+    private String getServiceUrlByRole(String role) {
+        if ("PATIENT".equalsIgnoreCase(role)) {
+            return patientServiceUrl;
+        } else if ("DENTIST".equalsIgnoreCase(role)) {
+            return dentistServiceUrl;
+        } else {
+            throw new ResourceNotFoundException("Invalid role: " + role);
+        }
+    }
+
+    private UserResponseDTO fetchUserByEmail(String serviceUrl, String email, String role) {
+        String url = serviceUrl + "?email=" + email;
+        try {
+            return restTemplate.getForObject(url, UserResponseDTO.class);
+        } catch (Exception e) {
+            System.err.println("Error fetching user data from service: " + e.getMessage());
+            throw new ResourceNotFoundException("No user found for email: " + email + " and role: " + role);
+        }
     }
 }
