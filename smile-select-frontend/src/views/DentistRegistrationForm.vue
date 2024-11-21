@@ -35,55 +35,17 @@
             required
         /><br /><br />
 
-        <label for="longitude_dentist">Longitude:</label>
-        <input
-            type="number"
-            id="longitude_dentist"
-            v-model="formData.longitude"
-            step="any"
+        <label for="clinic_dentist">Select Clinic:</label>
+        <select
+            id="clinic_dentist"
+            v-model="formData.clinicId"
             required
-        /><br /><br />
-
-        <label for="latitude_dentist">Latitude:</label>
-        <input
-            type="number"
-            id="latitude_dentist"
-            v-model="formData.latitude"
-            step="any"
-            required
-        /><br /><br />
-
-        <label for="street_dentist">Street:</label>
-        <input
-            type="text"
-            id="street_dentist"
-            v-model="formData.street"
-            required
-        /><br /><br />
-
-        <label for="house_number_dentist">House Number:</label>
-        <input
-            type="text"
-            id="house_number_dentist"
-            v-model="formData.houseNumber"
-            required
-        /><br /><br />
-
-        <label for="zip_dentist">ZIP Code:</label>
-        <input
-            type="number"
-            id="zip_dentist"
-            v-model="formData.zip"
-            required
-        /><br /><br />
-
-        <label for="city_dentist">City:</label>
-        <input
-            type="text"
-            id="city_dentist"
-            v-model="formData.city"
-            required
-        /><br /><br />
+        >
+          <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
+            {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}
+          </option>
+        </select>
+        <br /><br />
 
         <button type="submit">Register as Dentist</button>
       </form>
@@ -94,6 +56,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from '@/axios';
@@ -106,17 +69,24 @@ export default {
         lastName: '',
         email: '',
         password: '',
-        longitude: '',
-        latitude: '',
-        street: '',
-        houseNumber: '',
-        zip: '',
-        city: '',
+        clinicId: '', // New field for clinic selection
       },
+      clinics: [], // List of clinics fetched from the backend
       isRegistered: false,
     };
   },
+  mounted() {
+    this.fetchClinics();
+  },
   methods: {
+    async fetchClinics() {
+      try {
+        const response = await axios.get('/accounts/clinics');
+        this.clinics = response.data;
+      } catch (error) {
+        console.error('Error fetching clinics:', error);
+      }
+    },
     async submitDentist() {
       try {
         const response = await axios.post('/accounts/dentists', this.formData);
@@ -132,5 +102,6 @@ export default {
   },
 };
 </script>
+
 
 <style scoped></style>

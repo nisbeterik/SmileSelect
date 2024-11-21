@@ -34,4 +34,6 @@ public class Dentist {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
+    @Transient
+    private Long clinicId;
 }

@@ -2,7 +2,9 @@ package com.smile_select.account_service.service;
 
 import com.smile_select.account_service.dto.DentistUpdateDTO;
 import com.smile_select.account_service.exception.ResourceNotFoundException;
+import com.smile_select.account_service.model.Clinic;
 import com.smile_select.account_service.model.Dentist;
+import com.smile_select.account_service.repository.ClinicRepository;
 import com.smile_select.account_service.repository.DentistRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
@@ -19,6 +21,8 @@ public class DentistService {
 
     @Autowired
     private DentistRepository dentistRepository;
+    @Autowired
+    private ClinicRepository clinicRepository;
 
     // Password Encrypter
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -47,38 +51,32 @@ public class DentistService {
                 .orElseThrow(() -> new ResourceNotFoundException("Dentist not found or access denied for ID: " + id));
     }
 
-    public Dentist updateDentist(Long id, DentistUpdateDTO dentistUpdateDTO, String userEmail) {
+    public Dentist updateDentist(Long id, Dentist dentistUpdate, String userEmail) {
         Dentist dentist = getDentistById(id, userEmail);
-        if (dentistUpdateDTO.getFirstName() != null) {
-            dentist.setFirstName(dentistUpdateDTO.getFirstName());
+
+        // Update basic information
+        if (dentistUpdate.getFirstName() != null) {
+            dentist.setFirstName(dentistUpdate.getFirstName());
         }
-        if (dentistUpdateDTO.getLastName() != null) {
-            dentist.setLastName(dentistUpdateDTO.getLastName());
+        if (dentistUpdate.getLastName() != null) {
+            dentist.setLastName(dentistUpdate.getLastName());
         }
-        if (dentistUpdateDTO.getEmail() != null) {
-            dentist.setEmail(dentistUpdateDTO.getEmail());
+        if (dentistUpdate.getEmail() != null) {
+            dentist.setEmail(dentistUpdate.getEmail());
         }
-        if (dentistUpdateDTO.getPassword() != null && !dentistUpdateDTO.getPassword().isEmpty()) {
-            dentist.setPassword(passwordEncoder.encode(dentistUpdateDTO.getPassword()));
+        if (dentistUpdate.getPassword() != null && !dentistUpdate.getPassword().isEmpty()) {
+            dentist.setPassword(passwordEncoder.encode(dentistUpdate.getPassword()));
         }
-        if (dentistUpdateDTO.getLongitude() != 0) {
-            dentist.setLongitude(dentistUpdateDTO.getLongitude());
+
+        // Update the associated clinic
+        if (dentistUpdate.getClinicId() != null) {
+            Optional<Clinic> selectedClinic = clinicRepository.findById(dentistUpdate.getClinicId());
+            if (selectedClinic.isEmpty()) {
+                throw new ResourceNotFoundException("Selected clinic does not exist");
+            }
+            dentist.setClinic(selectedClinic.get());
         }
-        if (dentistUpdateDTO.getLatitude() != 0) {
-            dentist.setLatitude(dentistUpdateDTO.getLatitude());
-        }
-        if (dentistUpdateDTO.getStreet() != null) {
-            dentist.setStreet(dentistUpdateDTO.getStreet());
-        }
-        if (dentistUpdateDTO.getZip() != 0) {
-            dentist.setZip(dentistUpdateDTO.getZip());
-        }
-        if (dentistUpdateDTO.getCity() != null) {
-            dentist.setCity(dentistUpdateDTO.getCity());
-        }
-        if (dentistUpdateDTO.getHouseNumber() != null) {
-            dentist.setHouseNumber(dentistUpdateDTO.getHouseNumber());
-        }
+
         return dentistRepository.save(dentist);
     }
 

@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.smile_select.account_service.dto.DentistDTO;
+import com.smile_select.account_service.model.Clinic;
+import com.smile_select.account_service.repository.ClinicRepository;
 import com.smile_select.account_service.service.DentistService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class DentistController {
     @Autowired
     private DentistRepository dentistRepository;
     @Autowired
+    private ClinicRepository clinicRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private DentistService dentistService;
@@ -44,15 +48,21 @@ public class DentistController {
             return new ResponseEntity<>("Email is already in use", HttpStatus.BAD_REQUEST);
         }
 
+        // Validate and fetch the clinic
+        if (dentist.getClinicId() == null) {
+            return new ResponseEntity<>("Clinic ID is required", HttpStatus.BAD_REQUEST);
+        }
+        Optional<Clinic> selectedClinic = clinicRepository.findById(dentist.getClinicId());
+        if (selectedClinic.isEmpty()) {
+            return new ResponseEntity<>("Selected clinic does not exist", HttpStatus.BAD_REQUEST);
+        }
+
+        // Set the clinic and save the dentist
+        dentist.setClinic(selectedClinic.get());
         dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
 
-        // Save the dentist
         dentistRepository.save(dentist);
 
-        // Simulate saving the dentist data
-        System.out.println("Received dentist registration data: " + dentist);
-
-        // Respond with success message
         return new ResponseEntity<>("Dentist registered successfully!", HttpStatus.CREATED);
     }
 
@@ -65,9 +75,18 @@ public class DentistController {
     @GetMapping("/dentists")
     public ResponseEntity<List<DentistDTO>> getAllDentists() {
         List<DentistDTO> dentists = dentistService.getAllDentists().stream()
-                .map(dentist -> new DentistDTO(dentist.getId(), dentist.getFirstName(), dentist.getLastName(),
-                        dentist.getEmail(), dentist.getLongitude(), dentist.getLatitude(), dentist.getStreet(),
-                        dentist.getZip(), dentist.getCity(), dentist.getHouseNumber()))
+                .map(dentist -> new DentistDTO(
+                        dentist.getId(),
+                        dentist.getFirstName(),
+                        dentist.getLastName(),
+                        dentist.getEmail(),
+                        dentist.getClinic().getId(),
+                        dentist.getClinic().getLongitude(),
+                        dentist.getClinic().getLatitude(),
+                        dentist.getClinic().getStreet(),
+                        dentist.getClinic().getZip(),
+                        dentist.getClinic().getCity(),
+                        dentist.getClinic().getHouseNumber()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dentists);
@@ -82,11 +101,25 @@ public class DentistController {
      */
     @GetMapping("/dentists/{id}")
     public ResponseEntity<DentistDTO> getDentistById(@PathVariable("id") Long id) {
+        // Retrieve the authenticated dentist's email
         String dentistEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Dentist dentist = dentistService.getDentistById(id, dentistEmail);
-        DentistDTO response = new DentistDTO(dentist.getId(), dentist.getFirstName(), dentist.getLastName(), dentist.getEmail(),
-                dentist.getLongitude(), dentist.getLatitude(), dentist.getStreet(),
-                dentist.getZip(), dentist.getCity(), dentist.getHouseNumber());
+
+        // Map dentist details along with associated clinic details to the DTO
+        DentistDTO response = new DentistDTO(
+                dentist.getId(),
+                dentist.getFirstName(),
+                dentist.getLastName(),
+                dentist.getEmail(),
+                dentist.getClinic().getId(), // Add clinic ID
+                dentist.getClinic().getLongitude(), // Add clinic longitude
+                dentist.getClinic().getLatitude(), // Add clinic latitude
+                dentist.getClinic().getStreet(), // Add clinic street
+                dentist.getClinic().getZip(), // Add clinic ZIP code
+                dentist.getClinic().getCity(), // Add clinic city
+                dentist.getClinic().getHouseNumber() // Add clinic house number
+        );
+
         return ResponseEntity.ok(response);
     }
 
@@ -106,18 +139,25 @@ public class DentistController {
 
         if (existingDentistOpt.isPresent()) {
             Dentist existingDentist = existingDentistOpt.get();
+
+            // Update basic details
             existingDentist.setFirstName(dentist.getFirstName());
             existingDentist.setLastName(dentist.getLastName());
             existingDentist.setEmail(dentist.getEmail());
-            if (!dentist.getPassword().isEmpty()) {
+            if (dentist.getPassword() != null && !dentist.getPassword().isEmpty()) {
                 existingDentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
             }
-            existingDentist.setLongitude(dentist.getLongitude());
-            existingDentist.setLatitude(dentist.getLatitude());
-            existingDentist.setStreet(dentist.getStreet());
-            existingDentist.setZip(dentist.getZip());
-            existingDentist.setCity(dentist.getCity());
-            existingDentist.setHouseNumber(dentist.getHouseNumber());
+
+            // Update the associated clinic if a new clinicId is provided
+            if (dentist.getClinicId() != null) {
+                Optional<Clinic> selectedClinic = clinicRepository.findById(dentist.getClinicId());
+                if (selectedClinic.isEmpty()) {
+                    return new ResponseEntity<>("Selected clinic does not exist", HttpStatus.BAD_REQUEST);
+                }
+                existingDentist.setClinic(selectedClinic.get());
+            }
+
+            // Save updated dentist
             dentistRepository.save(existingDentist);
 
             return ResponseEntity.ok("Dentist updated successfully");

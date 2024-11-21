@@ -41,7 +41,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/accounts/login/**",
                                 "/api/accounts/patients", // Allow POST registration for patients
-                                "/api/accounts/dentists"  // Allow POST registration for dentists
+                                "/api/accounts/dentists",  // Allow POST registration for dentists
+                                "/api/accounts/clinics" // Allow requests for clinics
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/accounts/patients/{id}")
                             .authenticated() // Protect GET /api/accounts/patients/{id}
