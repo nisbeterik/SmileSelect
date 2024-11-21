@@ -81,6 +81,7 @@ public class DentistController {
                         dentist.getLastName(),
                         dentist.getEmail(),
                         dentist.getClinic().getId(),
+                        dentist.getClinic().getName(),
                         dentist.getClinic().getLongitude(),
                         dentist.getClinic().getLatitude(),
                         dentist.getClinic().getStreet(),
@@ -111,13 +112,14 @@ public class DentistController {
                 dentist.getFirstName(),
                 dentist.getLastName(),
                 dentist.getEmail(),
-                dentist.getClinic().getId(), // Add clinic ID
-                dentist.getClinic().getLongitude(), // Add clinic longitude
-                dentist.getClinic().getLatitude(), // Add clinic latitude
-                dentist.getClinic().getStreet(), // Add clinic street
-                dentist.getClinic().getZip(), // Add clinic ZIP code
-                dentist.getClinic().getCity(), // Add clinic city
-                dentist.getClinic().getHouseNumber() // Add clinic house number
+                dentist.getClinic().getId(),
+                dentist.getClinic().getName(),
+                dentist.getClinic().getLongitude(),
+                dentist.getClinic().getLatitude(),
+                dentist.getClinic().getStreet(),
+                dentist.getClinic().getZip(),
+                dentist.getClinic().getCity(),
+                dentist.getClinic().getHouseNumber()
         );
 
         return ResponseEntity.ok(response);

@@ -46,7 +46,9 @@ export default {
       try {
         const response = await axios.get(`/accounts/dentists/${id}`);
         console.log(response.data);
-        this.message = `Fetched dentist: ${response.data.firstName} ${response.data.lastName}, Clinic: ${response.data.street}, ${response.data.city}`;
+        this.message = `Fetched dentist: ${response.data.firstName} ${response.data.lastName},
+        Clinic: ${response.data.clinicName},
+        Address: ${response.data.street}, ${response.data.city}`;
       } catch (error) {
         console.error(`Error fetching dentist with ID ${id}:`, error);
         if (error.response && error.response.status === 404) {

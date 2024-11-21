@@ -17,12 +17,16 @@ public class DentistDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private Long clinicId;
 
-    private double longitude;      // Longitude of the clinic
-    private double latitude;       // Latitude of the clinic
-    private String street;         // Street of the clinic
-    private int zip;               // ZIP code of the clinic
-    private String city;           // City of the clinic
-    private String houseNumber;    // House number of the clinic
+    // Clinic details for dentist
+    private Long clinicId;
+    private String clinicName;
+
+    // Additional/optional clinic details for dentist
+    private double longitude;
+    private double latitude;
+    private String street;
+    private int zip;
+    private String city;
+    private String houseNumber;
 }

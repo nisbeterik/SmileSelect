@@ -42,7 +42,7 @@
             required
         >
           <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
-            {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}
+            {{ clinic.name }}, {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}
           </option>
         </select>
         <br /><br />
@@ -82,7 +82,7 @@ export default {
     async fetchClinics() {
       try {
         const response = await axios.get('/accounts/clinics');
-        this.clinics = response.data;
+        this.clinics = response.data
       } catch (error) {
         console.error('Error fetching clinics:', error);
       }

@@ -18,6 +18,9 @@ public class Clinic {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
+
     @Column(name = "longitude", nullable = false)
     private double longitude;
 
