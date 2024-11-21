@@ -6,6 +6,15 @@
       @select="handleSelect"
     />
 
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+      <label>
+        <input type="checkbox" v-model="multiSlotMode" /> Allow Multiple Timeslots
+      </label>
+      <button v-if="multiSlotMode && selectedSlots.length" @click="createMultipleTimeSlots">
+        Create Time Slots
+      </button>
+    </div>
+
     <div
       v-if="showCreateAppointmentModal"
       class="modal"
@@ -54,7 +63,7 @@
     <div
       v-if="showAppointmentDetailsModal"
       class="modal"
-      @click.self="closeEventModal"
+      @click.self="closeCurrentModal"
     >
       <div class="modal-content">
         <h3>Appointment Details:</h3>
@@ -96,6 +105,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 const bookedColor = '#FF5733';
 const availableColor = '#28A745';
+const selectedColor = '#C6B700'
 
 export default {
   components: {
@@ -110,6 +120,7 @@ export default {
   },
   data() {
     return {
+      selectedEventId: null,
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
         initialView: 'timeGridWeek',
@@ -120,6 +131,7 @@ export default {
         selectable: true,
         select: this.handleSelect,
         eventClick: this.handleEventClick,
+        eventDidMount: this.eventDidMount,
         slotMinTime: '07:00:00',
         slotMaxTime: '19:00:00',
         slotDuration: '00:15:00',
@@ -250,11 +262,6 @@ export default {
       }
     },
 
-    exit() {
-      this.showCreateAppointmentModal = false;
-      this.selectedSlot = { startTime: '', endTime: '', date: null };
-    },
-
     async getPatientInfo(patientId) {
       try {
         const response = await this.$axios.get(
@@ -271,9 +278,12 @@ export default {
 
     async handleEventClick(info) {
       const event = info.event;
+
       const eventTime =
         this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
       const patientId = event.extendedProps?.patientId;
+
+      console.log(event.id)
 
       this.selectedEvent = {
         id: event.id,
@@ -297,14 +307,37 @@ export default {
           console.error('Failed to fetch patient details:', error);
         }
       }
+      if (!event.extendedProps.originalColor) {
+         event.setExtendedProp('originalColor', event.backgroundColor);
+      }
+      event.setProp('backgroundColor', selectedColor);
+
+      console.log(event.id)
+
+      this.selectedEventId = event.id;
+
+      const calendarApi = this.$refs.calendar.getApi();
+      calendarApi.refetchEvents();
 
       console.log(this.selectedEvent);
       this.showAppointmentDetailsModal = true;
     },
 
-    closeCurrentModal() {
+    closeCurrentModal() { //resets all modal settings
+      console.log(this.selectedEventId)
+
+      if (this.selectedEventId) {
+        const calendarApi = this.$refs.calendar.getApi();
+        const selectedEvent = calendarApi.getEventById(this.selectedEventId);
+
+      if (selectedEvent) {
+        selectedEvent.setProp('backgroundColor', selectedEvent.extendedProps.originalColor);
+      }
+     }
+
       this.selectedEvent = null;
       this.showAppointmentDetailsModal = false;
+      document.querySelectorAll('.fc-event').forEach((el) => el.classList.remove('selected-event'));
       this.showCreateAppointmentModal = false;
       this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
@@ -336,9 +369,12 @@ export default {
           endTime: `${endDateTime}`,
         };
 
-        await this.$axios.post('/appointments', newAppointment);
+        const response = await this.$axios.post('/appointments', newAppointment);
+        const appointmentId = response.data.id;
+        
 
         this.calendarOptions.events.push({
+          id: appointmentId,
           title: 'Available',
           start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
           end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
@@ -362,6 +398,7 @@ export default {
         this.calendarOptions.events = [];
         var response = await this.$axios.get(`/appointments/dentist/${this.HARDCODED_DENTIST_ID}`); // PLACEHOLDER ID
         var existingAppointments = response.data;
+        
 
         Object.values(existingAppointments).forEach((appointment) => {
           var appointmentColor = bookedColor;
@@ -373,6 +410,7 @@ export default {
           }
 
           this.calendarOptions.events.push({
+            id: `${appointment.id}`,
             title: appointmentTitle,
             start: `${appointment.startTime}`,
             end: `${appointment.endTime}`,
@@ -393,6 +431,10 @@ export default {
 </script>
 
 <style scoped>
+:root {
+  --selected-event-color: #333333; /* Default color for the selected event */
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -410,6 +452,11 @@ export default {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+}
+.selected-event {
+  background-color: var(--selected-event-color) !important;
+  border-color: var(--selected-event-color) !important;
+  filter: brightness(70%)
 }
 
 .time-input-group {
