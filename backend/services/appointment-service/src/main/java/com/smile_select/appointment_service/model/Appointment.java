@@ -14,7 +14,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "appointment")
-@NoArgsConstructor @AllArgsConstructor @Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Appointment {
 
     @Id
@@ -32,5 +35,5 @@ public class Appointment {
 
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
-  
+
 }
