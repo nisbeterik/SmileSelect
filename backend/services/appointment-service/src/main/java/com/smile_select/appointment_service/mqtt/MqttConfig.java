@@ -17,70 +17,72 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 
+import java.util.UUID;
+
 @Configuration
 public class MqttConfig {
 
     @Bean
-	public MqttPahoClientFactory mqttClientFactory() {
-		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
-		MqttConnectOptions options = new MqttConnectOptions();
+    public MqttPahoClientFactory mqttClientFactory() {
+        DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
+        MqttConnectOptions options = new MqttConnectOptions();
 
-		options.setServerURIs(new String[] { "tcp://localhost:1883" });
-		
-		// NO USERNAME/PASSWORD IS SET UP CURRENTLY
-		// options.setUserName("admin");
-		// String pass = "password";
-		// options.setPassword(pass.toCharArray());
+        options.setServerURIs(new String[] { "tcp://localhost:1883" });
+        options.setCleanSession(false);
+        options.setKeepAliveInterval(60);
+        options.setConnectionTimeout(30);
+        options.setAutomaticReconnect(true);
 
-		options.setCleanSession(true);
-		factory.setConnectionOptions(options);
-		return factory;
-	}
-	@Bean
-	public MessageChannel mqttInputChannel() {
-		return new DirectChannel();
-	}
-	
-	@Bean
-	public MessageProducer inbound() {
-		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("serverIn",
-				mqttClientFactory(), "#");
+        factory.setConnectionOptions(options);
+        return factory;
+    }
 
-		adapter.setCompletionTimeout(5000);
-		adapter.setConverter(new DefaultPahoMessageConverter());
-		adapter.setQos(2);
-		adapter.setOutputChannel(mqttInputChannel());
-		return adapter;
-	}
-	
-	@Bean
-	@ServiceActivator(inputChannel = "mqttInputChannel")
-	public MessageHandler handler() {
-		return new MessageHandler() {
+    @Bean
+    public MessageChannel mqttInputChannel() {
+        return new DirectChannel();
+    }
+    
+    @Bean
+    public MessageProducer inbound() {
+        String clientId = "serverIn-" + UUID.randomUUID().toString();
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId,
+                mqttClientFactory(), "#");
 
-			@Override
-			public void handleMessage(Message<?> message) throws MessagingException {
-				String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
+        adapter.setCompletionTimeout(5000);
+        adapter.setConverter(new DefaultPahoMessageConverter());
+        adapter.setQos(2);
+        adapter.setOutputChannel(mqttInputChannel());
+        return adapter;
+    }
+    
+    @Bean
+    @ServiceActivator(inputChannel = "mqttInputChannel")
+    public MessageHandler handler() {
+        return new MessageHandler() {
+            @Override
+            public void handleMessage(Message<?> message) throws MessagingException {
+                String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
 
-				// Replace me with real topic
-				if(topic.equals("/placeholderTopic")) {
-					// Handle topic by calling services for example
-					System.out.println("Received message from topic: " + topic);
-					System.out.println("Payload: " + message.getPayload());
-				}
-			}
-
-		};
-	}
-	
-	@Bean
+                // Replace me with real topic
+                if(topic.equals("/placeholderTopic")) {
+                    // Handle topic by calling services if needed
+                    System.out.println("Received message from topic: " + topic);
+                    System.out.println("Payload: " + message.getPayload());
+                }
+            }
+        };
+    }
+    
+    @Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();
     }
-	@Bean
+
+    @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound() {
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler("serverOut", mqttClientFactory());
+        String clientId = "serverOut-" + UUID.randomUUID().toString();
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("/appointments");
         messageHandler.setDefaultRetained(false);
