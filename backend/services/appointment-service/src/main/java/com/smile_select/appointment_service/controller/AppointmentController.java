@@ -1,6 +1,8 @@
 package com.smile_select.appointment_service.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.smile_select.appointment_service.model.Appointment;
+import com.smile_select.appointment_service.mqtt.MqttGateway;
 import com.smile_select.appointment_service.service.AppointmentService;
 
 @RestController
@@ -24,6 +32,16 @@ import com.smile_select.appointment_service.service.AppointmentService;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+
+    // ObjectMapper set up to handle LocalDateTime, which it does not by default
+    private final ObjectMapper objectMapper = new ObjectMapper()
+        .registerModule(new JavaTimeModule()
+            .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+    
+    @Autowired
+	MqttGateway mqttGateway;
 
     @Autowired
     public AppointmentController(AppointmentService appointmentService) {
@@ -36,6 +54,7 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
         Appointment createdAppointment = appointmentService.save(appointment);
+        publishMessage("/appointments/new", createdAppointment);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 
@@ -140,6 +159,17 @@ public class AppointmentController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
+    private void publishMessage(String topic, Appointment appointment) {
+        try {
+            String message = objectMapper.writeValueAsString(appointment);
+            mqttGateway.publishMessage(message, topic);
+            System.out.println("Published message to topic: " + topic);
+        } catch (Exception e) {
+            System.err.println("Failed to publish message to topic " + topic + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
