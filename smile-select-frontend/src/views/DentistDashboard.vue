@@ -1,17 +1,17 @@
 <template>
   <div class="dashboard">
     <h1>Welcome to the Dentist Dashboard!</h1>
-    <button @click="getAllDentists"> GET all /dentists </button>
+    <button @click="getAllDentists">GET all /dentists</button>
     <button @click="getDentistById">GET dentist by ID</button>
-    <button @click="updateDentistById">PUT/Update dentist by ID </button>
-    <button @click="deleteDentistById">DELETE dentist by ID </button>
+    <button @click="updateDentistById">PUT/Update dentist by ID</button>
+    <button @click="deleteDentistById">DELETE dentist by ID</button>
 
-    <p v-if="message"> {{ message }}</p>
+    <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from '../axios'; // Import the configured Axios instance
 
 export default {
   name: 'DentistDashboard',
@@ -23,9 +23,17 @@ export default {
   methods: {
     async getAllDentists() {
       try {
-        const response = await axios.get('http://localhost:8080/api/accounts/dentists');
+        const response = await axios.get('/accounts/dentists');
         console.log(response.data);
-        this.message = `Fetched ${response.data.length} dentists successfully.`;
+
+        const dentists = response.data
+            .map(
+                (dentist) =>
+                    `ID: ${dentist.id}, Name: ${dentist.firstName} ${dentist.lastName}`
+            )
+            .join('\n');
+
+        this.message = `Fetched ${response.data.length} dentists:\n${dentists}`;
       } catch (error) {
         console.error('Error fetching all dentists:', error);
         this.message = 'Failed to fetch dentists.';
@@ -36,13 +44,15 @@ export default {
       if (!id) return;
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/accounts/dentists/${id}`);
+        const response = await axios.get(`/accounts/dentists/${id}`);
         console.log(response.data);
-        this.message = `Fetched dentist: ${response.data.firstName} ${response.data.lastName}`;
+        this.message = `Fetched dentist: ${response.data.firstName} ${response.data.lastName}, Clinic: ${response.data.street}, ${response.data.city}`;
       } catch (error) {
         console.error(`Error fetching dentist with ID ${id}:`, error);
         if (error.response && error.response.status === 404) {
           this.message = `Dentist with ID ${id} not found.`;
+        } else if (error.response && error.response.status === 403) {
+          this.message = `Access denied. Please log in.`;
         } else {
           this.message = `Failed to fetch dentist with ID ${id}.`;
         }
@@ -57,22 +67,22 @@ export default {
         lastName: prompt('Enter Last Name:'),
         email: prompt('Enter Email:'),
         password: prompt('Enter Password:'),
-        street: prompt('Enter Street:'),
-        houseNumber: prompt('Enter House Number:'),
-        city: prompt('Enter City:'),
-        zip: prompt('Enter ZIP Code:'),
-        latitude: parseFloat(prompt('Enter Latitude:')),
-        longitude: parseFloat(prompt('Enter Longitude:')),
+        clinicId: parseInt(prompt('Enter Clinic ID:')), // Update associated clinic
       };
 
       try {
-        const response = await axios.put(`http://localhost:8080/api/accounts/dentists/${id}`, updatedData);
+        const response = await axios.put(
+            `/accounts/dentists/${id}`,
+            updatedData
+        );
         console.log(response.data);
         this.message = response.data;
       } catch (error) {
         console.error(`Error updating dentist with ID ${id}:`, error);
         if (error.response && error.response.status === 404) {
           this.message = `Dentist with ID ${id} not found.`;
+        } else if (error.response && error.response.status === 403) {
+          this.message = `Access denied. Please log in.`;
         } else {
           this.message = `Failed to update dentist with ID ${id}.`;
         }
@@ -83,13 +93,15 @@ export default {
       if (!id) return;
 
       try {
-        const response = await axios.delete(`http://localhost:8080/api/accounts/dentists/${id}`);
+        const response = await axios.delete(`/accounts/dentists/${id}`);
         console.log(response.data);
-        this.message = response.data;
+        this.message = `Dentist with ID ${id} deleted successfully.`;
       } catch (error) {
         console.error(`Error deleting dentist with ID ${id}:`, error);
         if (error.response && error.response.status === 404) {
           this.message = `Dentist with ID ${id} not found.`;
+        } else if (error.response && error.response.status === 403) {
+          this.message = `Access denied. Please log in.`;
         } else {
           this.message = `Failed to delete dentist with ID ${id}.`;
         }
@@ -99,5 +111,6 @@ export default {
 };
 </script>
 
-
-
+<style scoped>
+/* Add your styles here */
+</style>
