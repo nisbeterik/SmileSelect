@@ -9,7 +9,7 @@
     <div
       v-if="showCreateAppointmentModal"
       class="modal"
-      @click.self="cancelAppointment"
+      @click.self="closeCurrentModal"
     >
       <div class="modal-content">
         <h3>Create Appointment</h3>
@@ -47,7 +47,7 @@
         </div>
 
         <button @click="saveAppointment">Save Appointment</button>
-        <button @click="cancelAppointment">Cancel</button>
+        <button @click="closeCurrentModal">Cancel</button>
       </div>
     </div>
 
@@ -82,7 +82,7 @@
             {{ selectedEvent.patientEmail }}
           </p>
         </div>
-        <button @click="closeEventModal">Close</button>
+        <button @click="closeCurrentModal">Close</button>
       </div>
     </div>
   </div>
@@ -250,7 +250,7 @@ export default {
       }
     },
 
-    cancelAppointment() {
+    exit() {
       this.showCreateAppointmentModal = false;
       this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
@@ -302,9 +302,11 @@ export default {
       this.showAppointmentDetailsModal = true;
     },
 
-    closeEventModal() {
+    closeCurrentModal() {
       this.selectedEvent = null;
       this.showAppointmentDetailsModal = false;
+      this.showCreateAppointmentModal = false;
+      this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
 
     async saveAppointment() {
@@ -351,7 +353,7 @@ export default {
         );
       }
 
-      this.cancelAppointment();
+      this.closeCurrentModal();
     },
 
     // TODO: Make this method load only appointments for the logged in dentist instead of all appointments
