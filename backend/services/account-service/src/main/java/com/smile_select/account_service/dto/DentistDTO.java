@@ -17,10 +17,5 @@ public class DentistDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private double longitude;
-    private double latitude;
-    private String street;
-    private int zip;
-    private String city;
-    private String houseNumber;
+    private Long clinicId;
 }
