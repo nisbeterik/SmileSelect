@@ -9,7 +9,7 @@ public class UserResponseDTO {
     private String email;
     private String role;
     private String token; // JWT token
-    private String password; // Used internally, but will be hidden in responses
+    private String password; // Used internally, hidden in responses
 
     public UserResponseDTO(String email, String role, String token, String password) {
         this.email = email;
