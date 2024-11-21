@@ -120,6 +120,8 @@ export default {
   },
   data() {
     return {
+      multislotmode: false, // Tracks if multi-slot mode is active    
+      selectedSlots: [],
       selectedEventId: null,
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
@@ -146,6 +148,10 @@ export default {
             text: 'Toggle Weekends',
             click: this.toggleWeekends,
           },
+          multiSlotMode: {
+            text: 'MultiSlotMode',
+            click: this.toggleMultiSlotMode,
+          }
         },
       },
       showCreateAppointmentModal: false,
@@ -161,6 +167,13 @@ export default {
     };
   },
   methods: {
+    toggleMultiSlotMode(){
+      if (this.multislotmode == false){
+        this.multislotmode == true;
+      } else {
+        this.multislotmode == false; 
+      }
+    },
     toggleWeekends() {
       const weekendsStatus = this.calendarOptions.weekends;
       if (weekendsStatus === true) {
