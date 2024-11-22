@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.smile_select.notification_service.model.Notification;
-import com.smile_select.notification_service.mqtt.MqttGateway;
 import com.smile_select.notification_service.service.NotificationService;
 
 @RestController
@@ -22,9 +20,6 @@ public class NotificationController {
     public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
-
-    @Autowired
-    MqttGateway mqttGateway;
 
     // This will likely never be used, as notifications are not handeled through REST, but is implemented for testing purposes
     @PostMapping
