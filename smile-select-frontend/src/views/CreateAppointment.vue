@@ -253,7 +253,7 @@ export default {
     },
 
     handleSelect(info) {
-      if (this.multiSlotMode == true) {
+      if (this.multiSlotMode == true || info.jsEvent.shiftKey) {
         const slot = {
           date: this.formatDate(info.start),
           startTime: this.formatTime(info.start),
