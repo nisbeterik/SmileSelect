@@ -41,7 +41,7 @@ public class MqttConfig {
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
     }
-    
+
     @Bean
     public MessageProducer inbound() {
         String clientId = "serverIn-" + UUID.randomUUID().toString();
@@ -54,7 +54,7 @@ public class MqttConfig {
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
     }
-    
+
     @Bean
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
@@ -63,16 +63,21 @@ public class MqttConfig {
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
 
-                // Replace me with real topic
-                if(topic.equals("/placeholderTopic")) {
-                    // Handle topic by calling services if needed
-                    System.out.println("Received message from topic: " + topic);
-                    System.out.println("Payload: " + message.getPayload());
+               // Handle topic
+
+                switch (topic) {
+                    case "/topic":
+                        System.out.println("Received message from topic: " + topic);
+                        System.out.println("Payload: " + message.getPayload());
+                        break;
+
+                    default:
+                        break;
                 }
             }
         };
     }
-    
+
     @Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();

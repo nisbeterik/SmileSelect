@@ -41,7 +41,7 @@ public class MqttConfig {
     public MessageChannel mqttInputChannel() {
         return new DirectChannel();
     }
-    
+
     @Bean
     public MessageProducer inbound() {
         String clientId = "serverIn-" + UUID.randomUUID().toString();
@@ -54,7 +54,7 @@ public class MqttConfig {
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
     }
-    
+
     @Bean
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
@@ -63,17 +63,21 @@ public class MqttConfig {
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
 
-                // Handle new appointment slot created
-                if(topic.equals("/appointments/new")) {
-                    // Placeholder actions
-                    System.out.println("Received message from topic: " + topic);
-                    System.out.println("Payload: " + message.getPayload());
+                // Handle topics
+
+                switch (topic) {
+                    case "/appointments/new":
+                        System.out.println("New appointment slot posted");
+                        System.out.println("Apppointment: " + message.getPayload());
+                        break;
+
+                    default:
+                        break;
                 }
-				// Handle more topics below...
             }
         };
     }
-    
+
     @Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();
