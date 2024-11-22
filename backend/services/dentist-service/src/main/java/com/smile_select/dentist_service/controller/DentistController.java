@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.smile_select.account_service.dto.DentistDTO;
-import com.smile_select.account_service.model.Clinic;
-import com.smile_select.account_service.repository.ClinicRepository;
-import com.smile_select.account_service.service.DentistService;
+import com.smile_select.dentist_service.dto.DentistDTO;
+import com.smile_select.dentist_service.model.Clinic;
+import com.smile_select.dentist_service.repository.ClinicRepository;
+import com.smile_select.dentist_service.service.DentistService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import com.smile_select.account_service.model.Dentist;
-import com.smile_select.account_service.repository.DentistRepository;
+import com.smile_select.dentist_service.model.Dentist;
+import com.smile_select.dentist_service.repository.DentistRepository;
 
 /**
  * RESTful controller responsible for handling dentist registration and basic CRUD operations.

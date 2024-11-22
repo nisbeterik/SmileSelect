@@ -10,10 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import com.smile_select.account_service.dto.PatientDTO;
-import com.smile_select.account_service.model.Patient;
-import com.smile_select.account_service.service.PatientService;
-import com.smile_select.account_service.dto.PatientUpdateDTO;
+import com.smile_select.patient_service.dto.PatientDTO;
+import com.smile_select.patient_service.model.Patient;
+import com.smile_select.patient_service.service.PatientService;
+import com.smile_select.patient_service.dto.PatientUpdateDTO;
 
 // Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api/accounts

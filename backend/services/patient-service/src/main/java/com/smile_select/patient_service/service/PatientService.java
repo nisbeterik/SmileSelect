@@ -1,9 +1,9 @@
 package com.smile_select.patient_service.service;
 
-import com.smile_select.account_service.dto.PatientUpdateDTO;
-import com.smile_select.account_service.exception.ResourceNotFoundException;
-import com.smile_select.account_service.model.Patient;
-import com.smile_select.account_service.repository.PatientRepository;
+import com.smile_select.patient_service.dto.PatientUpdateDTO;
+import com.smile_select.patient_service.exception.ResourceNotFoundException;
+import com.smile_select.patient_service.model.Patient;
+import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
