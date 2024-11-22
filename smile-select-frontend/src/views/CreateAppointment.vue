@@ -168,9 +168,6 @@ export default {
       } else {
         this.multiSlotMode = true;
       }
-      
-      //switch
-      console.log(this.multiSlotMode)
     },
     toggleWeekends() {
       const weekendsStatus = this.calendarOptions.weekends;
@@ -276,7 +273,7 @@ export default {
           this.selectedSlot.endTime = this.formatTime(info.end);
         } else {
           this.selectedSlot.startTime = '08:00';
-          this.selectedSlot.endTime = '10:00';
+         this.selectedSlot.endTime = '10:00';
         }
 
         const overlap = this.checkOverlap(this.selectedSlot);
@@ -324,8 +321,6 @@ export default {
         this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
       const patientId = event.extendedProps?.patientId;
 
-      console.log(event.id)
-
       this.selectedEvent = {
         id: event.id,
         status: event.title,
@@ -353,19 +348,15 @@ export default {
       }
       event.setProp('backgroundColor', selectedColor);
 
-      console.log(event.id)
-
       this.selectedEventId = event.id;
 
       const calendarApi = this.$refs.calendar.getApi();
       calendarApi.refetchEvents();
 
-      console.log(this.selectedEvent);
       this.showAppointmentDetailsModal = true;
     },
 
     closeCurrentModal() { //resets all modal settings
-      console.log(this.selectedEventId)
 
       if (this.selectedEventId) {
         const calendarApi = this.$refs.calendar.getApi();
@@ -385,14 +376,11 @@ export default {
 
     async saveAppointment(slotData = null) {
       let slot;
-      console.log(slotData,"!")
       if(slotData === null) {
         slot = { ...this.selectedSlot };
       } else{
         slot = slotData;
       }
-      console.log(this.selectedSlot, "objekt")
-      console.log(slot, "bla bla")
 
       try {
         
@@ -432,7 +420,6 @@ export default {
           end: `${slot.date}T${slot.endTime}`,
           backgroundColor: availableColor,
         });
-        console.log('Appointment saved');
       } catch (error) {
         alert('Error saving appointment');
         console.error(
@@ -469,7 +456,6 @@ export default {
             backgroundColor: appointmentColor,
           });
         });
-        console.log('Appointments fetched');
       } catch (error) {
         console.error(
           'Error saving appointment:',
