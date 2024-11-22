@@ -35,10 +35,6 @@ public class MqttTopicHandler {
             case "/appointments/dentist-cancelled":
                 notificationService.processAppointmentCancellationByDentist(message.getPayload());
                 break;
-
-            default:
-                System.out.println("Unhandled topic: " + topic);
-                break;
         }
     }
 
