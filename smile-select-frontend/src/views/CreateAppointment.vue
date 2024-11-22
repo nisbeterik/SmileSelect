@@ -8,7 +8,7 @@
     <div
       v-if="showCreateAppointmentModal"
       class="modal"
-      @click.self="closeCurrentModal"
+      @click.self="closeCurrentModal()"
     >
       <div class="modal-content">
         <h3>Create Appointment</h3>
@@ -45,8 +45,8 @@
           </div>
         </div>
 
-        <button @click="saveAppointment">Save Appointment</button>
-        <button @click="closeCurrentModal">Cancel</button>
+        <button @click="saveAppointment()">Save Appointment</button>
+        <button @click="closeCurrentModal()">Cancel</button>
       </div>
     </div>
 
@@ -260,6 +260,7 @@ export default {
           startTime: this.formatTime(info.start),
           endTime: this.formatTime(info.end),
         };
+        
 
         this.selectedSlots.push(slot);
 
@@ -287,29 +288,13 @@ export default {
 
     async createMultipleTimeSlots() {
       try {
-        const formatToLocalDateTime = (date, time) => `${date}T${time}:00`;
+        const appointmentPromises = [];
+        for (const slot of this.selectedSlots) {
+            const promise = this.saveAppointment(slot);
+            appointmentPromises.push(promise);
+        }
 
-        const newAppointments = this.selectedSlots.map((slot) => ({
-          dentistId: `${this.HARDCODED_DENTIST_ID}`,
-          startTime: formatToLocalDateTime(slot.date, slot.startTime),
-          endTime: formatToLocalDateTime(slot.date, slot.endTime),
-        }));
-
-        await Promise.all(
-          newAppointments.map((appointment) =>
-            this.$axios.post('/appointments', appointment)
-          )
-        );
-
-        newAppointments.forEach((appointment) => {
-          this.calendarOptions.events.push({
-            id: appointment.id,
-            title: 'Available',
-            start: appointment.startTime,
-            end: appointment.endTime,
-            backgroundColor: availableColor,
-          });
-        });
+        await Promise.all(appointmentPromises);
 
         this.selectedSlots = []; // Clear selected slots
       } catch (error) {
@@ -398,11 +383,22 @@ export default {
       this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
 
-    async saveAppointment() {
+    async saveAppointment(slotData = null) {
+      let slot;
+      console.log(slotData,"!")
+      if(slotData === null) {
+        slot = { ...this.selectedSlot };
+      } else{
+        slot = slotData;
+      }
+      console.log(this.selectedSlot, "objekt")
+      console.log(slot, "bla bla")
+
       try {
-        const overlap = this.checkOverlap(this.selectedSlot);
+        
+        const overlap = this.checkOverlap(slot);
         if (overlap) {
-          this.cancelAppointment();
+          this.closeCurrentModal();
           return;
         }
 
@@ -411,12 +407,12 @@ export default {
         };
 
         const startDateTime = formatToLocalDateTime(
-          this.selectedSlot.date,
-          this.selectedSlot.startTime
+          slot.date,
+          slot.startTime
         );
         const endDateTime = formatToLocalDateTime(
-          this.selectedSlot.date,
-          this.selectedSlot.endTime
+          slot.date,
+          slot.endTime
         );
 
         var newAppointment = {
@@ -432,8 +428,8 @@ export default {
         this.calendarOptions.events.push({
           id: appointmentId,
           title: 'Available',
-          start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
-          end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
+          start: `${slot.date}T${slot.startTime}`,
+          end: `${slot.date}T${slot.endTime}`,
           backgroundColor: availableColor,
         });
         console.log('Appointment saved');
@@ -444,7 +440,6 @@ export default {
           error.response?.data || error.message
         );
       }
-
       this.closeCurrentModal();
     },
 
