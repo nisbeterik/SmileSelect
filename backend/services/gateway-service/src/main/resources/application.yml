@@ -11,10 +11,10 @@ spring:
     gateway:
       globalcors:
         corsConfigurations:
-          '[/**]':  
-            allowedOrigins: "*"  
-            allowedMethods: "*"  
-            allowedHeaders: "*"  
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
       routes:
         - id: account-service
           uri: http://localhost:8081 # Static URL for account-service
@@ -22,7 +22,7 @@ spring:
             - Path=/api/accounts/**
 
         - id: appointment-service
-          uri: http://localhost:8082  # Static URL for notification-service
+          uri: http://localhost:8082 # Static URL for notification-service
           predicates:
             - Path=/api/appointments/**
 
@@ -30,6 +30,11 @@ spring:
           uri: http://localhost:8083 # Static URL for appointment-service
           predicates:
             - Path=/api/notifications/**
+
+        - id: logging-service
+          uri: http://localhost:8086 # Static URL for logging-service
+          predicates:
+            - Path=/api/logs/**
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
