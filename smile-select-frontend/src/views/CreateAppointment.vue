@@ -91,11 +91,12 @@
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 
 const bookedColor = '#FF5733';
 const availableColor = '#28A745';
-const selectedColor = '#C6B700'
+const selectedColor = '#C6B700';
 
 export default {
   components: {
@@ -114,7 +115,7 @@ export default {
       selectedSlots: [],
       selectedEventId: null,
       calendarOptions: {
-        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
         initialView: 'timeGridWeek',
         firstDay: 1,
         weekends: false,
@@ -131,7 +132,7 @@ export default {
         headerToolbar: {
           left: 'prev,next today,toggleWeekends multiSlotMode,createTimeSlots',
           center: 'title',
-          right: 'prev,next,dayGridMonth,timeGridWeek',
+          right: 'prev,next,dayGridMonth,timeGridWeek,listWeek',
         },
         customButtons: {
           toggleWeekends: {
@@ -398,7 +399,9 @@ export default {
         const selectedEvent = calendarApi.getEventById(this.selectedEventId);
 
       if (selectedEvent) {
-        selectedEvent.setProp('backgroundColor', selectedEvent.extendedProps.originalColor);
+        const originalColor = selectedEvent.extendedProps.originalColor 
+        || (selectedEvent.extendedProps.patientId === null ? availableColor : bookedColor);
+        selectedEvent.setProp('backgroundColor', originalColor);
       }
      }
 
