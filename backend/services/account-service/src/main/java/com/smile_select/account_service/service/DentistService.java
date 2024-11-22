@@ -1,5 +1,6 @@
 package com.smile_select.account_service.service;
 
+import com.smile_select.account_service.dto.DentistDTO;
 import com.smile_select.account_service.dto.DentistUpdateDTO;
 import com.smile_select.account_service.exception.ResourceNotFoundException;
 import com.smile_select.account_service.model.Clinic;
@@ -45,10 +46,20 @@ public class DentistService {
         return dentistRepository.findAll();
     }
 
-    public Dentist getDentistById(Long id, String userEmail) {
-        return dentistRepository.findById(id)
-                .filter(dentist -> dentist.getEmail().equals(userEmail))
-                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found or access denied for ID: " + id));
+    public Dentist getDentistById (Long id, String userEmail) {
+        Optional<Dentist> optionalDentist = dentistRepository.findById(id);
+
+        if (optionalDentist.isEmpty()) {
+            throw new ResourceNotFoundException("Dentist not found or access denied for ID: " + id);
+        }
+
+        Dentist dentist = optionalDentist.get();
+
+        if (!dentist.getEmail().equals(userEmail)) {
+            throw new ResourceNotFoundException("Access denied for : " + id);
+        }
+
+        return dentist;
     }
 
     public Dentist updateDentist(Long id, Dentist dentistUpdate, String userEmail) {
@@ -81,7 +92,20 @@ public class DentistService {
     }
 
     public void deleteDentistById(Long id, String userEmail) {
-        Dentist dentist = getDentistById(id, userEmail);
+        Optional<Dentist> optionalDentist = dentistRepository.findById(id);
+
+        if (optionalDentist.isEmpty()) {
+            throw new ResourceNotFoundException("Dentist not found with ID: " + id);
+        }
+
+        Dentist dentist = optionalDentist.get();
+
+        // Allow deletion if the user is the dentist
+        if (!dentist.getEmail().equals(userEmail)) {
+            throw new ResourceNotFoundException("Access denied for deleting dentist ID: " + id);
+        }
+
         dentistRepository.delete(dentist);
     }
+
 }
