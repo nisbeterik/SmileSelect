@@ -3,13 +3,16 @@ package com.smile_select.notification_service.mqtt;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.core.MessageProducer;
 import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
 
 import java.util.UUID;
 
@@ -56,4 +59,17 @@ public class MqttConfig {
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();
     }
+
+    @Bean
+    @ServiceActivator(inputChannel = "mqttOutboundChannel")
+    public MessageHandler mqttOutbound() {
+        String clientId = "serverOut-" + UUID.randomUUID().toString();
+        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
+        messageHandler.setAsync(true);
+        messageHandler.setDefaultTopic("/notifications");
+        messageHandler.setDefaultRetained(false); 
+        return messageHandler;
+    }
 }
+
+
