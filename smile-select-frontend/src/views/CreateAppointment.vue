@@ -288,24 +288,35 @@ export default {
 
     createMultiSlotModeTempSlot(){
       var index = -1;
+      
       this.selectedSlots.forEach(slot => {
+      var overlap = false; 
+      
+      if((index * -1) === this.selectedSlots.length) { //checks if the latest slot overlaps
+        overlap = this.checkOverlap(slot);
         
-      this.calendarOptions.events.push({
-          id: index, 
-          title: 'Wating for creation',
-          start: `${slot.date}T${slot.startTime}`,
-          end: `${slot.date}T${slot.endTime}`,
-          backgroundColor: selectedColor,
-        });
-
-        index--;
+      } 
+      if (overlap){
+          this.selectedSlots.pop();
+        } else {
+          this.calendarOptions.events.push({
+            id: index, 
+            title: 'Wating for creation',
+            start: `${slot.date}T${slot.startTime}`,
+            end: `${slot.date}T${slot.endTime}`,
+            backgroundColor: selectedColor,
+          });
+          index--;
+        } 
+        
       });
 
       
     },
 
     async createMultipleTimeSlots() {
-      this.loadAppointments();
+      
+      this.calendarOptions.events = this.calendarOptions.events.filter(event => event.id >= 0);
 
       try {
         const appointmentPromises = [];
@@ -313,10 +324,11 @@ export default {
             const promise = this.saveAppointment(slot);
             appointmentPromises.push(promise);
         }
-
+        
         await Promise.all(appointmentPromises);
 
-        this.selectedSlots = []; // Clear selected slots
+        this.selectedSlots = [];  
+
       } catch (error) {
         console.error('Error creating time slots:', error);
         alert('Failed to create time slots.');
@@ -459,6 +471,8 @@ export default {
         this.calendarOptions.events = [];
         var response = await this.$axios.get(`/appointments/dentist/${this.HARDCODED_DENTIST_ID}`); // PLACEHOLDER ID
         var existingAppointments = response.data;
+
+        if (this.selectedSlots) { this.createMultiSlotModeTempSlot() }
         
 
         Object.values(existingAppointments).forEach((appointment) => {
