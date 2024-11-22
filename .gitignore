@@ -17,6 +17,7 @@ target/
 !**/src/test/**/build/
 /out/
 
+backend/services/auth-service/src/main/resources/env.properties
 # Environment variable files
 .env
 .env.local
