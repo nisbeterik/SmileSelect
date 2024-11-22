@@ -165,6 +165,8 @@ export default {
     toggleMultiSlotMode() {
       if (this.multiSlotMode === true) {
         this.multiSlotMode = false;
+        this.selectedSlots = [];
+        this.loadAppointments();
       } else {
         this.multiSlotMode = true;
       }
@@ -260,6 +262,7 @@ export default {
         
 
         this.selectedSlots.push(slot);
+        this.createMultiSlotModeTempSlot(slot);
 
       } else { //single slot creating
 
@@ -283,7 +286,27 @@ export default {
       }
     },
 
+    createMultiSlotModeTempSlot(){
+      var index = -1;
+      this.selectedSlots.forEach(slot => {
+        
+      this.calendarOptions.events.push({
+          id: index, 
+          title: 'Wating for creation',
+          start: `${slot.date}T${slot.startTime}`,
+          end: `${slot.date}T${slot.endTime}`,
+          backgroundColor: selectedColor,
+        });
+
+        index--;
+      });
+
+      
+    },
+
     async createMultipleTimeSlots() {
+      this.loadAppointments();
+
       try {
         const appointmentPromises = [];
         for (const slot of this.selectedSlots) {
