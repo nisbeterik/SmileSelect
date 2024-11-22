@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from '@/axios';
+import axios from '@/axios'; // Import the configured Axios instance
 
 export default {
   name: 'LoginView',
@@ -61,6 +61,15 @@ export default {
         });
         console.log('Login Successful:', response.data);
 
+        const token = response.data.token;
+
+        if (token) {
+          // Store the token in localStorage
+          localStorage.setItem('jwtToken', token);
+        } else {
+          throw new Error('Token not found in response');
+        }
+
         // Emit success event to parent component with role
         this.$emit('loginSuccess', this.role);
       } catch (error) {
@@ -71,3 +80,6 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+</style>

@@ -1,11 +1,6 @@
 package com.smile_select.account_service.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,22 +30,10 @@ public class Dentist {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "longitude", nullable = false)
-    private double longitude;
+    @ManyToOne
+    @JoinColumn(name = "clinic_id")
+    private Clinic clinic;
 
-    @Column(name = "latitude", nullable = false)
-    private double latitude;
-
-    @Column(name = "street", nullable = false, length = 100)
-    private String street;
-
-    @Column(name = "zip", nullable = false)
-    private int zip;
-
-    @Column(name = "city", nullable = false, length = 50)
-    private String city;
-
-    @Column(name = "house_number", nullable = false)
-    private String houseNumber;
-
+    @Transient
+    private Long clinicId;
 }

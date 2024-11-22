@@ -38,15 +38,28 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
                         .requestMatchers(
                                 "/api/accounts/login/**",
                                 "/api/accounts/patients", // Allow POST registration for patients
-                                "/api/accounts/dentists"  // Allow POST registration for dentists
+                                "/api/accounts/dentists", // Allow POST registration for dentists
+                                "/api/accounts/clinics" // Allow requests for clinics
                         ).permitAll()
+                        // Protect specific GET endpoint for dentists by ID
+                        .requestMatchers(HttpMethod.GET, "/api/accounts/dentists/{id}")
+                        .authenticated()
+                        // Allow all other endpoints under /api/accounts/dentists/**
+                        .requestMatchers("/api/accounts/dentists/**")
+                        .permitAll()
+                        // Protect specific GET endpoint for patients by ID
                         .requestMatchers(HttpMethod.GET, "/api/accounts/patients/{id}")
-                            .authenticated() // Protect GET /api/accounts/patients/{id}
-                        .requestMatchers("/api/accounts/patients/**").permitAll() // Allow other patient-related routes
-                        .anyRequest().authenticated())
+                        .authenticated()
+                        // Allow other patient-related routes
+                        .requestMatchers("/api/accounts/patients/**")
+                        .permitAll()
+                        // Protect any other endpoints
+                        .anyRequest()
+                        .authenticated())
                 .httpBasic(httpBasic -> httpBasic.disable());
 
         // Add JWT authentication filter

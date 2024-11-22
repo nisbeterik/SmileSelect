@@ -18,6 +18,12 @@ public class DentistUpdateDTO {
     private String lastName;
     private String email;
     private String password;
+
+    // Clinic details for dentist
+    private Long clinicId;
+    private String clinicName;
+
+    // Additional/optional clinic details for dentist
     private double longitude;
     private double latitude;
     private String street;
