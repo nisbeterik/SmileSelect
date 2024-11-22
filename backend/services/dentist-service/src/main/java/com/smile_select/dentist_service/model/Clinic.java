@@ -1,4 +1,4 @@
-package com.smile_select.account_service.model;
+package com.smile_select.dentist_service.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

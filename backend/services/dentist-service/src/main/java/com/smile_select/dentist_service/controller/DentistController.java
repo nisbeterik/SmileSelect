@@ -1,4 +1,4 @@
-package com.smile_select.account_service.controller;
+package com.smile_select.dentist_service.controller;
 
 import java.util.List;
 import java.util.Optional;

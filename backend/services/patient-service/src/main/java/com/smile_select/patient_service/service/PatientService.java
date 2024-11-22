@@ -1,4 +1,4 @@
-package com.smile_select.account_service.service;
+package com.smile_select.patient_service.service;
 
 import com.smile_select.account_service.dto.PatientUpdateDTO;
 import com.smile_select.account_service.exception.ResourceNotFoundException;

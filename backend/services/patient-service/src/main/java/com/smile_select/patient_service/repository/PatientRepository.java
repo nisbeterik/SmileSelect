@@ -1,4 +1,4 @@
-package com.smile_select.account_service.repository;
+package com.smile_select.patient_service.repository;
 
 import com.smile_select.account_service.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;

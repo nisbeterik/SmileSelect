@@ -1,4 +1,4 @@
-package com.smile_select.account_service.controller;
+package com.smile_select.dentist_service.controller;
 
 import com.smile_select.account_service.model.Clinic;
 import com.smile_select.account_service.repository.ClinicRepository;

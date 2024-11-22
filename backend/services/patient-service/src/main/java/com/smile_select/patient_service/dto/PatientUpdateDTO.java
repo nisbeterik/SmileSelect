@@ -1,4 +1,4 @@
-package com.smile_select.account_service.dto;
+package com.smile_select.patient_service.dto;
 
 import java.time.LocalDate;
 

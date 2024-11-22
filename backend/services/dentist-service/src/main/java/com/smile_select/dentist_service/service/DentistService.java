@@ -1,4 +1,4 @@
-package com.smile_select.account_service.service;
+package com.smile_select.dentist_service.service;
 
 import com.smile_select.account_service.dto.DentistDTO;
 import com.smile_select.account_service.dto.DentistUpdateDTO;

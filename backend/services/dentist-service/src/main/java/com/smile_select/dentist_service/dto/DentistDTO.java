@@ -1,4 +1,4 @@
-package com.smile_select.account_service.dto;
+package com.smile_select.dentist_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

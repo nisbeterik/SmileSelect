@@ -1,4 +1,4 @@
-package com.smile_select.account_service.model;
+package com.smile_select.patient_service.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
