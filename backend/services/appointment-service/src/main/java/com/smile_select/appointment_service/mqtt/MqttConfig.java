@@ -11,11 +11,8 @@ import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
-import org.springframework.integration.mqtt.support.MqttHeaders;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessagingException;
 
 import java.util.UUID;
 
@@ -45,37 +42,17 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         String clientId = "serverIn-" + UUID.randomUUID().toString();
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId,
-                mqttClientFactory(), "#");
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
+            clientId, 
+            mqttClientFactory(), 
+            "#"
+        );
 
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
-    }
-
-    @Bean
-    @ServiceActivator(inputChannel = "mqttInputChannel")
-    public MessageHandler handler() {
-        return new MessageHandler() {
-            @Override
-            public void handleMessage(Message<?> message) throws MessagingException {
-                String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
-
-               // Handle topic
-
-                switch (topic) {
-                    case "/topic":
-                        System.out.println("Received message from topic: " + topic);
-                        System.out.println("Payload: " + message.getPayload());
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        };
     }
 
     @Bean
@@ -90,7 +67,7 @@ public class MqttConfig {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("/appointments");
-        messageHandler.setDefaultRetained(false);
+        messageHandler.setDefaultRetained(false); 
         return messageHandler;
     }
 }
