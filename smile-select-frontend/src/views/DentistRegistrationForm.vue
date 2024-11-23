@@ -81,7 +81,7 @@ export default {
   methods: {
     async fetchClinics() {
       try {
-        const response = await axios.get('/accounts/clinics');
+        const response = await axios.get('/dentists/clinics');
         this.clinics = response.data
       } catch (error) {
         console.error('Error fetching clinics:', error);
@@ -89,7 +89,7 @@ export default {
     },
     async submitDentist() {
       try {
-        const response = await axios.post('/accounts/dentists', this.formData);
+        const response = await axios.post('/dentists', this.formData);
         console.log('Registration Successful:', response.data);
 
         // Emit success event to parent component

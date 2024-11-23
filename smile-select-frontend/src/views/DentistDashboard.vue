@@ -23,7 +23,7 @@ export default {
   methods: {
     async getAllDentists() {
       try {
-        const response = await axios.get('/accounts/dentists');
+        const response = await axios.get('/dentists');
         console.log(response.data);
 
         const dentists = response.data
@@ -44,7 +44,7 @@ export default {
       if (!id) return;
 
       try {
-        const response = await axios.get(`/accounts/dentists/${id}`);
+        const response = await axios.get(`/dentists/${id}`);
         console.log(response.data);
         this.message = `Fetched dentist: ${response.data.firstName} ${response.data.lastName},
         Clinic: ${response.data.clinicName},
@@ -74,7 +74,7 @@ export default {
 
       try {
         const response = await axios.put(
-            `/accounts/dentists/${id}`,
+            `/dentists/${id}`,
             updatedData
         );
         console.log(response.data);
@@ -95,7 +95,7 @@ export default {
       if (!id) return;
 
       try {
-        const response = await axios.delete(`/accounts/dentists/${id}`);
+        const response = await axios.delete(`/dentists/${id}`);
         console.log(response.data);
         this.message = `Dentist with ID ${id} deleted successfully.`;
       } catch (error) {

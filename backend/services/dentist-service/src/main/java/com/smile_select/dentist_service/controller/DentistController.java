@@ -23,7 +23,7 @@ import com.smile_select.dentist_service.repository.DentistRepository;
  * Exposes endpoints at the base path /api/accounts.
  */
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/api/dentists")
 public class DentistController {
 
     @Autowired
@@ -42,7 +42,7 @@ public class DentistController {
      * @param dentist Dentist details
      * @return ResponseEntity with the response message
      */
-    @PostMapping("/dentists")
+    @PostMapping
     public ResponseEntity<String> registerDentist(@Valid @RequestBody Dentist dentist) {
         if (dentistService.findDentistByEmail(dentist.getEmail()).isPresent()) {
             return new ResponseEntity<>("Email is already in use", HttpStatus.BAD_REQUEST);
@@ -72,7 +72,7 @@ public class DentistController {
      *
      * @return ResponseEntity with the list of all dentists
      */
-    @GetMapping("/dentists")
+    @GetMapping
     public ResponseEntity<List<DentistDTO>> getAllDentists() {
         List<DentistDTO> dentists = dentistService.getAllDentists().stream()
                 .map(dentist -> new DentistDTO(
@@ -100,7 +100,7 @@ public class DentistController {
      * @return The details of the dentist, or a 404 Not Found status if not found.
      * Ensures only the authenticated user can access
      */
-    @GetMapping("/dentists/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<DentistDTO> getDentistById(@PathVariable("id") Long id) {
         // Retrieve the authenticated dentist's email
         String dentistEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -133,7 +133,7 @@ public class DentistController {
      * @param dentist the Dentist object with updated information
      * @return ResponseEntity with a message indicating the outcome of the update operation
      */
-    @PutMapping("/dentists/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateDentist(
             @PathVariable Long id,
             @Valid @RequestBody Dentist dentist) {
@@ -176,7 +176,7 @@ public class DentistController {
      * @return a ResponseEntity containing a success message if the dentist was deleted,
      * or a not found message if no dentist with the specified ID exists
      */
-    @DeleteMapping("/dentists/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDentist(@PathVariable Long id) {
         String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         dentistService.deleteDentistById(id, userEmail);

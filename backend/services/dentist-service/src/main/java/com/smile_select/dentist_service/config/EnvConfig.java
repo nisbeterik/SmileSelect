@@ -6,5 +6,4 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:env.properties") // Loads the env.properties file from the classpath
 public class EnvConfig {
-    // No additional code needed
 }

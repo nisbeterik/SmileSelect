@@ -31,8 +31,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/accounts/dentists").permitAll() // Allow registration
-                        .requestMatchers("/api/accounts/clinics").permitAll() // Allow fetching clinics
+                        .requestMatchers("/api/dentists").permitAll() // Allow registration
+                        .requestMatchers("/api/dentists/clinics").permitAll() // Allow fetching clinics
+                        .requestMatchers("/api/dentists/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable());
