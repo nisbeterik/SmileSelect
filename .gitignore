@@ -18,6 +18,7 @@ target/
 /out/
 
 backend/services/auth-service/src/main/resources/env.properties
+backend/services/dentist-service/src/main/resources/env.properties
 # Environment variable files
 .env
 .env.local
