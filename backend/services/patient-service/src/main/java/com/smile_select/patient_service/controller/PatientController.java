@@ -18,7 +18,7 @@ import com.smile_select.patient_service.dto.PatientUpdateDTO;
 // Marks the class as a RESTful controller
 // Sets the base path for all endpoints in this controller to /api/accounts
 @RestController
-@RequestMapping("/api/accounts/patients")
+@RequestMapping("/api/patients")
 public class PatientController {
 
     @Autowired
