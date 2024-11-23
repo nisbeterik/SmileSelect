@@ -3,6 +3,8 @@ package com.smile_select.patient_service.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.smile_select.dentist_service.exception.ResourceNotFoundException;
+import com.smile_select.dentist_service.model.Dentist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,4 +78,11 @@ public class PatientController {
     }
 
     // add endpoint for updating password
+
+    @GetMapping("/by-email")
+    public ResponseEntity<Patient> getPatientByEmail(@RequestParam("email") String email) {
+        Patient patient = patientService.findPatientByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with email: " + email));
+        return ResponseEntity.ok(patient);
+    }
 }
