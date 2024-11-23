@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.smile_select.dentist_service.dto.DentistDTO;
+import com.smile_select.dentist_service.exception.ResourceNotFoundException;
 import com.smile_select.dentist_service.model.Clinic;
 import com.smile_select.dentist_service.repository.ClinicRepository;
 import com.smile_select.dentist_service.service.DentistService;
@@ -182,4 +183,12 @@ public class DentistController {
         dentistService.deleteDentistById(id, userEmail);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/by-email")
+    public ResponseEntity<Dentist> getDentistByEmail(@RequestParam("email") String email) {
+        Dentist dentist = dentistService.findDentistByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with email: " + email));
+        return ResponseEntity.ok(dentist);
+    }
+
 }

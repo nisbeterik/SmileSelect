@@ -47,9 +47,9 @@ export default {
       this.showLogin = !this.showLogin; // Toggle between login and registration forms
     },
     navigateToDashboard() {
-      if (this.userRole === 'dentist') {
+      if (this.userRole === 'DENTIST') {
         this.$router.push('/dentist-dashboard');
-      } else if (this.userRole === 'patient') {
+      } else if (this.userRole === 'PATIENT') {
         this.$router.push('/patient-dashboard');
       } else {
         // Default action, redirect to home or show an error

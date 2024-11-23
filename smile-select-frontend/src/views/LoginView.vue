@@ -5,8 +5,8 @@
       <div class="form-group">
         <label for="role">Role</label>
         <select id="role" v-model="role" required>
-          <option value="patient">Patient</option>
-          <option value="dentist">Dentist</option>
+          <option value="PATIENT">Patient</option>
+          <option value="DENTIST">Dentist</option>
         </select>
       </div>
 
@@ -47,17 +47,18 @@ export default {
     return {
       email: '',
       password: '',
-      role: 'patient', // Default to patient role
+      role: 'PATIENT', // Default to patient role
       errorMessage: '',
     };
   },
   methods: {
     async handleLogin() {
       try {
-        const endpoint = `/accounts/login/${this.role}`;
+        const endpoint = `/auth/login`;
         const response = await axios.post(endpoint, {
           email: this.email,
           password: this.password,
+          role: this.role.toUpperCase(),
         });
         console.log('Login Successful:', response.data);
 

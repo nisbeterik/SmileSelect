@@ -69,12 +69,16 @@ public class AuthService {
     }
 
     private UserResponseDTO fetchUserByEmail(String serviceUrl, String email, String role) {
-        String url = serviceUrl + "?email=" + email;
+        String url = serviceUrl + "/by-email?email=" + email;
         try {
-            return restTemplate.getForObject(url, UserResponseDTO.class);
+            // Fetch user data
+            UserResponseDTO userResponse = restTemplate.getForObject(url, UserResponseDTO.class);
+            userResponse.setRole(role);
+            return userResponse;
         } catch (Exception e) {
             System.err.println("Error fetching user data from service: " + e.getMessage());
             throw new ResourceNotFoundException("No user found for email: " + email + " and role: " + role);
         }
     }
+
 }

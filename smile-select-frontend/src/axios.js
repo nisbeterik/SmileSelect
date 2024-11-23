@@ -20,6 +20,7 @@ instance.interceptors.request.use(
     }
 );
 
+
 // TODO - Add Logout Feature that removes token after logout
 
 export default instance;
