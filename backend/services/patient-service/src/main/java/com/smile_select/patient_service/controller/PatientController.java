@@ -3,8 +3,7 @@ package com.smile_select.patient_service.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.smile_select.dentist_service.exception.ResourceNotFoundException;
-import com.smile_select.dentist_service.model.Dentist;
+import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
