@@ -13,17 +13,29 @@ default:
   image: maven:3.9.9-eclipse-temurin-21
 
 # Compile jobs for each microservice
-compile_account_service:
+compile_dentist_service:
   stage: compile
   script:
-    - echo "Compiling Account Service..."
-    - mvn -B clean compile --file backend/services/account-service/pom.xml
+    - echo "Compiling Dentist Service..."
+    - mvn -B clean compile --file backend/services/dentist-service/pom.xml
   tags:
     - docker
   artifacts:
     expire_in: 1 week
     paths:
-      - backend/services/account-service/target
+      - backend/services/dentist-service/target
+
+compile_patient_service:
+  stage: compile
+  script:
+    - echo "Compiling Patient Service..."
+    - mvn -B clean compile --file backend/services/patient-service/pom.xml
+  tags:
+    - docker
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - backend/services/patient-service/target
 
 compile_appointment_service:
   stage: compile
@@ -36,6 +48,7 @@ compile_appointment_service:
     expire_in: 1 week
     paths:
       - backend/services/appointment-service/target
+
 compile_auth_service:
   stage: compile
   script:
@@ -72,17 +85,26 @@ compile_notification_service:
     paths:
       - backend/services/notification-service/target
 
-
 # Test jobs for each microservice (commented out for now)
-# test_account_service:
+# test_dentist_service:
 #   stage: test
 #   script:
-#     - echo "Running tests for Account Service..."
-#     - mvn -B test --file backend/services/account-service/pom.xml
+#     - echo "Running tests for Dentist Service..."
+#     - mvn -B test --file backend/services/dentist-service/pom.xml
 #   tags:
 #     - docker
 #   dependencies:
-#     - compile_account_service
+#     - compile_dentist_service
+
+# test_patient_service:
+#   stage: test
+#   script:
+#     - echo "Running tests for Patient Service..."
+#     - mvn -B test --file backend/services/patient-service/pom.xml
+#   tags:
+#     - docker
+#   dependencies:
+#     - compile_patient_service
 
 # test_appointment_service:
 #   stage: test
@@ -123,6 +145,7 @@ compile_notification_service:
 #     - docker
 #   dependencies:
 #     - compile_notification_service
+
 # Job for frontend
 build_vue_frontend:
   stage: compile
@@ -136,6 +159,6 @@ build_vue_frontend:
   tags:
     - docker
   artifacts:
-      expire_in: 1 week
-      paths:
-        - smile-select-frontend/dist
+    expire_in: 1 week
+    paths:
+      - smile-select-frontend/dist
