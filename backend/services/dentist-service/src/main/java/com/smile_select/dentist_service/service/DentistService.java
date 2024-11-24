@@ -1,7 +1,5 @@
 package com.smile_select.dentist_service.service;
 
-import com.smile_select.dentist_service.dto.DentistDTO;
-import com.smile_select.dentist_service.dto.DentistUpdateDTO;
 import com.smile_select.dentist_service.exception.ResourceNotFoundException;
 import com.smile_select.dentist_service.model.Clinic;
 import com.smile_select.dentist_service.model.Dentist;

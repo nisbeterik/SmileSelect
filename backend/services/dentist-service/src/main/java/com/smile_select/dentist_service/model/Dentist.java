@@ -1,17 +1,9 @@
 package com.smile_select.dentist_service.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "dentist")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class Dentist {
 
     @Id
@@ -36,4 +28,84 @@ public class Dentist {
 
     @Transient
     private Long clinicId;
+
+    // No-argument constructor
+    public Dentist() {
+    }
+
+    // All-argument constructor
+    public Dentist(long id, String firstName, String lastName, String email, String password, Clinic clinic, Long clinicId) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.clinic = clinic;
+        this.clinicId = clinicId;
+    }
+
+    // Getters and setters
+
+    // id
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    // firstName
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    // lastName
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    // email
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    // password
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // clinic
+    public Clinic getClinic() {
+        return clinic;
+    }
+
+    public void setClinic(Clinic clinic) {
+        this.clinic = clinic;
+    }
+
+    // clinicId
+    public Long getClinicId() {
+        return clinicId;
+    }
+
+    public void setClinicId(Long clinicId) {
+        this.clinicId = clinicId;
+    }
 }
