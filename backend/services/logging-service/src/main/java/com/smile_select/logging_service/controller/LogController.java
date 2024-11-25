@@ -1,4 +1,4 @@
-package com.smile_select.controller;
+package com.smile_select.logging_service.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
