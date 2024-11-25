@@ -26,18 +26,22 @@ public class Patient {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
+    @Column(name = "role")
+    private String role = "PATIENT";
+
     // No-argument constructor
     public Patient() {
     }
 
     // All-argument constructor
-    public Patient(Long id, String firstName, String lastName, String email, String password, LocalDate dateOfBirth) {
+    public Patient(Long id, String firstName, String lastName, String email, String password, LocalDate dateOfBirth, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
+        this.role = role;
     }
 
     // Getters and setters
@@ -94,5 +98,13 @@ public class Patient {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
