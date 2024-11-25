@@ -5,8 +5,8 @@
       <div class="form-group">
         <label for="role">Role</label>
         <select id="role" v-model="role" required>
-          <option value="patient">Patient</option>
-          <option value="dentist">Dentist</option>
+          <option value="PATIENT">Patient</option>
+          <option value="DENTIST">Dentist</option>
         </select>
       </div>
 
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from '@/axios'; // Import the configured Axios instance
+import axios from '@/axios';
 
 export default {
   name: 'LoginView',
@@ -47,39 +47,32 @@ export default {
     return {
       email: '',
       password: '',
-      role: 'patient', // Default to patient role
+      role: 'PATIENT',
       errorMessage: '',
     };
   },
   methods: {
     async handleLogin() {
       try {
-        const endpoint = `/accounts/login/${this.role}`;
+        const endpoint = `/auth/login`;
         const response = await axios.post(endpoint, {
           email: this.email,
           password: this.password,
+          role: this.role,
         });
-        console.log('Login Successful:', response.data);
 
         const token = response.data.token;
 
         if (token) {
-          // Store the token in localStorage
           localStorage.setItem('jwtToken', token);
+          this.$emit('loginSuccess', this.role);
         } else {
-          throw new Error('Token not found in response');
+          throw new Error('Token not found');
         }
-
-        // Emit success event to parent component with role
-        this.$emit('loginSuccess', this.role);
       } catch (error) {
-        this.errorMessage = 'Login failed. Please try again.';
-        console.error('Login Error:', error);
+        this.errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
       }
     },
   },
 };
 </script>
-
-<style scoped>
-</style>
