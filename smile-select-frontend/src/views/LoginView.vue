@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from '@/axios'; // Import the configured Axios instance
+import axios from '@/axios';
 
 export default {
   name: 'LoginView',
@@ -47,7 +47,7 @@ export default {
     return {
       email: '',
       password: '',
-      role: 'PATIENT', // Default to patient role
+      role: 'PATIENT',
       errorMessage: '',
     };
   },
@@ -58,29 +58,21 @@ export default {
         const response = await axios.post(endpoint, {
           email: this.email,
           password: this.password,
-          role: this.role.toUpperCase(),
+          role: this.role,
         });
-        console.log('Login Successful:', response.data);
 
         const token = response.data.token;
 
         if (token) {
-          // Store the token in localStorage
           localStorage.setItem('jwtToken', token);
+          this.$emit('loginSuccess', this.role);
         } else {
-          throw new Error('Token not found in response');
+          throw new Error('Token not found');
         }
-
-        // Emit success event to parent component with role
-        this.$emit('loginSuccess', this.role);
       } catch (error) {
-        this.errorMessage = 'Login failed. Please try again.';
-        console.error('Login Error:', error);
+        this.errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
       }
     },
   },
 };
 </script>
-
-<style scoped>
-</style>
