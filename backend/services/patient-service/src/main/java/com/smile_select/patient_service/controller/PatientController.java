@@ -36,13 +36,20 @@ public class PatientController {
         return new ResponseEntity<>("Patient registered successfully!", HttpStatus.CREATED);
     }
 
-    // Get a specific patient by ID (ensures only the authenticated user can access)
-    @GetMapping("/{id}")
+    // Get patient by email
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Patient> getPatientByEmail(@PathVariable("email") String email) {
+        Patient patient = patientService.findPatientByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with email: " + email));
+        return ResponseEntity.ok(patient);
+    }
+
+    // Get patient by ID
+    @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<PatientDTO> getPatientById(@PathVariable("id") Long id) {
         String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Patient patient = patientService.getPatientById(id, userEmail);
 
-        // Map to DTO
         PatientDTO response = new PatientDTO(patient.getId(), patient.getFirstName(), patient.getLastName(),
                 patient.getEmail());
         return ResponseEntity.ok(response);
@@ -59,6 +66,7 @@ public class PatientController {
         return ResponseEntity.ok(patients);
     }
 
+    // Update patient details
     @PatchMapping("/{id}")
     public ResponseEntity<?> updatePatientDetails(
             @PathVariable("id") Long id,
@@ -74,14 +82,5 @@ public class PatientController {
         String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         patientService.deletePatientById(id, userEmail);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // add endpoint for updating password
-
-    @GetMapping("/by-email")
-    public ResponseEntity<Patient> getPatientByEmail(@RequestParam("email") String email) {
-        Patient patient = patientService.findPatientByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with email: " + email));
-        return ResponseEntity.ok(patient);
     }
 }

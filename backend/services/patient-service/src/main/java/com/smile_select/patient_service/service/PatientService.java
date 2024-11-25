@@ -5,6 +5,7 @@ import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import com.smile_select.patient_service.model.Patient;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +40,23 @@ public class PatientService {
     }
 
     // Retrieve patient by ID
+    /*
+     * public Patient getPatientById(Long id, String userEmail) {
+     * // Mock authentication
+     * String authenticatedEmail = "love.strandang@gmail.com"; // Use a hardcoded
+     * email to simulate an authenticated
+     * // user
+     * return patientRepository.findById(id)
+     * .filter(patient -> patient.getEmail().equals(authenticatedEmail))
+     * .orElseThrow(() -> new
+     * ResourceNotFoundException("Patient not found or access denied for ID: " +
+     * id));
+     * }
+     */
+
     public Patient getPatientById(Long id, String userEmail) {
         return patientRepository.findById(id)
-                .filter(patient -> patient.getEmail().equals(userEmail))
+                .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
 
@@ -69,5 +84,4 @@ public class PatientService {
         }
         patientRepository.save(patient);
     }
-
 }
