@@ -39,21 +39,6 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    // Retrieve patient by ID
-    /*
-     * public Patient getPatientById(Long id, String userEmail) {
-     * // Mock authentication
-     * String authenticatedEmail = "love.strandang@gmail.com"; // Use a hardcoded
-     * email to simulate an authenticated
-     * // user
-     * return patientRepository.findById(id)
-     * .filter(patient -> patient.getEmail().equals(authenticatedEmail))
-     * .orElseThrow(() -> new
-     * ResourceNotFoundException("Patient not found or access denied for ID: " +
-     * id));
-     * }
-     */
-
     public Patient getPatientById(Long id, String userEmail) {
         return patientRepository.findById(id)
                 .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
