@@ -66,7 +66,7 @@ public class MqttConfig {
         String clientId = "serverOut-" + UUID.randomUUID().toString();
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         messageHandler.setAsync(true);
-        messageHandler.setDefaultTopic("/appointments");
+        messageHandler.setDefaultTopic("/auth");
         messageHandler.setDefaultRetained(false); 
         return messageHandler;
     }
