@@ -11,10 +11,10 @@ spring:
     gateway:
       globalcors:
         corsConfigurations:
-          '[/**]':  
-            allowedOrigins: "*"  
-            allowedMethods: "*"  
-            allowedHeaders: "*"  
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
       routes:
         - id: appointment-service
           uri: http://localhost:8081 # Static URL for appointment-service
@@ -31,15 +31,22 @@ spring:
           predicates:
             - Path=/api/dentists/**
 
+        - id: logging-service
+          uri: http://localhost:8084 # Static URL for patient-service
+          predicates:
+            - Path=/api/logs/**
+
         - id: notification-service
-          uri: http://localhost:8084 # Static URL for notification-service
+          uri: http://localhost:8085 # Static URL for notification-service
           predicates:
             - Path=/api/notifications/**
 
         - id: patient-service
-          uri: http://localhost:8085 # Static URL for patient-service
+          uri: http://localhost:8086 # Static URL for patient-service
           predicates:
             - Path=/api/patients/**
+
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG

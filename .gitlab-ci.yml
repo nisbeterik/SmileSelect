@@ -62,6 +62,18 @@ compile_gateway_service:
     paths:
       - backend/services/gateway-service/target
 
+compile_logging_service:
+  stage: compile
+  script:
+    - echo "Compiling Logging Service..."
+    - mvn -B clean compile --file backend/services/logging-service/pom.xml
+  tags:
+    - docker
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - backend/services/logging-service/target
+
 compile_notification_service:
   stage: compile
   script:
