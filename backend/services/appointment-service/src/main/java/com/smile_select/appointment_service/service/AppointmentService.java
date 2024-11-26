@@ -1,17 +1,35 @@
 package com.smile_select.appointment_service.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.smile_select.appointment_service.model.Appointment;
+import com.smile_select.appointment_service.mqtt.MqttGateway;
 import com.smile_select.appointment_service.repository.AppointmentRepository;
 
 @Service
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    
+    @Autowired
+	MqttGateway mqttGateway;
+
+    // ObjectMapper set up to handle LocalDateTime, which it does not by default
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule()
+                    .addSerializer(LocalDateTime.class,
+                            new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     @Autowired
     public AppointmentService(AppointmentRepository appointmentRepository) {
@@ -52,6 +70,18 @@ public class AppointmentService {
 
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
         return appointmentRepository.findByPatientId(patientId);
+    }
+
+    // Method for publishing an MQTT message containting a stringified appointment JSON-object
+    public void publishAppointmentMessage(String topic, Appointment appointment) {
+        try {
+            String message = objectMapper.writeValueAsString(appointment);
+            mqttGateway.publishMessage(message, topic);
+            System.out.println("Published message to topic: " + topic);
+        } catch (Exception e) {
+            System.err.println("Failed to publish message to topic " + topic + ": " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 }
