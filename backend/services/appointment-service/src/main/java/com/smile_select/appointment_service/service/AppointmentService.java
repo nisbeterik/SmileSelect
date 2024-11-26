@@ -72,7 +72,8 @@ public class AppointmentService {
         return appointmentRepository.findByPatientId(patientId);
     }
 
-    public void publishMessage(String topic, Appointment appointment) {
+    // Method for publishing an MQTT message containting a stringified appointment JSON-object
+    public void publishAppointmentMessage(String topic, Appointment appointment) {
         try {
             String message = objectMapper.writeValueAsString(appointment);
             mqttGateway.publishMessage(message, topic);

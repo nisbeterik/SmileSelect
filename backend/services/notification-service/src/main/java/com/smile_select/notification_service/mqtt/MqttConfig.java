@@ -1,4 +1,3 @@
-
 package com.smile_select.notification_service.mqtt;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -12,11 +11,9 @@ import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
-import org.springframework.integration.mqtt.support.MqttHeaders;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessagingException;
+
 import java.util.UUID;
 
 @Configuration
@@ -45,37 +42,17 @@ public class MqttConfig {
     @Bean
     public MessageProducer inbound() {
         String clientId = "serverIn-" + UUID.randomUUID().toString();
-        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(clientId,
-                mqttClientFactory(), "#");
+        MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
+            clientId, 
+            mqttClientFactory(), 
+            "#"
+        );
 
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
-    }
-
-    @Bean
-    @ServiceActivator(inputChannel = "mqttInputChannel")
-    public MessageHandler handler() {
-        return new MessageHandler() {
-            @Override
-            public void handleMessage(Message<?> message) throws MessagingException {
-                String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
-
-                // Handle topics
-
-                switch (topic) {
-                    case "/appointments/new":
-                        System.out.println("New appointment slot posted");
-                        System.out.println("Apppointment: " + message.getPayload());
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        };
     }
 
     @Bean
@@ -90,7 +67,9 @@ public class MqttConfig {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("/notifications");
-        messageHandler.setDefaultRetained(false);
+        messageHandler.setDefaultRetained(false); 
         return messageHandler;
     }
 }
+
+

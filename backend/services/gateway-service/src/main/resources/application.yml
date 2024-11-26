@@ -16,25 +16,37 @@ spring:
             allowedMethods: '*'
             allowedHeaders: '*'
       routes:
-        - id: account-service
-          uri: http://localhost:8081 # Static URL for account-service
-          predicates:
-            - Path=/api/accounts/**
-
         - id: appointment-service
-          uri: http://localhost:8082 # Static URL for notification-service
+          uri: http://localhost:8081 # Static URL for appointment-service
           predicates:
             - Path=/api/appointments/**
 
+        - id: auth-service
+          uri: http://localhost:8082  # Static URL for auth-service
+          predicates:
+            - Path=/api/auth/**
+
+        - id: dentist-service
+          uri: http://localhost:8083 # Static URL for dentist-service
+          predicates:
+            - Path=/api/dentists/**
+
+        - id: logging-service
+          uri: http://localhost:8084 # Static URL for patient-service
+          predicates:
+            - Path=/api/logs/**
+
         - id: notification-service
-          uri: http://localhost:8083 # Static URL for appointment-service
+          uri: http://localhost:8085 # Static URL for notification-service
           predicates:
             - Path=/api/notifications/**
 
-        - id: logging-service
-          uri: http://localhost:8086 # Static URL for logging-service
+        - id: patient-service
+          uri: http://localhost:8086 # Static URL for patient-service
           predicates:
-            - Path=/api/logs/**
+            - Path=/api/patients/**
+
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
