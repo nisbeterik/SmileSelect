@@ -36,6 +36,7 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
         Appointment createdAppointment = appointmentService.save(appointment);
+        appointmentService.publishAppointmentMessage("/appointments/new", createdAppointment);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 
