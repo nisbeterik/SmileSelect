@@ -60,3 +60,6 @@ pnpm-debug.log*
 
 /smile-select-frontend/dist
 .vscode/settings.json
+backend/services/auth-service/src/main/resources/env.properties
+backend/services/dentist-service/src/main/resources/env.properties
+backend/services/patient-service/src/main/resources/env.properties
