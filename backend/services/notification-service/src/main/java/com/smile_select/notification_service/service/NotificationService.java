@@ -11,18 +11,24 @@ import com.smile_select.notification_service.repository.NotificationRepository;
 public class NotificationService {
     
     private final NotificationRepository notificationRepository;
+    private final EmailService emailService;
 
     @Autowired
     MqttGateway mqttGateway;
 
     @Autowired
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, EmailService emailService) {
         this.notificationRepository = notificationRepository;
+        this.emailService = emailService;
     }
 
     // Method for publishing MQTT messages
     public void publishMessage(String payload, String topic){
         mqttGateway.publishMessage(payload, topic);
+    }
+
+    public void sendEmail(String to, String subject, String content){
+        emailService.sendEmail(to, subject, content);
     }
 
     public Notification save(Notification notification) {
