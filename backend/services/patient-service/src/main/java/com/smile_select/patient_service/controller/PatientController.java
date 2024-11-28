@@ -54,6 +54,22 @@ public class PatientController {
                 patient.getEmail());
         return ResponseEntity.ok(response);
     }
+    //find patient
+    @GetMapping("/search")
+        public ResponseEntity<List<PatientDTO>> searchPatients(
+            @RequestParam(required = false) String query
+        ) {
+            List<PatientDTO> patients = patientService.searchPatients(query).stream()
+                .map(patient -> new PatientDTO(
+                    patient.getId(), 
+                    patient.getFirstName(), 
+                    patient.getLastName(), 
+                    patient.getEmail()
+                ))
+                .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(patients);
+    }
 
     // Get all patients
     @GetMapping

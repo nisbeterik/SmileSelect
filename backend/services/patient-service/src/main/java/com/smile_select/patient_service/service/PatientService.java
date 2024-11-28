@@ -5,10 +5,15 @@ import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import com.smile_select.patient_service.model.Patient;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -83,5 +88,39 @@ public class PatientService {
             patient.setDateOfBirth(updateDetails.getDateOfBirth());
         }
         patientRepository.save(patient);
+    }
+
+    //find a patient from partial information
+    public List<Patient> searchPatients(String searchQuery) {
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return new ArrayList<>();
+        }  
+
+        final String finalSearchQuery = searchQuery.trim().toLowerCase();
+
+        return patientRepository.findAll((Specification<Patient>) (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            try {
+                Long id = Long.parseLong(finalSearchQuery);
+                predicates.add(criteriaBuilder.equal(root.get("id"), id));
+            } catch (NumberFormatException error) {
+                predicates.add(criteriaBuilder.or(
+                    criteriaBuilder.like( //checks email
+                        criteriaBuilder.lower(root.get("email")),
+                        "%" + finalSearchQuery + "%"
+                    ),
+                    criteriaBuilder.like( //checks first name
+                        criteriaBuilder.lower(root.get("first_name")),
+                        "%" + finalSearchQuery + "%"
+                    ),
+                    criteriaBuilder.like( //checks last name
+                        criteriaBuilder.lower(root.get("last_name")),
+                        "%" + finalSearchQuery + "%"
+                    )
+                ));
+            }      
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
     }
 }
