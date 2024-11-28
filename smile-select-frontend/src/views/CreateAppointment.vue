@@ -82,6 +82,7 @@
           </p>
         </div>
         <button @click="closeCurrentModal">Close</button>
+        <button @click="deleteAppointment">Delete</button>
       </div>
     </div>
   </div>
@@ -503,6 +504,11 @@ export default {
         );
       }
     },
+    async deleteAppointment(){
+      var response = await this.$axios.delete(`/appointments/${this.selectedEvent.id}`);
+      var deletedAppointment = response.data;
+      console.log(deletedAppointment)
+    }
   },
 };
 </script>
