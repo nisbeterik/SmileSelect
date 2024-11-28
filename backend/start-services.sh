@@ -9,6 +9,11 @@ SERVICES=(
   "$SCRIPT_DIR/services/appointment-service"
   "$SCRIPT_DIR/services/gateway-service"
   "$SCRIPT_DIR/services/notification-service"
+  "$SCRIPT_DIR/services/dentist-service"
+  "$SCRIPT_DIR/services/patient-service"
+  "$SCRIPT_DIR/services/auth-service"
+  "$SCRIPT_DIR/services/logging-service"
+
 )
 
 # Start each service
