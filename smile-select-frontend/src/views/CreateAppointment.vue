@@ -499,15 +499,35 @@ export default {
         });
       } catch (error) {
         console.error(
-          'Error saving appointment:',
+          'Error loading appointment:',
           error.response?.data || error.message
         );
       }
     },
     async deleteAppointment(){
-      var response = await this.$axios.delete(`/appointments/${this.selectedEvent.id}`);
+      try {
+        const appointmentId = this.selectedEvent.id;
+
+        var response = await this.$axios.delete(`/appointments/${appointmentId}`);
       var deletedAppointment = response.data;
       console.log(deletedAppointment)
+
+        this.calendarOptions.events = this.calendarOptions.events.filter(event => event.id !== appointmentId);
+
+        this.closeCurrentModal();
+        
+      } catch (error) {
+        alert('Error deleting appointment');
+        console.error(
+            'Error deleteing appointment:',
+            error.response?.data || error.message
+          );
+      }
+    },
+    async checkPatient(patientID){
+      var response = await this.$axios.get(`/patients/${patientId}`);
+      alert("git merge --force")
+      console.log(response);
     }
   },
 };
