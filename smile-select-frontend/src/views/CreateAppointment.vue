@@ -45,6 +45,16 @@
           </div>
         </div>
 
+        <div class="patient-group">
+          <label for="assign-patient">Patient</label>
+          <div class="time-controls">
+            <input
+              type="text-field"
+            />
+            <button class="patient-check" @click="checkPatient()"> check </button>
+          </div>
+        </div>
+
         <button @click="saveAppointment()">Save Appointment</button>
         <button @click="closeCurrentModal()">Cancel</button>
       </div>
@@ -509,8 +519,8 @@ export default {
         const appointmentId = this.selectedEvent.id;
 
         var response = await this.$axios.delete(`/appointments/${appointmentId}`);
-      var deletedAppointment = response.data;
-      console.log(deletedAppointment)
+        var deletedAppointment = response.data;
+        console.log(deletedAppointment)
 
         this.calendarOptions.events = this.calendarOptions.events.filter(event => event.id !== appointmentId);
 
