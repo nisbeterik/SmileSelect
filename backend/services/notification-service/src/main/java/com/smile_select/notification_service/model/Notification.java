@@ -5,16 +5,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import jakarta.persistence.Column;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Notification {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "email", nullable = false, length = 100)
     private String email;
@@ -25,46 +33,4 @@ public class Notification {
     @Column(name = "message", nullable = false)
     private String message;
 
-    public Notification() {
-    }
-
-    public Notification(String email, LocalDateTime time, String message) {
-        this.email = email;
-        this.time = time;
-        this.message = message;
-    }
-
-    // Getters and Setters
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDateTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalDateTime time) {
-        this.time = time;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

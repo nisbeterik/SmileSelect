@@ -26,7 +26,44 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 
 ## <a id="software-architechture"></a>Software Architechture 
 
+<details><summary>Component Diagram</summary>
 
+![Component Diagram](assets/diagrams/component-diagram.png)
+
+*This component diagram represents a microservice-based architecture for a distributed dental management system. The system is made up of multiple microservices, a central API Gateway, and an MQTT broker for asynchronous communication between services. Some details of the architecture are as follows:*
+
+**User Interfaces:**
+
+The system has two frontends: Patient UI and Dentist UI, which interact with the backend via the API Gateway using RESTful HTTP communication. 
+
+**API Gateway:**
+
+Acts as a single entry point for external communication, forwarding user requests to the respective microservices (i.e. Appointment-Service, Dentist-Service).
+
+**Microservices:**
+
+Each microservice is designed for a specific functionality:
+
+* Appointment-Service: Manages appointments.
+* Auth-Service: Handles authentication and authorization.
+* Dentist-Service: Manages dentist-related data.
+* Logging-Service: Handles logging operations for monitoring of events.
+* Notification-Service: Sends notifications via MQTT.
+* Patient-Service: Manages patient-related data.
+
+
+
+**Databases**:
+
+Each microservice (except Auth-Service) has a dedicated database to store its data, ensuring modularity and scalability.
+
+**Communication**:
+
+* Synchronous communication (REST) occurs between the API Gateway and microservices.
+* Asynchronous communication (MQTT) is used for inter-service messaging, improving decoupling and scalability.
+
+
+</details>
 
 ## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
 
