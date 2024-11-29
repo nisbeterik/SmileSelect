@@ -84,4 +84,11 @@ public class PatientService {
         }
         patientRepository.save(patient);
     }
+
+    public String getPatientEmailById(Long patientId) {
+        return patientRepository.findById(patientId)
+                .map(Patient::getEmail)
+                .orElse(null);
+    }
+
 }

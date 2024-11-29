@@ -1,5 +1,8 @@
 package com.smile_select.patient_service.mqtt;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
@@ -7,10 +10,16 @@ import org.springframework.stereotype.Component;
 import com.smile_select.patient_service.service.PatientService;
 import org.springframework.integration.mqtt.support.MqttHeaders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class MqttTopicHandler {
 
     private final PatientService patientService;
+
+    @Autowired
+    private MqttGateway mqttGateway;
 
     public MqttTopicHandler(PatientService patientService) {
         this.patientService = patientService;
@@ -28,8 +37,46 @@ public class MqttTopicHandler {
                 System.err.println("Payload: " + message.getPayload());
                 break;
 
+            case "/appointments/created":
+                processAppointmentCreated(message.getPayload());
+        }
+
     }
 
+    private void processAppointmentCreated(String payload) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(payload);
+
+            Long appointmentId = rootNode.path("appointmentId").asLong();
+            Long patientId = rootNode.path("patientId").asLong();
+            String startTime = rootNode.path("startTime").asText();
+
+            // Fetch patient email
+            System.out.println("Fetching email for patientId: " + patientId);
+            String patientEmail = patientService.getPatientEmailById(patientId);
+            System.out.println("Retrieved patientEmail: " + patientEmail);
+
+
+            if (patientEmail != null) {
+                // Prepare message to publish
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("appointmentId", appointmentId);
+                messageMap.put("patientId", patientId);
+                messageMap.put("patientEmail", patientEmail);
+                messageMap.put("startTime", startTime);
+
+                String messageToPublish = objectMapper.writeValueAsString(messageMap);
+
+                // Publish to the new topic
+                mqttGateway.publishMessage(messageToPublish, "/appointments/with-email");
+                System.out.println("Published message to /appointments/with-email");
+            } else {
+                System.err.println("Patient email not found for patientId: " + patientId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
