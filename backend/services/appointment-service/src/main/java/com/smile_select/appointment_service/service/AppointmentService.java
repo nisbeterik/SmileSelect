@@ -3,7 +3,9 @@ package com.smile_select.appointment_service.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,4 +86,22 @@ public class AppointmentService {
         }
     }
 
+    public void publishAppointmentCreatedEvent(Appointment appointment) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("appointmentId", appointment.getId());
+            messageMap.put("patientId", appointment.getPatientId());
+            messageMap.put("startTime", appointment.getStartTime());
+
+            String message = objectMapper.writeValueAsString(messageMap);
+            mqttGateway.publishMessage(message, "/appointments/created");
+            System.out.println("Published appointment created event to topic: /appointments/created");
+        } catch (Exception e) {
+            System.err.println("Failed to publish appointment created event: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
