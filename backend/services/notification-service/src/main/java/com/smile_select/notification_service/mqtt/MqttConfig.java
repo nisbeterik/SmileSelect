@@ -44,8 +44,9 @@ public class MqttConfig {
         String clientId = "serverIn-" + UUID.randomUUID().toString();
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
             clientId, 
-            mqttClientFactory(), 
-            "#"
+            mqttClientFactory(),
+            "/appointments/with-email"
+
         );
 
         adapter.setCompletionTimeout(5000);

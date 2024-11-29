@@ -35,6 +35,10 @@ public class MqttTopicHandler {
             case "/appointments/dentist-cancelled":
                 notificationService.processAppointmentCancellationByDentist(message.getPayload());
                 break;
+
+            case "/appointments/with-email":
+                notificationService.processAppointmentWithEmail(message.getPayload());
+                break;
         }
     }
 
