@@ -91,16 +91,16 @@ public class PatientService {
     }
 
     //find a patient from partial information
-    public List<Patient> searchPatients(String searchQuery) {
-        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+    public List<Patient> searchPatients(String query) {
+        if (query == null || query.trim().isEmpty()) {
             return new ArrayList<>();
         }  
 
-        final String finalSearchQuery = searchQuery.trim().toLowerCase();
+        final String finalSearchQuery = query.trim().toLowerCase();
 
-        return patientRepository.findAll((Specification<Patient>) (root, query, criteriaBuilder) -> {
+        return patientRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
+            System.out.println(predicates + "innan");
             try {
                 Long id = Long.parseLong(finalSearchQuery);
                 predicates.add(criteriaBuilder.equal(root.get("id"), id));
@@ -120,7 +120,8 @@ public class PatientService {
                     )
                 ));
             }      
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            System.out.println(predicates + "Efter");
+                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         });
     }
 }

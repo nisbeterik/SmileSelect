@@ -50,8 +50,9 @@
           <div class="time-controls">
             <input
               type="text-field"
+              v-model="patientQuery"
             />
-            <button class="patient-check" @click="checkPatient()"> check </button>
+            <button class="patient-check" @click="findPatientByEmail()"> check </button>
           </div>
         </div>
 
@@ -167,6 +168,9 @@ export default {
         endTime: null,
         date: null,
       },
+      patientQuery: null,
+      patientId: null,
+      searchResults: null,
       selectedEvent: null,
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
       intervalId: null,
@@ -417,6 +421,8 @@ export default {
      }
 
       this.selectedEvent = null;
+      this.patientId = null;
+      this.patientQuery = null;
       this.showAppointmentDetailsModal = false;
       document.querySelectorAll('.fc-event').forEach((el) => el.classList.remove('selected-event'));
       this.showCreateAppointmentModal = false;
@@ -432,6 +438,10 @@ export default {
       }
 
       try {
+        console.log(this.patientQuery)
+        if (this.patientQuery) {
+          await this.findPatientByEmail();
+        }
         
         const overlap = this.checkOverlap(slot);
         if (overlap) {
@@ -456,9 +466,11 @@ export default {
           dentistId: `${this.HARDCODED_DENTIST_ID}`,
           startTime: `${startDateTime}`,
           endTime: `${endDateTime}`,
+          patientId: `${this.patientId}`
         };
 
         const response = await this.$axios.post('/appointments', newAppointment);
+        console.log(response)
         const appointmentId = response.data.id;
         
 
@@ -534,12 +546,35 @@ export default {
           );
       }
     },
-    async checkPatient(patientID){
-      var response = await this.$axios.get(`/patients/${patientId}`);
-      alert("git merge --force")
-      console.log(response);
-    }
-  },
+    async searchPatients() {
+      try {
+          var response = await this.$axios.get(`/patients/search`, {
+            params: {
+              query: this.patientQuery
+            }
+          });
+          
+          // Store or process the results
+          this.searchResults = response.data;
+          console.log(this.searchResults)
+        } catch (error) {
+          console.error('Error searching patients:', error);
+      }
+    },
+    async findPatientByEmail(){
+      try {
+          var response = await this.$axios.get(`/patients/email/${this.patientQuery}`);
+          console.log(response.data);
+          this.patientId = response.data.id;
+
+          console.log(this.patientId, "ideeet");
+
+
+    } catch (error) {
+          console.error('Error finding patient email patients:', error);
+      }
+  }
+ }
 };
 </script>
 
