@@ -438,7 +438,6 @@ export default {
       }
 
       try {
-        console.log(this.patientQuery)
         if (this.patientQuery) {
           await this.findPatientByEmail();
         }
@@ -461,6 +460,15 @@ export default {
           slot.date,
           slot.endTime
         );
+        
+        var appointmentColor = bookedColor;
+        var appointmentTitle = 'Booked';
+
+        if (this.patientId === null) {
+            appointmentColor = availableColor;
+            appointmentTitle = 'Available';
+        }
+        
 
         var newAppointment = {
           dentistId: `${this.HARDCODED_DENTIST_ID}`,
@@ -476,10 +484,10 @@ export default {
 
         this.calendarOptions.events.push({
           id: appointmentId,
-          title: 'Available',
+          title: appointmentTitle,
           start: `${slot.date}T${slot.startTime}`,
           end: `${slot.date}T${slot.endTime}`,
-          backgroundColor: availableColor,
+          backgroundColor: appointmentColor,
         });
       } catch (error) {
         alert('Error saving appointment');
