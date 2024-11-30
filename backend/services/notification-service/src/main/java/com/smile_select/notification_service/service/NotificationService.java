@@ -2,6 +2,7 @@ package com.smile_select.notification_service.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,11 +64,13 @@ public class NotificationService {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             JsonNode rootNode = objectMapper.readTree(payload);
 
             Long appointmentId = rootNode.path("appointmentId").asLong();
             Long patientId = rootNode.path("patientId").asLong();
             String patientEmail = rootNode.path("patientEmail").asText();
+            String patientFirstName = rootNode.path("patientFirstName").asText();
             String startTime = rootNode.path("startTime").asText();
 
             if (patientEmail == null || patientEmail.isEmpty()) {
@@ -77,7 +80,7 @@ public class NotificationService {
 
             // Prepare email content
             String subject = "Your New Appointment is Scheduled";
-            String content = "Dear Patient,\n\n"
+            String content = "Dear " + patientFirstName + "\n\n"
                     + "Your dentist has scheduled a new appointment for you.\n"
                     + "Appointment ID: " + appointmentId + "\n"
                     + "Start Time: " + startTime + "\n\n"

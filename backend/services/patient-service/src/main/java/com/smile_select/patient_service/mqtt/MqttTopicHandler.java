@@ -2,6 +2,7 @@ package com.smile_select.patient_service.mqtt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smile_select.patient_service.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
@@ -54,21 +55,22 @@ public class MqttTopicHandler {
 
             // Fetch patient email
             System.out.println("Fetching email for patientId: " + patientId);
-            String patientEmail = patientService.getPatientEmailById(patientId);
-            System.out.println("Retrieved patientEmail: " + patientEmail);
+            Patient patient = patientService.getPatientByIdForEmail(patientId);
+            System.out.println("Retrieved patientEmail: " + patient.getEmail());
 
 
-            if (patientEmail != null) {
+            if (patient != null) {
                 // Prepare message to publish
                 Map<String, Object> messageMap = new HashMap<>();
                 messageMap.put("appointmentId", appointmentId);
                 messageMap.put("patientId", patientId);
-                messageMap.put("patientEmail", patientEmail);
+                messageMap.put("patientEmail", patient.getEmail());
+                messageMap.put("patientFirstName", patient.getFirstName());
                 messageMap.put("startTime", startTime);
 
                 String messageToPublish = objectMapper.writeValueAsString(messageMap);
 
-                // Publish to the new topic
+                // Publish to the topic
                 mqttGateway.publishMessage(messageToPublish, "/appointments/with-email");
                 System.out.println("Published message to /appointments/with-email");
             } else {

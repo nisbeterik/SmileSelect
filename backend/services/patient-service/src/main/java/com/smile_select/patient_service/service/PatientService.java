@@ -60,6 +60,11 @@ public class PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
 
+    public Patient getPatientByIdForEmail(Long id) {
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found for ID: " + id));
+    }
+
     // Delete a patient
     public void deletePatientById(Long id, String userEmail) {
         Patient patient = getPatientById(id, userEmail);

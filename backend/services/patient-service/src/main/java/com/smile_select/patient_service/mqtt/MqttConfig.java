@@ -41,12 +41,6 @@ public class MqttConfig {
 
     @Bean
     public MessageProducer inbound() {
-    //    String clientId = "serverIn-" + UUID.randomUUID().toString();
-    //    MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
-    //        clientId,
-    //        mqttClientFactory(),
-    //        "#"
-    //    );
 
         // Subscribe to /appointments/created
         String clientId = "patientServiceIn-" + UUID.randomUUID().toString();
@@ -71,7 +65,6 @@ public class MqttConfig {
     @Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound() {
-       // String clientId = "serverOut-" + UUID.randomUUID().toString();
         String clientId = "patientServiceOut-" + UUID.randomUUID().toString();
 
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
