@@ -96,13 +96,13 @@
         </div>
         <div v-else>
           <div class="patient-group">
-          <label for="assign-patient">Patient</label>
+          <label for="assign-patient">Add Patient</label>
           <div class="time-controls">
             <input
               type="text-field"
               v-model="patientQuery"
             />
-            <button class="patient-check" @click="findPatientByEmail()"> check </button>
+            <button class="patient-check" @click="addPatientToAppointment()"> Add </button>
           </div>
         </div>
         </div>
@@ -340,8 +340,6 @@ export default {
         } 
         
       });
-
-      
     },
 
     async createMultipleTimeSlots() {
@@ -604,10 +602,25 @@ export default {
             "id": this.selectedEvent.id,
             "patientId": null
           })
-        console.log(response)
-        this.selectedEvent.patientId = null; 
-     }
+        if (response.status === 200) {
+          this.selectedEvent.patientId = null; 
+        }
+      }
     },
+    async addPatientToAppointment() {
+      await this.findPatientByEmail();
+      if (this.patientId) {
+        const response = await this.$axios.patch(`/appointments`, 
+          {
+            "id": this.selectedEvent.id,
+            "patientId": this.patientId 
+          })
+        if (response.status === 200) {
+          this.selectedEvent.patientId = this.patientId; 
+        }
+      }
+    },
+
   }
 };
 </script>
