@@ -596,6 +596,18 @@ export default {
           console.error('Error finding patient email patients:', error);
       }
     },
+    async removePatientFromAppointment() {
+      const patientId = this.selectedEvent.id
+      if (patientId) {
+        const response = await this.$axios.patch(`/appointments`, 
+          {
+            "id": this.selectedEvent.id,
+            "patientId": null
+          })
+        console.log(response)
+        this.selectedEvent.patientId = null; 
+     }
+    },
   }
 };
 </script>
