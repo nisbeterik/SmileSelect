@@ -86,11 +86,25 @@
           <p>
             <strong>Patient Name:</strong><br />
             {{ selectedEvent.patientName }}
+            <button @click="removePatientFromAppointment">Remove</button>
           </p>
           <p>
             <strong>Patient Email:</strong><br />
             {{ selectedEvent.patientEmail }}
           </p>
+          
+        </div>
+        <div v-else>
+          <div class="patient-group">
+          <label for="assign-patient">Patient</label>
+          <div class="time-controls">
+            <input
+              type="text-field"
+              v-model="patientQuery"
+            />
+            <button class="patient-check" @click="findPatientByEmail()"> check </button>
+          </div>
+        </div>
         </div>
         <button @click="closeCurrentModal">Close</button>
         <button @click="deleteAppointment">Delete</button>
@@ -354,7 +368,7 @@ export default {
     async getPatientInfo(patientId) {
       try {
         const response = await this.$axios.get(
-          `/accounts/patients/${patientId}`
+          `/patients/booking/${patientId}`
         );
         return response.data;
       } catch (error) {
@@ -581,8 +595,8 @@ export default {
     } catch (error) {
           console.error('Error finding patient email patients:', error);
       }
+    },
   }
- }
 };
 </script>
 

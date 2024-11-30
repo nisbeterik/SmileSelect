@@ -59,11 +59,18 @@ public class PatientService {
      * }
      */
 
+
+     
     public Patient getPatientById(Long id, String userEmail) {
-        return patientRepository.findById(id)
+        return patientRepository.findById(id) 
                 .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
-    }
+    } 
+    public Patient getPatientByIdAsDentist(Long id) {
+        return patientRepository.findById(id) 
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
+    } 
+
 
     // Delete a patient
     public void deletePatientById(Long id, String userEmail) {

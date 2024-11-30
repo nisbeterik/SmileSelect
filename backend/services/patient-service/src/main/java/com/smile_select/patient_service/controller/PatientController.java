@@ -54,6 +54,15 @@ public class PatientController {
                 patient.getEmail());
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/booking/{id:[0-9]+}")
+    public ResponseEntity<PatientDTO> getPatientByIdAsDentist(@PathVariable("id") Long id) {
+        //String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Patient patient = patientService.getPatientByIdAsDentist(id);
+
+        PatientDTO response = new PatientDTO(patient.getId(), patient.getFirstName(), patient.getLastName(),
+                patient.getEmail());
+        return ResponseEntity.ok(response);
+    }
     //find patient
     @GetMapping("/search")
         public ResponseEntity<List<PatientDTO>> searchPatients(
