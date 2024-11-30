@@ -73,6 +73,13 @@ public class NotificationService {
             String patientFirstName = rootNode.path("patientFirstName").asText();
             String startTime = rootNode.path("startTime").asText();
 
+            System.out.println("appointmentId: " + appointmentId);
+            System.out.println("patientId: " + patientId);
+            System.out.println("patientEmail: " + patientEmail);
+            System.out.println("patientFirstName: " + patientFirstName);
+            System.out.println("startTime: " + startTime);
+
+
             if (patientEmail == null || patientEmail.isEmpty()) {
                 System.out.println("Patient email is missing in the payload.");
                 return;
