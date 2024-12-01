@@ -134,6 +134,9 @@ public class AppointmentController {
 
             appointmentService.save(appointment);
 
+            // Publish event for email notification when patient is added
+            appointmentService.publishAppointmentCreatedEvent(appointment);
+
             return ResponseEntity.ok(appointment);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
