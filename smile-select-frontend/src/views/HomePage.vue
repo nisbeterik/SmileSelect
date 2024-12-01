@@ -8,6 +8,7 @@
       <button @click="navigateTo('/create-appointment')">Create Appointment</button>
       <button @click="navigateTo('/map')">Map Page</button>
       <button @click="navigateTo('/auth')">Login</button>
+      <button @click="navigateTo('/available-slots')">Available Slots</button>
     </div>
   </div>
 </template>

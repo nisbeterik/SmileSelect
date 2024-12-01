@@ -86,14 +86,26 @@ public class AppointmentController {
     }
 
     @GetMapping(value = "/dentist/{dentistId}")
-    public ResponseEntity<?> getAppointmentsByDentistId(@PathVariable("dentistId") Long dentistId) {
-        List<Appointment> appointments = appointmentService.getAppointmentsByDentistId(dentistId);
-        if (appointments.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("There are no appointments associated with that dentist ID");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(appointments);
-    }
+    public ResponseEntity<?> getAppointmentsByDentistId(
+        @PathVariable("dentistId") Long dentistId,
+        @RequestParam(value = "onlyAvailable", required = false, defaultValue = "false") boolean onlyAvailable) {
+            List<Appointment> appointments;
+
+            if (onlyAvailable) {
+            
+                appointments = appointmentService.getAvailableAppointmentsByDentistId(dentistId);
+            } else {
+                
+                appointments = appointmentService.getAppointmentsByDentistId(dentistId);
+            }
+
+            if (appointments.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("There are no appointments associated with that dentist ID");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(appointments);
+            
+            }
 
     @GetMapping(value = "/patient/{patientId}")
     public ResponseEntity<?> getAppointmentsByPatientId(@PathVariable("patientId") Long patientId) {
