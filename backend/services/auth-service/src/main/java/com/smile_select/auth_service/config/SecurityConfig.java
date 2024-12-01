@@ -22,7 +22,7 @@ public class SecurityConfig {
     // Constructor injection of JwtAuthenticationFilter and
     // CustomAccessDeniedHandler
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-            CustomAccessDeniedHandler customAccessDeniedHandler) {
+                          CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
     }

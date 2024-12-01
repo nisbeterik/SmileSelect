@@ -5,41 +5,41 @@
       <form @submit.prevent="submitDentist">
         <label for="first_name_dentist">First Name:</label>
         <input
-            type="text"
-            id="first_name_dentist"
-            v-model="formData.firstName"
-            required
+          type="text"
+          id="first_name_dentist"
+          v-model="formData.firstName"
+          required
         /><br /><br />
 
         <label for="last_name_dentist">Last Name:</label>
         <input
-            type="text"
-            id="last_name_dentist"
-            v-model="formData.lastName"
-            required
+          type="text"
+          id="last_name_dentist"
+          v-model="formData.lastName"
+          required
         /><br /><br />
 
         <label for="email_dentist">Email:</label>
         <input
-            type="email"
-            id="email_dentist"
-            v-model="formData.email"
-            required
+          type="email"
+          id="email_dentist"
+          v-model="formData.email"
+          required
         /><br /><br />
 
         <label for="password_dentist">Password:</label>
         <input
-            type="password"
-            id="password_dentist"
-            v-model="formData.password"
-            required
+          type="password"
+          id="password_dentist"
+          v-model="formData.password"
+          required
         /><br /><br />
 
         <label for="clinic_dentist">Select Clinic:</label>
         <select
-            id="clinic_dentist"
-            v-model="formData.clinicId"
-            required
+          id="clinic_dentist"
+          v-model="formData.clinicId"
+          required
         >
           <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
             {{ clinic.name }}, {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}

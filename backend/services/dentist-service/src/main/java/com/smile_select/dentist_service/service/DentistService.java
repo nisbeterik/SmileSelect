@@ -38,12 +38,12 @@ public class DentistService {
 
     // ObjectMapper with support for LocalDate and LocalDateTime
     private final ObjectMapper objectMapper = new ObjectMapper()
-        .registerModule(new JavaTimeModule()
-                .addSerializer(LocalDateTime.class,
-                        new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .addSerializer(LocalDate.class,
-                        new LocalDateSerializer(DateTimeFormatter.ISO_LOCAL_DATE)))
-        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            .registerModule(new JavaTimeModule()
+                    .addSerializer(LocalDateTime.class,
+                            new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                    .addSerializer(LocalDate.class,
+                            new LocalDateSerializer(DateTimeFormatter.ISO_LOCAL_DATE)))
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     // Password Encrypter
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

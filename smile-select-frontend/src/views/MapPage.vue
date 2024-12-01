@@ -17,8 +17,7 @@ export default {
     LControlScale
   },
   data() {
-    return {
-    };
+    return {};
   },
 };
 </script>
@@ -30,6 +29,7 @@ body, html, #app {
   padding: 0;
   height: 100%;
 }
+
 .l-map-container {
   height: 100vh;
   width: 100vw;

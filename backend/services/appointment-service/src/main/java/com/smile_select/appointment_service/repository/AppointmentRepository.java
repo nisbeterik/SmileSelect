@@ -18,7 +18,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("SELECT a FROM Appointment a WHERE DATE(a.startTime) BETWEEN :startDate AND :endDate")
     public List<Appointment> findByStartTimeDateBetween(@Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+                                                        @Param("endDate") LocalDate endDate);
 
     public List<Appointment> findByDentistId(Long dentistId);
     public List<Appointment> findByPatientId(Long patientId);

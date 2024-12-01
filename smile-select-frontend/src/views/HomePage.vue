@@ -1,39 +1,38 @@
 <template>
-    <div class="home-page">
-      <h1>Welcome to SmileSelect</h1>
-      <h2>Smile-tacular dental care, just book and prepare!</h2>
-      <div class="button-container">
-        <button @click="navigateTo('/patient-registration')">Patient Registration Form</button>
-        <button @click="navigateTo('/dentist-registration')">Dentist Registration Form</button>
-        <button @click="navigateTo('/create-appointment')">Create Appointment</button>
-        <button @click="navigateTo('/map')">Map Page</button>
-        <button @click="navigateTo('/auth')">Login</button>
-        <button @click="navigateTo('/available-slots')">Available slots</button>
-      </div>
+  <div class="home-page">
+    <h1>Welcome to SmileSelect</h1>
+    <h2>Smile-tacular dental care, just book and prepare!</h2>
+    <div class="button-container">
+      <button @click="navigateTo('/patient-registration')">Patient Registration Form</button>
+      <button @click="navigateTo('/dentist-registration')">Dentist Registration Form</button>
+      <button @click="navigateTo('/create-appointment')">Create Appointment</button>
+      <button @click="navigateTo('/map')">Map Page</button>
+      <button @click="navigateTo('/auth')">Login</button>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "HomePage",
-    methods: {
-      navigateTo(path) {
-        this.$router.push(path);
-      },
+  </div>
+</template>
+
+<script>
+export default {
+  name: "HomePage",
+  methods: {
+    navigateTo(path) {
+      this.$router.push(path);
     },
-  };
-  </script>
-  
-  <style>
-  .button-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  </style>
+  },
+};
+</script>
+
+<style>
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+</style>
