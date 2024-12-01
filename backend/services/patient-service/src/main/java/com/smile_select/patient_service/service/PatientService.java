@@ -1,12 +1,24 @@
 package com.smile_select.patient_service.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.smile_select.patient_service.dto.PatientUpdateDTO;
 import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import com.smile_select.patient_service.model.Patient;
+import com.smile_select.patient_service.mqtt.MqttGateway;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 import java.util.ArrayList;
@@ -23,7 +35,20 @@ public class PatientService {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
+    private MqttGateway mqttGateway;
+
+    @Autowired
     private PatientRepository patientRepository;
+
+    // ObjectMapper with support for LocalDate and LocalDateTime
+    private final ObjectMapper objectMapper = new ObjectMapper()
+        .registerModule(new JavaTimeModule()
+                .addSerializer(LocalDateTime.class,
+                        new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .addSerializer(LocalDate.class,
+                        new LocalDateSerializer(DateTimeFormatter.ISO_LOCAL_DATE)))
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
 
     public Optional<Patient> findPatientByEmail(String email) {
         return patientRepository.findByEmail(email);
@@ -95,6 +120,45 @@ public class PatientService {
             patient.setDateOfBirth(updateDetails.getDateOfBirth());
         }
         patientRepository.save(patient);
+    }
+
+    public void handlePatientLoginRequest(String payload){
+
+        try {
+            // Parse loginRequest payload
+            JsonNode jsonNode = objectMapper.readTree(payload);
+
+            // Extract correlationId and email
+            String correlationId = jsonNode.get("correlationId").asText();
+            String email = jsonNode.get("email").asText();
+
+            System.out.println("Received login request for patient with email: " + email);
+
+            // Find patient with extracted email
+            Optional<Patient> patient = patientRepository.findByEmail(email);
+
+            // Update topic for response to include correlationId
+            String topic = "/auth/login-patient/response" + "/" + correlationId;
+
+            String responsePayload;
+            if (patient.isPresent()) {
+
+                // Convert patient object to JSON string
+                responsePayload = objectMapper.writeValueAsString(patient.get());
+            } else {
+
+                // Return empty JSON string if patient does not exist
+                responsePayload = "{}";
+            }
+
+            // Publish response to MQTT
+            System.out.println("Publishing login response under topic: " + topic);
+            mqttGateway.publishMessage(responsePayload, topic);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     //find a patient from partial information

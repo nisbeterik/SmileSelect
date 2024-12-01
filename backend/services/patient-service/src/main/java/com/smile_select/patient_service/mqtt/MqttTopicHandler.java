@@ -32,10 +32,8 @@ public class MqttTopicHandler {
         @Header(MqttHeaders.RECEIVED_TOPIC) String topic
     ) {
         switch (topic) {
-            case "/topic":
-                // Handle incoming message with specified topic by calling methods in patientService
-                System.out.println("Incoming message from topic: " + topic);
-                System.err.println("Payload: " + message.getPayload());
+            case "/auth/login-patient/request":
+                patientService.handlePatientLoginRequest(message.getPayload());
                 break;
 
             case "/appointments/created":
