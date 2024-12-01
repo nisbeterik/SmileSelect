@@ -20,6 +20,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     public List<Appointment> findByStartTimeDateBetween(@Param("startDate") LocalDate startDate,
                                                         @Param("endDate") LocalDate endDate);
 
+    @Query("SELECT a FROM Appointment a WHERE a.dentistId = :dentistId AND a.patientId IS NULL")
+    public List<Appointment> findAvailableAppointmentsByDentistId(@Param("dentistId") Long dentistId);
+
     public List<Appointment> findByDentistId(Long dentistId);
     public List<Appointment> findByPatientId(Long patientId);
 

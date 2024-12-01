@@ -115,7 +115,7 @@ export default defineComponent({
     },
     async fetchAppointmentsByDentist() {
       try {
-        const response = await axios.get(`/appointments/dentist/${this.selectedDentistId}`);
+        const response = await axios.get(`/appointments/dentist/${this.selectedDentistId}?onlyAvailable=true`);
         this.calendarOptions.events = response.data.map((appointment) => ({
           id: appointment.id,
           title: "Dentist Appointment",

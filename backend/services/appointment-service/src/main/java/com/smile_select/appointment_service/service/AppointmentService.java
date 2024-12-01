@@ -74,6 +74,10 @@ public class AppointmentService {
         return appointmentRepository.findByPatientId(patientId);
     }
 
+    public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
+        return appointmentRepository.findAvailableAppointmentsByDentistId(dentistId);
+    }
+
     // Method for publishing an MQTT message containting a stringified appointment JSON-object
     public void publishAppointmentMessage(String topic, Appointment appointment) {
         try {
