@@ -170,6 +170,7 @@ build_vue_frontend:
   script:
     - echo "Installing dependencies for Vue.js frontend..."
     - cd smile-select-frontend
+    - npm install @fullcalendar/list@^6.1.15
     - npm install --verbose
     - echo "Building Vue.js frontend..."
     - npm run build
