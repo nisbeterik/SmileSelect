@@ -3,9 +3,7 @@ package com.smile_select.appointment_service.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,20 +20,20 @@ import com.smile_select.appointment_service.repository.AppointmentRepository;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final MqttGateway mqttGateway;
-    private final ObjectMapper objectMapper;
+    
+    @Autowired
+	MqttGateway mqttGateway;
+
+    // ObjectMapper set up to handle LocalDateTime, which it does not by default
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule()
+                    .addSerializer(LocalDateTime.class,
+                            new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, MqttGateway mqttGateway) {
+    public AppointmentService(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
-        this.mqttGateway = mqttGateway;
-
-        // Configure the ObjectMapper
-        this.objectMapper = new ObjectMapper();
-        // Register the JavaTimeModule to handle Java 8 Date/Time types
-        this.objectMapper.registerModule(new JavaTimeModule());
-        // Disable writing dates as timestamps
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public Appointment save(Appointment appointment) {
@@ -86,21 +84,4 @@ public class AppointmentService {
         }
     }
 
-    public void publishAppointmentCreatedEvent(Appointment appointment) {
-        try {
-            // Use the class-level objectMapper
-            Map<String, Object> messageMap = new HashMap<>();
-            messageMap.put("appointmentId", appointment.getId());
-            messageMap.put("patientId", appointment.getPatientId());
-            messageMap.put("startTime", appointment.getStartTime()); // LocalDateTime
-
-            String message = objectMapper.writeValueAsString(messageMap);
-            System.out.println("Message being published: " + message);
-            mqttGateway.publishMessage(message, "/appointments/created");
-            System.out.println("Published appointment created event to topic: /appointments/created");
-        } catch (Exception e) {
-            System.err.println("Failed to publish appointment created event: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 }
