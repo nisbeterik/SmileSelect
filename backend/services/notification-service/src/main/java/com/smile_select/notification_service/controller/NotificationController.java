@@ -1,5 +1,7 @@
 package com.smile_select.notification_service.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import com.smile_select.notification_service.service.NotificationService;
 public class NotificationController {
 
     private final NotificationService notificationService;
-    
+
     @Autowired
     public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
@@ -28,4 +30,14 @@ public class NotificationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNotification);
     }
 
+    @PostMapping("/send")
+    public ResponseEntity<String> sendCustomEmail(@RequestBody Map<String, Object> requestBody) {
+        String to = (String) requestBody.get("to");
+        String subject = (String) requestBody.get("subject");
+        String content = (String) requestBody.get("content");
+
+        notificationService.sendEmail(to, subject, content);
+
+        return ResponseEntity.ok("Email sent successfully");
+    }
 }

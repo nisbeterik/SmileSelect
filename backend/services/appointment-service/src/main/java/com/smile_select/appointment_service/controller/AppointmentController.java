@@ -37,6 +37,10 @@ public class AppointmentController {
         }
         Appointment createdAppointment = appointmentService.save(appointment);
         appointmentService.publishAppointmentMessage("/appointments/new", createdAppointment);
+
+        // Publish created appointment to "/appointments/created" topic
+        appointmentService.publishAppointmentCreatedEvent(createdAppointment);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 
@@ -115,7 +119,10 @@ public class AppointmentController {
 
             if (incompleteAppointment.getPatientId() != null) {
                 appointment.setPatientId(incompleteAppointment.getPatientId());
+            } else if (incompleteAppointment.getPatientId() == null) {
+                appointment.setPatientId(null);
             }
+
 
             if (incompleteAppointment.getStartTime() != null) {
                 appointment.setStartTime(incompleteAppointment.getStartTime());
@@ -126,6 +133,9 @@ public class AppointmentController {
             }
 
             appointmentService.save(appointment);
+
+            // Publish event for email notification when patient is added
+            appointmentService.publishAppointmentCreatedEvent(appointment);
 
             return ResponseEntity.ok(appointment);
         } else {
@@ -143,5 +153,4 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }
     }
-
 }

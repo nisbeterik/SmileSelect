@@ -18,8 +18,8 @@ public class MqttTopicHandler {
 
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handleMessage(
-        Message<String> message, 
-        @Header(MqttHeaders.RECEIVED_TOPIC) String topic
+            Message<String> message,
+            @Header(MqttHeaders.RECEIVED_TOPIC) String topic
     ) {
         switch (topic) {
             case "/topic":
@@ -28,7 +28,7 @@ public class MqttTopicHandler {
                 System.err.println("Payload: " + message.getPayload());
                 break;
 
-    }
+        }
 
     }
 }

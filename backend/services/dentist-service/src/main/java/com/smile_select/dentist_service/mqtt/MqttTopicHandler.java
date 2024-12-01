@@ -18,15 +18,15 @@ public class MqttTopicHandler {
 
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handleMessage(
-        Message<String> message, 
-        @Header(MqttHeaders.RECEIVED_TOPIC) String topic
+            Message<String> message,
+            @Header(MqttHeaders.RECEIVED_TOPIC) String topic
     ) {
         switch (topic) {
             case "/auth/login-dentist/request":
                 dentistService.handleDentistLoginRequest(message.getPayload());
                 break;
 
-    }
+        }
 
     }
 }
