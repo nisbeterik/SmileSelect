@@ -11,6 +11,7 @@ import com.smile_select.notification_service.mqtt.MqttGateway;
 import com.smile_select.notification_service.repository.NotificationRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class NotificationService {
@@ -73,6 +74,14 @@ public class NotificationService {
             String patientFirstName = rootNode.path("patientFirstName").asText();
             String startTime = rootNode.path("startTime").asText();
 
+            // Convert startTime to LocalDateTime
+            LocalDateTime formatedTime = objectMapper.convertValue(startTime, LocalDateTime.class);
+
+            // Format startTime to a nicer format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
+            String formattedStartTime = formatedTime.format(formatter);
+
+
             System.out.println("appointmentId: " + appointmentId);
             System.out.println("patientId: " + patientId);
             System.out.println("patientEmail: " + patientEmail);
@@ -90,7 +99,7 @@ public class NotificationService {
             String content = "Dear " + patientFirstName + "\n\n"
                     + "Your dentist has scheduled a new appointment for you.\n"
                     + "Appointment ID: " + appointmentId + "\n"
-                    + "Start Time: " + startTime + "\n\n"
+                    + "Start Time: " + formattedStartTime + "\n\n"
                     + "Please contact us if you have any questions.\n\n"
                     + "Best regards,\n"
                     + "SmileSelect Team";
