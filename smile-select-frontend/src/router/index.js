@@ -9,10 +9,12 @@ import { createRouter, createWebHistory } from 'vue-router';
 import PatientDashboard from '@/views/PatientDashboard.vue';
 import DentistDashboard from '@/views/DentistDashboard.vue';
 import AuthPage from "@/views/AuthPage.vue";
+import AvailabilityPage from "@/views/AvailabilityPage.vue";
 
 const routes = [
   { path: "/", name: "Home", component: HomePage },
   { path: "/auth", name: "AuthPage", component: AuthPage },
+  { path: "/available-slots", name: "AvailabilityPage", component: AvailabilityPage },
   { path: "/patient-dashboard", name: "PatientDashboard", component: PatientDashboard },
   { path: "/dentist-dashboard", name: "DentistDashboard", component: DentistDashboard },
   { path: "/patient-registration", name: "PatientRegistration", component: PatientRegistrationForm },
