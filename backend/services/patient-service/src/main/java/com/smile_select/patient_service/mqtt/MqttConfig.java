@@ -47,7 +47,7 @@ public class MqttConfig {
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
                 clientId,
                 mqttClientFactory(),
-                "/appointments/created"
+                "#"
         );
 
         adapter.setCompletionTimeout(5000);
