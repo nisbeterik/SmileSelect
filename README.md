@@ -65,6 +65,15 @@ Each microservice (except Auth-Service) has a dedicated database to store its da
 
 </details>
 
+<details><summary>Entity-Relationship (ER) Diagram</summary>
+
+![Entity-Relationship Diagram](assets/diagrams/er-diagram.png)
+
+*This ER diagram represents and outlines the structure of a dental management system, capturing the core relationships and data flows between clinics, dentists, patients, appointments, and notifications.*
+*It models the relationships between these entities and their respective roles in the system.*
+
+</details>
+
 ## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
 
 * **Erik Nisbet** (@eriknis)
