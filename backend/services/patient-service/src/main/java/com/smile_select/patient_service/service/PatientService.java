@@ -191,4 +191,9 @@ public class PatientService {
             e.printStackTrace();
         }
     }
+    // Finding Patient id for email notification function
+    public Patient getPatientByIdForEmail(Long id) {
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
+    }
 }
