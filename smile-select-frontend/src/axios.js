@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 // Request interceptor to include the JWT token
-instance.interceptors.request.use(
+/*instance.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem('jwtToken');
       if (token) {
@@ -19,7 +19,7 @@ instance.interceptors.request.use(
       return Promise.reject(error);
     }
 );
-
+*/
 
 // TODO - Add Logout Feature that removes token after logout
 
