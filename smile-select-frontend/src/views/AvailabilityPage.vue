@@ -43,6 +43,18 @@
         </template>
       </FullCalendar>
     </div>
+    <div v-if="isModalVisible" class="modal-overlay">
+      <div class="modal">
+        <h2>Confirm Booking</h2>
+        <p>Are you sure you want to book this appointment?</p>
+        <input v-model="email" type="email" placeholder="Enter your email" class="modal-email-input" />
+        <div class="modal-actions">
+          <button @click="confirmBooking" class="btn-confirm">Confirm</button>
+          <button @click="closeModal" class="btn-cancel">Cancel</button>
+        </div>
+        <p v-if="emailError" class="error-message">{{ emailError }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -74,7 +86,7 @@ export default defineComponent({
         selectMirror: true,
         dayMaxEvents: true,
         weekends: false,
-        slotMinTime: "06:00:00", 
+        slotMinTime: "06:00:00",
         slotMaxTime: "23:00:00",
         allDaySlot: false,
         eventClick: this.handleEventClick,
@@ -83,6 +95,8 @@ export default defineComponent({
       dentists: [],
       selectedClinicId: null,
       selectedDentistId: null,
+      isModalVisible: false,
+      selectedEventId: null,
     };
   },
   computed: {
@@ -126,69 +140,135 @@ export default defineComponent({
         console.error("Error fetching appointments:", error);
       }
     },
-    handleDateSelect(selectInfo) {
-      console.log(selectInfo);
-    },
     handleEventClick(clickInfo) {
-      if (confirm(`Are you sure you want to book '${clickInfo.event.title}'`)) {
-        let data = {
-          id: clickInfo.event.id,
+      this.selectedEventId = clickInfo.event.id;
+      this.isModalVisible = true;
+    },
+    async confirmBooking() {
+      if (!this.email) {
+        this.emailError = "Please enter a valid email.";
+        return;
+      }
+
+      try {
+        const patientResponse = await axios.get(`/patients/email/${this.email}`);
+        const patient = patientResponse.data;
+
+        const appointmentData = {
+          id: this.selectedEventId,
+          patientId: patient.id,
         };
-        this.bookAppointment(data);
+
+        const updateResponse = await axios.patch(`/appointments`, appointmentData);
+
+        console.log("Appointment updated successfully:", updateResponse.data);
+        this.isModalVisible = false;
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          this.emailError = "Patient not found. Please check the email.";
+        } else {
+          console.error("Error confirming booking:", error);
+          this.emailError = "An error occurred while confirming your booking. Please try again.";
+        }
       }
     },
-    bookAppointment(slotInfo) {
-      console.log(slotInfo);
+    closeModal() {
+      this.isModalVisible = false;
     },
   },
 });
 </script>
-  
-  <style lang='css'>
-  h2 {
-    margin: 0;
-    font-size: 16px;
-  }
-  
-  ul {
-    margin: 0;
-    padding: 0 0 0 1.5em;
-  }
-  
-  li {
-    margin: 1.5em 0;
-    padding: 0;
-  }
-  
-  b { 
-    margin-right: 3px;
-  }
-  
-  .availability-app {
-    display: flex;
-    min-height: 100%;
-    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-    font-size: 14px;
-  }
-  
-  .availability-sidebar {
-    width: 300px;
-    line-height: 1.5;
-    background: #eaf9ff;
-    border-right: 1px solid #d3e2e8;
-  }
-  
-  .availability-sidebar-section {
-    padding: 2em;
-  }
-  
-  .availability-main {
-    flex-grow: 1;
-    padding: 3em;
-  }
-  
-  .fc { 
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  </style>
+
+<style>
+h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+ul {
+  margin: 0;
+  padding: 0 0 0 1.5em;
+}
+
+li {
+  margin: 1.5em 0;
+  padding: 0;
+}
+
+b {
+  margin-right: 3px;
+}
+
+.availability-app {
+  display: flex;
+  min-height: 100%;
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.availability-sidebar {
+  width: 300px;
+  line-height: 1.5;
+  background: #eaf9ff;
+  border-right: 1px solid #d3e2e8;
+}
+
+.availability-sidebar-section {
+  padding: 2em;
+}
+
+.availability-main {
+  flex-grow: 1;
+  padding: 3em;
+}
+
+.fc {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2em;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-actions {
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-confirm {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+</style>
