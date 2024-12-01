@@ -65,3 +65,4 @@ pnpm-debug.log*
 /smile-select-frontend/dist
 .vscode/settings.json
 backend/services/notification-service/src/main/resources/env.properties
+.DS_Store
