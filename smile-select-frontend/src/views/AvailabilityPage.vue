@@ -1,135 +1,146 @@
 <template>
-    <div class='availability-app'>
-      <div class='availability-sidebar'>
-        <div class='availability-sidebar-section'>
-          <h2>Instructions</h2>
-          <ul>
-            <li>Click an available slot to book it</li>
-          </ul>
+  <div class="availability-app">
+    <div class="availability-sidebar">
+      <div class="availability-sidebar-section">
+        <h2>Instructions</h2>
+        <ul>
+          <li>Click an available slot to book it</li>
+        </ul>
+      </div>
+      <div class="availability-sidebar-section">
+        <h2>Select Clinic</h2>
+        <div v-if="clinics.length">
+          <select v-model="selectedClinicId" @change="fetchDentistsByClinic" class="clinic-dropdown">
+            <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
+              {{ clinic.name }}
+            </option>
+          </select>
+          <p v-if="selectedClinic">Selected Clinic: {{ selectedClinic.name }}</p>
         </div>
-        <div class='availability-sidebar-section'>
+        <p v-else>No clinics available.</p>
+      </div>
+      <div class="availability-sidebar-section">
         <h2>Select Dentist</h2>
-          <div v-if="dentists.length">
-            <select v-model="selectedDentistId" class="dentist-dropdown">
-              <option v-for="dentist in dentists" :key="dentist.id" :value="dentist.id">
-                {{ dentist.firstName }} {{ dentist.lastName }}
-              </option>
-            </select>
-            <p v-if="selectedDentist">Selected Dentist: {{ selectedDentist.firstName }} {{ selectedDentist.lastName }}</p>
-          </div>
+        <div v-if="dentists.length">
+          <select v-model="selectedDentistId" @change="fetchAppointmentsByDentist" class="dentist-dropdown">
+            <option v-for="dentist in dentists" :key="dentist.id" :value="dentist.id">
+              {{ dentist.firstName }} {{ dentist.lastName }}
+            </option>
+          </select>
+          <p v-if="selectedDentist">Selected Dentist: {{ selectedDentist.firstName }} {{ selectedDentist.lastName }}</p>
+        </div>
         <p v-else>No dentists available.</p>
       </div>
-      </div>
-      <div class='availability-main'>
-        <FullCalendar
-          class='availability-calendar'
-          :options='calendarOptions'
-        >
-          <template v-slot:eventContent='arg'>
-            <b>{{ arg.timeText }}</b>
-            <i>{{ arg.event.title }}</i>
-          </template>
-        </FullCalendar>
-      </div>
     </div>
-  </template>
-  
-  <script>
-  import { defineComponent } from 'vue'
-  import FullCalendar from '@fullcalendar/vue3'
-  import dayGridPlugin from '@fullcalendar/daygrid'
-  import timeGridPlugin from '@fullcalendar/timegrid'
-  import interactionPlugin from '@fullcalendar/interaction'
+    <div class="availability-main">
+      <FullCalendar
+        class="availability-calendar"
+        :options="calendarOptions"
+      >
+        <template v-slot:eventContent="arg">
+          <b>{{ arg.timeText }}</b>
+          <i>{{ arg.event.title }}</i>
+        </template>
+      </FullCalendar>
+    </div>
+  </div>
+</template>
 
-  import axios from '@/axios';
-  
-  export default defineComponent({
-    components: {
-      FullCalendar,
-    },
+<script>
+import { defineComponent } from "vue";
+import FullCalendar from "@fullcalendar/vue3";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import axios from "@/axios";
 
-    mounted() {
-        this.loadSlots();
-    },
-    data() {
-      return {
-        calendarOptions: {
-          plugins: [
-            dayGridPlugin,
-            timeGridPlugin,
-            interactionPlugin 
-          ],
-          headerToolbar: {
-            left: 'prev, next, today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek'
-          },
-          initialView: 'timeGridWeek',
-          events: [
-  {
-    id: '1',
-    title: 'Dentist Appointment',
-    start: '2024-11-18T09:00:00',
-    end: '2024-11-18T10:00:00'
+export default defineComponent({
+  components: {
+    FullCalendar,
   },
-  {
-    id: '2',
-    title: 'Dentist Appointment',
-    start: '2024-11-20T14:00:00',
-    end: '2024-11-20T15:00:00'
-  },
-  {
-    id: '3',
-    title: 'Dentist Appointment',
-    start: '2024-11-22T11:00:00',
-    end: '2024-11-22T12:00:00'
-  }
-], 
-          editable: true,
-          selectable: true,
-          selectMirror: true,
-          dayMaxEvents: true,
-          weekends: false,
-          select: this.handleDateSelect,
-          eventClick: this.handleEventClick,
-          eventsSet: this.handleEvents
+  data() {
+    return {
+      calendarOptions: {
+        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+        headerToolbar: {
+          left: "prev, next, today",
+          center: "title",
+          right: "dayGridMonth,timeGridWeek",
         },
-        dentists: [],
+        initialView: "timeGridWeek",
+        events: [],
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: true,
+        weekends: false,
+        select: this.handleDateSelect,
+        eventClick: this.handleEventClick,
+      },
+      clinics: [],
+      dentists: [],
+      selectedClinicId: null,
+      selectedDentistId: null,
+    };
+  },
+  computed: {
+    selectedClinic() {
+      return this.clinics.find((clinic) => clinic.id === this.selectedClinicId);
+    },
+    selectedDentist() {
+      return this.dentists.find((dentist) => dentist.id === this.selectedDentistId);
+    },
+  },
+  mounted() {
+    this.fetchClinics();
+  },
+  methods: {
+    async fetchClinics() {
+      try {
+        const response = await axios.get("/dentists/clinics");
+        this.clinics = response.data;
+      } catch (error) {
+        console.error("Error fetching clinics:", error);
       }
     },
-    methods: {
-      handleEventClick(clickInfo) {
-        if (confirm(`Are you sure you want to book '${clickInfo.event.title}'`)) {
-          let data = {
-            id: clickInfo.event.id
-          }
-          this.bookAppointment(data);
-        }
-      },
-      handleEvents(events) {
-        this.currentEvents = events
-      },
-      async loadSlots(){
-        try {
-          const response = await axios.get('/accounts/dentists');
-          this.dentists = response.data;
-          if (this.dentists.length > 0) {
-            console.log(this.dentists[0]);
-            console.log(`First Dentist: ${this.dentists[0].firstName} ${this.dentists[0].lastName}`);
-          } else {
-            console.log("No dentists found.");
-          }
-        } catch (error) {
-          console.error('Error retrieving dentists:', error);
-        }
-        
-      },
-      bookAppointment(slotInfo){
-        console.log(slotInfo);
+    async fetchDentistsByClinic() {
+      try {
+        const response = await axios.get(`/dentists?clinicId=${this.selectedClinicId}`);
+        this.dentists = response.data;
+      } catch (error) {
+        console.error("Error fetching dentists:", error);
       }
-    }
-  })
-  </script>
+    },
+    async fetchAppointmentsByDentist() {
+      try {
+        const response = await axios.get(`/appointments/dentist/${this.selectedDentistId}`);
+        this.calendarOptions.events = response.data.map((appointment) => ({
+          id: appointment.id,
+          title: "Dentist Appointment",
+          start: appointment.startTime,
+          end: appointment.endTime,
+        }));
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    },
+    handleDateSelect(selectInfo) {
+      console.log(selectInfo);
+    },
+    handleEventClick(clickInfo) {
+      if (confirm(`Are you sure you want to book '${clickInfo.event.title}'`)) {
+        let data = {
+          id: clickInfo.event.id,
+        };
+        this.bookAppointment(data);
+      }
+    },
+    bookAppointment(slotInfo) {
+      console.log(slotInfo);
+    },
+  },
+});
+</script>
   
   <style lang='css'>
   h2 {
