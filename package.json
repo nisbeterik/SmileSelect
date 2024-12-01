@@ -10,6 +10,7 @@
     "vue-eslint-parser": "^9.4.3"
   },
   "dependencies": {
+    "@fullcalendar/list": "^6.1.15",
     "jakarta": "^0.0.1"
   }
 }

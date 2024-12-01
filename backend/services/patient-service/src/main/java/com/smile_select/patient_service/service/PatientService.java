@@ -5,10 +5,15 @@ import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import com.smile_select.patient_service.model.Patient;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -54,16 +59,18 @@ public class PatientService {
      * }
      */
 
+
+
     public Patient getPatientById(Long id, String userEmail) {
         return patientRepository.findById(id)
                 .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
-
-    public Patient getPatientByIdForEmail(Long id) {
+    public Patient getPatientByIdAsDentist(Long id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found for ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
+
 
     // Delete a patient
     public void deletePatientById(Long id, String userEmail) {
@@ -90,10 +97,38 @@ public class PatientService {
         patientRepository.save(patient);
     }
 
-    public String getPatientEmailById(Long patientId) {
-        return patientRepository.findById(patientId)
-                .map(Patient::getEmail)
-                .orElse(null);
-    }
+    //find a patient from partial information
+    public List<Patient> searchPatients(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
 
+        final String finalSearchQuery = query.trim().toLowerCase();
+
+        return patientRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            System.out.println(predicates + "innan");
+            try {
+                Long id = Long.parseLong(finalSearchQuery);
+                predicates.add(criteriaBuilder.equal(root.get("id"), id));
+            } catch (NumberFormatException error) {
+                predicates.add(criteriaBuilder.or(
+                    criteriaBuilder.like( //checks email
+                        criteriaBuilder.lower(root.get("email")),
+                        "%" + finalSearchQuery + "%"
+                    ),
+                    criteriaBuilder.like( //checks first name
+                        criteriaBuilder.lower(root.get("first_name")),
+                        "%" + finalSearchQuery + "%"
+                    ),
+                    criteriaBuilder.like( //checks last name
+                        criteriaBuilder.lower(root.get("last_name")),
+                        "%" + finalSearchQuery + "%"
+                    )
+                ));
+            }
+            System.out.println(predicates + "Efter");
+                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+        });
+    }
 }

@@ -119,7 +119,10 @@ public class AppointmentController {
 
             if (incompleteAppointment.getPatientId() != null) {
                 appointment.setPatientId(incompleteAppointment.getPatientId());
+            } else if (incompleteAppointment.getPatientId() == null) {
+                appointment.setPatientId(null);
             }
+
 
             if (incompleteAppointment.getStartTime() != null) {
                 appointment.setStartTime(incompleteAppointment.getStartTime());
