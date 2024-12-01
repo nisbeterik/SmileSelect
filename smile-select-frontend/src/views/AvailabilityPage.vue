@@ -32,6 +32,13 @@
         <p v-else>No dentists available.</p>
       </div>
     </div>
+    <div v-if="isBookingConfirmed" class="modal-overlay">
+      <div class="modal">
+        <h2>Booking Confirmed</h2>
+        <p>Your appointment has been successfully booked!</p>
+        <button @click="closeBookingConfirmation" class="btn-confirm">Close</button>
+      </div>
+    </div>
     <div class="availability-main">
       <FullCalendar
         class="availability-calendar"
@@ -96,7 +103,10 @@ export default defineComponent({
       selectedClinicId: null,
       selectedDentistId: null,
       isModalVisible: false,
+      isBookingConfirmed: false,
+      emailError: null,
       selectedEventId: null,
+      email: '',
     };
   },
   computed: {
@@ -163,6 +173,11 @@ export default defineComponent({
 
         console.log("Appointment updated successfully:", updateResponse.data);
         this.isModalVisible = false;
+        this.isBookingConfirmed = true;
+
+        setTimeout(() => {
+          this.isBookingConfirmed = false; 
+        }, 3000); 
       } catch (error) {
         if (error.response && error.response.status === 404) {
           this.emailError = "Patient not found. Please check the email.";
@@ -175,6 +190,10 @@ export default defineComponent({
     closeModal() {
       this.isModalVisible = false;
     },
+    closeBookingConfirmation() {
+      this.isBookingConfirmed = false;
+    },
+
   },
 });
 </script>
@@ -270,5 +289,11 @@ b {
   border: none;
   padding: 0.5em 1em;
   cursor: pointer;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 1em;
 }
 </style>
