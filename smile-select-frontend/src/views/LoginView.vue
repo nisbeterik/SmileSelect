@@ -55,6 +55,8 @@ export default {
     async handleLogin() {
       const authStore = useAuthStore();
       try {
+        authStore.clearAuth();
+        
         const endpoint = `/auth/login`;
         const response = await this.$axios.post(endpoint, {
           email: this.email,
@@ -62,16 +64,20 @@ export default {
           role: this.role,
         });
 
-        const token = response.data.token;
+        const { token, role, id } = response.data;
 
         if (token) {
-          authStore.setToken(token); // Save the token to the store
+          authStore.setToken(token);
+          authStore.setRole(role);
+          authStore.setId(id); // Save the ID
           this.$emit('loginSuccess', this.role);
         } else {
           throw new Error('Token not found');
         }
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+        console.error('Login Error:', error.response?.data || error.message);
+        this.errorMessage =
+          error.response?.data?.message || 'Login failed. Please try again.';
       }
     },
   },
