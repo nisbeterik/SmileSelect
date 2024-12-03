@@ -36,12 +36,8 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
 
-        // TODO - If statement to check if booked for patient or just an empty slot
         Appointment createdAppointment = appointmentService.save(appointment);
         appointmentService.publishAppointmentMessage("/appointments/new", createdAppointment);
-
-        // Publish created appointment to "/appointments/booked" topic
-       // appointmentService.publishAppointmentCreatedEvent(createdAppointment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
@@ -177,7 +173,6 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }
     }
-
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable("id") Long id) {
