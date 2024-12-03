@@ -18,16 +18,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.service.AppointmentService;
+import com.smile_select.appointment_service.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentController(AppointmentService appointmentService, JwtUtil jwtUtil) {
         this.appointmentService = appointmentService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping
@@ -171,28 +176,35 @@ public class AppointmentController {
         }
     }
 
-    // Method for patient cancelling appointment
     @PatchMapping(value = "/{id}/cancel")
-    public ResponseEntity<?> cancelAppointment(@PathVariable("id") Long id) {
+    public ResponseEntity<?> cancelAppointment(
+            @PathVariable("id") Long id,
+            HttpServletRequest request) {
+    
         Optional<Appointment> optionalAppointment = appointmentService.getAppointmentById(id);
-
+    
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
-
-            // Parse JWT to extract role for the requester, making sure the correct email is
-            // sent
-
-            String role = "DENTIST"; // REMOVE ME LATER, HARDCODED TEMPORARILY
-
-            if (role == "PATIENT") {
+    
+            // Extract the token from the Authorization header
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or missing token");
+            }
+            String token = authorizationHeader.substring(7); // Remove "Bearer "
+    
+            // Get the role from the token
+            String role = jwtUtil.getRoleFromToken(token);
+    
+            if ("PATIENT".equals(role)) {
                 appointmentService.publishAppointmentMessage("/appointments/cancelled-by-patient", appointment);
-            } else if (role == "DENTIST") {
+            } else if ("DENTIST".equals(role)) {
                 appointmentService.publishAppointmentMessage("/appointments/cancelled-by-dentist", appointment);
             }
-
+    
             appointment.setPatientId(null);
             appointmentService.save(appointment);
-
+    
             return ResponseEntity.ok(appointment);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
