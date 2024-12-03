@@ -24,19 +24,19 @@ public class MqttTopicHandler {
             @Header(MqttHeaders.RECEIVED_TOPIC) String topic
     ) {
         switch (topic) {
-            case "/appointments/new":
+            case "/notifications/created":
                 notificationService.processNewAppointmentSlot(message.getPayload());
                 break;
 
-            case "/appointments/patient-cancelled":
+            case "/notifications/cancelled-by-patient":
                 notificationService.processAppointmentCancellationByPatient(message.getPayload());
                 break;
 
-            case "/appointments/dentist-cancelled":
+            case "/notifications/cancelled-by-dentist":
                 notificationService.processAppointmentCancellationByDentist(message.getPayload());
                 break;
 
-            case "/appointments/with-email":
+            case "/notifications/with-email":
                 notificationService.processAppointmentWithEmail(message.getPayload());
                 break;
         }
