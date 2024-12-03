@@ -19,8 +19,6 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    // Constructor injection of JwtAuthenticationFilter and
-    // CustomAccessDeniedHandler
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
                           CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -29,7 +27,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Password encoder for hashing passwords
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -41,14 +39,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers("/api/auth/validate").authenticated()
-                        .anyRequest().hasAuthority("ADMIN")) // Example RBAC
-                .httpBasic(httpBasic -> httpBasic.disable())
-                .exceptionHandling()
-                .accessDeniedHandler(customAccessDeniedHandler); // Set the custom AccessDeniedHandler
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/validate").authenticated()
+                .anyRequest().hasAuthority("ADMIN")) // Example RBAC
+            .httpBasic(httpBasic -> httpBasic.disable())
+            .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler));
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
