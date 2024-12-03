@@ -16,7 +16,6 @@ public class JwtUtil {
 
     private final JwtConfig jwtConfig;
 
-    // Inject JwtConfig class
     @Autowired
     public JwtUtil(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
@@ -25,14 +24,13 @@ public class JwtUtil {
     public String generateToken(String email, String role, Long id) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("role", role) // Add role claim
-                .claim("id", id)     // Add id claim
+                .claim("role", role)
+                .claim("id", id) // Add ID to the JWT payload
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getJwtExpirationInMs())) // Access expiration from JwtConfig
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getJwtExpirationInMs()))
                 .signWith(Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
-    
 
     public String getEmailFromToken(String token) {
         try {
@@ -47,19 +45,6 @@ public class JwtUtil {
         }
     }
 
-    public String getIdFromToken(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes()))
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.get("id", String.class); // Extract the ID claim
-        } catch (Exception e) {
-            throw new JwtValidationException("Error extracting ID from JWT: " + e.getMessage());
-        }
-    }    
-
     public String getRoleFromToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
@@ -70,6 +55,19 @@ public class JwtUtil {
             return claims.get("role", String.class);
         } catch (Exception e) {
             throw new JwtValidationException("Error extracting role from JWT: " + e.getMessage());
+        }
+    }
+
+    public Long getIdFromToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes()))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("id", Long.class);
+        } catch (Exception e) {
+            throw new JwtValidationException("Error extracting ID from JWT: " + e.getMessage());
         }
     }
 
