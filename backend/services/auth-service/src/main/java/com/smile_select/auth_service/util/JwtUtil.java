@@ -47,6 +47,19 @@ public class JwtUtil {
         }
     }
 
+    public String getIdFromToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes()))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("id", String.class); // Extract the ID claim
+        } catch (Exception e) {
+            throw new JwtValidationException("Error extracting ID from JWT: " + e.getMessage());
+        }
+    }    
+
     public String getRoleFromToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
