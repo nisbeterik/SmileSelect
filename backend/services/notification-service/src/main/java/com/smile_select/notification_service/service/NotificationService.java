@@ -48,9 +48,47 @@ public class NotificationService {
     }
 
     public void processAppointmentCancellationByPatient(String payload) {
-        System.out.println("Appointment cancelled by patient: ");
-        System.out.println(payload);
-       // LOGIC HERE
+        System.out.println("Received message for patient cancellation");
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            JsonNode rootNode = objectMapper.readTree(payload);
+
+            String dentistEmail = rootNode.path("dentistEmail").asText();
+            String dentistFirstName = rootNode.path("dentistFirstName").asText();
+            String appointmentStartTime = rootNode.path("appointmentStartTime").asText();
+            String appointmentId = rootNode.path("appointmentId").asText();
+
+            // Convert startTime to LocalDateTime
+            LocalDateTime formatedTime = objectMapper.convertValue(appointmentStartTime, LocalDateTime.class);
+
+            // Format startTime to a nicer format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
+            String formattedStartTime = formatedTime.format(formatter);
+
+            // Prepare email content
+            String subject = "Patient has cancelled appointment";
+            String content = "Dear " + dentistFirstName + "\n\n"
+                    + "A patient you had scheduled has cancelled their appointment.\n"
+                    + "Appointment ID: " + appointmentId + "\n"
+                    + "Start Time: " + formattedStartTime + "\n\n"
+                    + "Please contact us if you have any questions.\n\n"
+                    + "Best regards,\n"
+                    + "SmileSelect Team";
+
+            // Send email
+            sendEmail(dentistEmail, subject, content);
+
+            // Save the notification (optional)
+            Notification notification = new Notification();
+            notification.setEmail(dentistEmail);
+            notification.setTime(LocalDateTime.now());
+            notification.setMessage(content);
+            save(notification);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void processAppointmentCancellationByDentist(String payload) {
