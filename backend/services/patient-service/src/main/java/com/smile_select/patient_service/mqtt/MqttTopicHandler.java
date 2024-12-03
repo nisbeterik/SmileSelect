@@ -38,10 +38,16 @@ public class MqttTopicHandler {
 
             case "/appointments/created":
                 processAppointmentCreated(message.getPayload());
+                break;
+
+            case "/appointments/cancelled-by-dentist":
+                patientService.handleAppointmentCancellation(message.getPayload());
+                break;
         }
 
     }
 
+    // This should be inside Patient service and use an appointment JSON instead of a custom setup
     private void processAppointmentCreated(String payload) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -53,7 +59,7 @@ public class MqttTopicHandler {
 
             // Fetch patient email
             System.out.println("Fetching email for patientId: " + patientId);
-            Patient patient = patientService.getPatientByIdForEmail(patientId);
+            Patient patient = patientService.getPatientById(patientId);
             System.out.println("Retrieved patientEmail: " + patient.getEmail());
 
 
@@ -69,8 +75,8 @@ public class MqttTopicHandler {
                 String messageToPublish = objectMapper.writeValueAsString(messageMap);
 
                 // Publish to the topic
-                mqttGateway.publishMessage(messageToPublish, "/appointments/with-email");
-                System.out.println("Published message to /appointments/with-email");
+                mqttGateway.publishMessage(messageToPublish, "/notifications/booked");
+                System.out.println("Published message to /notifications/booked");
             } else {
                 System.err.println("Patient email not found for patientId: " + patientId);
             }
