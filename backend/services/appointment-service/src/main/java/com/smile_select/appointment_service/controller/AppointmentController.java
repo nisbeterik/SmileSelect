@@ -41,7 +41,7 @@ public class AppointmentController {
         appointmentService.publishAppointmentMessage("/appointments/new", createdAppointment);
 
         // Publish created appointment to "/appointments/booked" topic
-        appointmentService.publishAppointmentCreatedEvent(createdAppointment);
+       // appointmentService.publishAppointmentCreatedEvent(createdAppointment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
@@ -148,15 +148,36 @@ public class AppointmentController {
 
             appointmentService.save(appointment);
 
-            // - TODO - Change to be a separate method
-            // Publish event for email notification when patient is added
-            appointmentService.publishAppointmentCreatedEvent(appointment);
-
             return ResponseEntity.ok(appointment);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }
     }
+
+    @PatchMapping("/add-patient")
+    public ResponseEntity<?> addPatientToAppointment(@RequestBody Appointment appointmentWithPatient) {
+        Optional<Appointment> optionalAppointment = appointmentService
+                .getAppointmentById(appointmentWithPatient.getId());
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+
+            if (appointmentWithPatient.getPatientId() != null) {
+                appointment.setPatientId(appointmentWithPatient.getPatientId());
+                appointmentService.save(appointment);
+
+                // Publish event for email notification when patient is added
+                appointmentService.publishAppointmentCreatedEvent(appointment);
+
+                return ResponseEntity.ok(appointment);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient ID is required to add a patient");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable("id") Long id) {
