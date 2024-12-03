@@ -17,7 +17,10 @@ import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -166,6 +169,50 @@ public class DentistService {
         }
 
     }
+
+    public void handleAppointmentCancellation(String payload) {
+        System.out.println("Received message for patient cancellation");
+        try {
+            // Parse appointment payload
+            JsonNode jsonNode = objectMapper.readTree(payload);
+
+            // Extract necessary information for notification
+            String startTime = jsonNode.get("startTime").asText();
+            Long dentistId = jsonNode.get("dentistId").asLong();
+            Long appointmentId = jsonNode.get("id").asLong();
+
+            // Find patient
+            Optional<Dentist> optionalDentist = dentistRepository.findById(dentistId);
+            String messageToBePublished;
+            String topic = "/notifications/cancelled-by-patient";
+
+            if (optionalDentist.isPresent()) {
+
+                Dentist dentist = optionalDentist.get();
+
+                // Create JSON-data to send to notification service
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("dentistFirstName", dentist.getFirstName());
+                messageMap.put("dentistEmail", dentist.getEmail());
+                messageMap.put("appointmentStartTime", startTime);
+                messageMap.put("appointmentId", appointmentId);
+
+                // Publish cancellation to via MQTT to send notification
+                messageToBePublished = objectMapper.writeValueAsString(messageMap);
+                System.out.println("Publishing message: " + messageToBePublished);
+                System.out.println("Topic: " + topic);
+        
+                mqttGateway.publishMessage(messageToBePublished, topic);
+
+            } else {
+                // Handle case where dentist does not exist
+                throw new Exception("Patient not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
+
 
 
