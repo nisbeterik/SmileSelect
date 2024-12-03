@@ -38,6 +38,11 @@ public class MqttTopicHandler {
 
             case "/appointments/created":
                 processAppointmentCreated(message.getPayload());
+                break;
+
+            case "/appointments/booked":
+                processAppointmentCreated(message.getPayload());
+                break;
         }
 
     }
@@ -69,8 +74,8 @@ public class MqttTopicHandler {
                 String messageToPublish = objectMapper.writeValueAsString(messageMap);
 
                 // Publish to the topic
-                mqttGateway.publishMessage(messageToPublish, "/appointments/with-email");
-                System.out.println("Published message to /appointments/with-email");
+                mqttGateway.publishMessage(messageToPublish, "/notifications/booked");
+                System.out.println("Published message to /notifications/booked");
             } else {
                 System.err.println("Patient email not found for patientId: " + patientId);
             }

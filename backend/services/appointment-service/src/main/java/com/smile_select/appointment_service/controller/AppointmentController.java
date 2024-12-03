@@ -35,10 +35,12 @@ public class AppointmentController {
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
+
+        // TODO - If statement to check if booked for patient or just an empty slot
         Appointment createdAppointment = appointmentService.save(appointment);
         appointmentService.publishAppointmentMessage("/appointments/new", createdAppointment);
 
-        // Publish created appointment to "/appointments/created" topic
+        // Publish created appointment to "/appointments/booked" topic
         appointmentService.publishAppointmentCreatedEvent(createdAppointment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
@@ -146,6 +148,7 @@ public class AppointmentController {
 
             appointmentService.save(appointment);
 
+            // - TODO - Change to be a separate method
             // Publish event for email notification when patient is added
             appointmentService.publishAppointmentCreatedEvent(appointment);
 
