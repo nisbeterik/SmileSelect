@@ -45,7 +45,7 @@ public class MqttConfig {
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
                 clientId,
                 mqttClientFactory(),
-                "/appointments/with-email"
+                "#"
 
         );
 
