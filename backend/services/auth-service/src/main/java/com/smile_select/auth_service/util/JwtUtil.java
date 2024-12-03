@@ -22,15 +22,17 @@ public class JwtUtil {
         this.jwtConfig = jwtConfig;
     }
 
-    public String generateToken(String email, String role) {
+    public String generateToken(String email, String role, Long id) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("role", role)
+                .claim("role", role) // Add role claim
+                .claim("id", id)     // Add id claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getJwtExpirationInMs())) // Access expiration from JwtConfig
                 .signWith(Keys.hmacShaKeyFor(jwtConfig.getJwtSecret().getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
+    
 
     public String getEmailFromToken(String token) {
         try {
