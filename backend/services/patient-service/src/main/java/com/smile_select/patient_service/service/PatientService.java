@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
+import java.util.*;
 
 import jakarta.persistence.criteria.Predicate;
 
@@ -196,4 +194,44 @@ public class PatientService {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
     }
+
+    public void processAppointmentCreated(String payload) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(payload);
+
+            Long appointmentId = rootNode.path("appointmentId").asLong();
+            Long patientId = rootNode.path("patientId").asLong();
+            String startTime = rootNode.path("startTime").asText();
+
+            // Fetch patient email
+            System.out.println("Fetching email for patientId: " + patientId);
+            Patient patient = getPatientByIdForEmail(patientId);
+            System.out.println("Retrieved patientEmail: " + patient.getEmail());
+
+
+            if (patient != null) {
+                // Prepare message to publish
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("appointmentId", appointmentId);
+                messageMap.put("patientId", patientId);
+                messageMap.put("patientEmail", patient.getEmail());
+                messageMap.put("patientFirstName", patient.getFirstName());
+                messageMap.put("startTime", startTime);
+
+                String messageToPublish = objectMapper.writeValueAsString(messageMap);
+
+                // Publish to the topic
+                mqttGateway.publishMessage(messageToPublish, "/notifications/booked");
+                System.out.println("Published message to /notifications/booked");
+            } else {
+                System.err.println("Patient email not found for patientId: " + patientId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }
