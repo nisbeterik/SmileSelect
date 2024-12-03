@@ -50,13 +50,51 @@ public class NotificationService {
     public void processAppointmentCancellationByPatient(String payload) {
         System.out.println("Appointment cancelled by patient: ");
         System.out.println(payload);
-        // LOGIC HERE
+       // LOGIC HERE
     }
 
     public void processAppointmentCancellationByDentist(String payload) {
-        System.out.println("Appointment cancelled by dentist: ");
-        System.out.println(payload);
-        // LOGIC HERE
+        System.out.println("Received message for dentist cancellation");
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            JsonNode rootNode = objectMapper.readTree(payload);
+
+            String patientEmail = rootNode.path("patientEmail").asText();
+            String patientFirstName = rootNode.path("patientFirstName").asText();
+            String appointmentStartTime = rootNode.path("appointmentStartTime").asText();
+            String appointmentId = rootNode.path("appointmentId").asText();
+
+            // Convert startTime to LocalDateTime
+            LocalDateTime formatedTime = objectMapper.convertValue(appointmentStartTime, LocalDateTime.class);
+
+            // Format startTime to a nicer format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
+            String formattedStartTime = formatedTime.format(formatter);
+
+            // Prepare email content
+            String subject = "Your appointment has been cancelled";
+            String content = "Dear " + patientFirstName + "\n\n"
+                    + "Your dentist has cancelled your appointment.\n"
+                    + "Appointment ID: " + appointmentId + "\n"
+                    + "Start Time: " + formattedStartTime + "\n\n"
+                    + "Please contact us if you have any questions.\n\n"
+                    + "Best regards,\n"
+                    + "SmileSelect Team";
+
+            // Send email
+            sendEmail(patientEmail, subject, content);
+
+            // Save the notification (optional)
+            Notification notification = new Notification();
+            notification.setEmail(patientEmail);
+            notification.setTime(LocalDateTime.now());
+            notification.setMessage(content);
+            save(notification);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void processAppointmentWithEmail(String payload) {
