@@ -161,7 +161,6 @@ public class DentistService {
 
             // Publish response to MQTT
             System.out.println("Publishing login response under topic: " + topic);
-            System.out.println("Payload " + responsePayload);
             mqttGateway.publishMessage(responsePayload, topic);
 
         } catch (Exception e) {
