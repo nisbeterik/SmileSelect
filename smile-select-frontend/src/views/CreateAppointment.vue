@@ -96,14 +96,6 @@ const availableColor = '#28A745';
 const selectedColor = '#C6B700';
 
 export default {
-  setup() {
-    const authStore = useAuthStore();
-    const token = authStore.token;
-
-    return {
-      token,
-    };
-  },
   components: {
     FullCalendar,
   },
@@ -115,7 +107,9 @@ export default {
     clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
   },
   data() {
+    const authStore = useAuthStore();
     return {
+      token: authStore.token,
       multiSlotMode: false, // Tracks if multi-slot mode is active
       selectedSlots: [],
       selectedEventId: null,
