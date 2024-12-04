@@ -37,46 +37,14 @@ public class MqttTopicHandler {
                 break;
 
             case "/appointments/created":
-                processAppointmentCreated(message.getPayload());
+                patientService.processAppointmentCreated(message.getPayload());
+                break;
+
+            case "/appointments/booked":
+                patientService.processAppointmentCreated(message.getPayload());
+                break;
         }
 
-    }
-
-    private void processAppointmentCreated(String payload) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(payload);
-
-            Long appointmentId = rootNode.path("appointmentId").asLong();
-            Long patientId = rootNode.path("patientId").asLong();
-            String startTime = rootNode.path("startTime").asText();
-
-            // Fetch patient email
-            System.out.println("Fetching email for patientId: " + patientId);
-            Patient patient = patientService.getPatientByIdForEmail(patientId);
-            System.out.println("Retrieved patientEmail: " + patient.getEmail());
-
-
-            if (patient != null) {
-                // Prepare message to publish
-                Map<String, Object> messageMap = new HashMap<>();
-                messageMap.put("appointmentId", appointmentId);
-                messageMap.put("patientId", patientId);
-                messageMap.put("patientEmail", patient.getEmail());
-                messageMap.put("patientFirstName", patient.getFirstName());
-                messageMap.put("startTime", startTime);
-
-                String messageToPublish = objectMapper.writeValueAsString(messageMap);
-
-                // Publish to the topic
-                mqttGateway.publishMessage(messageToPublish, "/appointments/with-email");
-                System.out.println("Published message to /appointments/with-email");
-            } else {
-                System.err.println("Patient email not found for patientId: " + patientId);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
 
