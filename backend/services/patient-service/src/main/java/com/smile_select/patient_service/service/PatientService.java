@@ -13,6 +13,7 @@ import com.smile_select.patient_service.model.Patient;
 import com.smile_select.patient_service.mqtt.MqttGateway;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -82,8 +83,26 @@ public class PatientService {
      */
 
 
+    public Optional<Patient> getPatientById(Long patientId) {
+        try {
+            // Attempt to fetch the patient from the repository
+            return patientRepository.findById(patientId);
+        } catch (IllegalArgumentException ex) {
+            // Handle case where patientId is null or invalid
+            System.out.println("Invalid patient ID provided: " + patientId + ". Error: " + ex.getMessage());
+            return Optional.empty();
+        } catch (DataAccessException ex) {
+            // Handle database-related exceptions
+            System.out.println("Database error occurred while fetching patient with ID: " + patientId + ". Error: " + ex.getMessage());
+            return Optional.empty();
+        } catch (Exception ex) {
+            // Handle any other unexpected exceptions
+            System.out.println("An unexpected error occurred while fetching patient with ID: " + patientId + ". Error: " + ex.getMessage());
+            return Optional.empty();
+        }
+    }
 
-    public Patient getPatientById(Long id, String userEmail) {
+    public Patient getPatientByIdAndEmail(Long id, String userEmail) {
         return patientRepository.findById(id)
                 .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
@@ -96,13 +115,13 @@ public class PatientService {
 
     // Delete a patient
     public void deletePatientById(Long id, String userEmail) {
-        Patient patient = getPatientById(id, userEmail);
+        Patient patient = getPatientByIdAndEmail(id, userEmail);
         patientRepository.delete(patient);
     }
 
     // Update patient details
     public void updatePatientDetails(Long id, String userEmail, PatientUpdateDTO updateDetails) {
-        Patient patient = getPatientById(id, userEmail);
+        Patient patient = getPatientByIdAndEmail(id, userEmail);
 
         if (updateDetails.getFirstName() != null) {
             patient.setFirstName(updateDetails.getFirstName());
@@ -206,11 +225,13 @@ public class PatientService {
 
             // Fetch patient email
             System.out.println("Fetching email for patientId: " + patientId);
-            Patient patient = getPatientByIdForEmail(patientId);
-            System.out.println("Retrieved patientEmail: " + patient.getEmail());
+            Optional<Patient> retrievedPatient = getPatientById(patientId);
 
 
-            if (patient != null) {
+            if (retrievedPatient.isPresent()) {
+                Patient patient = retrievedPatient.get();
+                System.out.println("Retrieved patientEmail: " + patient.getEmail());
+
                 // Prepare message to publish
                 Map<String, Object> messageMap = new HashMap<>();
                 messageMap.put("appointmentId", appointmentId);
