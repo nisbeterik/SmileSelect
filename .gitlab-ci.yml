@@ -123,7 +123,7 @@ compile_patient_service:
 #   dependencies:
 #     - compile_auth_service
 
- test_dentist_service:
+test_dentist_service:
    stage: test
    script:
      - echo "Running tests for Dentist Service..."
