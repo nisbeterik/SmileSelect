@@ -18,16 +18,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.service.AppointmentService;
+import com.smile_select.appointment_service.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentController(AppointmentService appointmentService, JwtUtil jwtUtil) {
         this.appointmentService = appointmentService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping
@@ -35,11 +40,9 @@ public class AppointmentController {
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
-        Appointment createdAppointment = appointmentService.save(appointment);
-        appointmentService.publishAppointmentMessage("/appointments/new", createdAppointment);
 
-        // Publish created appointment to "/appointments/created" topic
-        appointmentService.publishAppointmentCreatedEvent(createdAppointment);
+        Appointment createdAppointment = appointmentService.save(appointment);
+        appointmentService.publishAppointmentMessage("/appointments/created", createdAppointment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
@@ -87,25 +90,25 @@ public class AppointmentController {
 
     @GetMapping(value = "/dentist/{dentistId}")
     public ResponseEntity<?> getAppointmentsByDentistId(
-        @PathVariable("dentistId") Long dentistId,
-        @RequestParam(value = "onlyAvailable", required = false, defaultValue = "false") boolean onlyAvailable) {
-            List<Appointment> appointments;
+            @PathVariable("dentistId") Long dentistId,
+            @RequestParam(value = "onlyAvailable", required = false, defaultValue = "false") boolean onlyAvailable) {
+        List<Appointment> appointments;
 
-            if (onlyAvailable) {
-            
-                appointments = appointmentService.getAvailableAppointmentsByDentistId(dentistId);
-            } else {
-                
-                appointments = appointmentService.getAppointmentsByDentistId(dentistId);
-            }
+        if (onlyAvailable) {
 
-            if (appointments.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("There are no appointments associated with that dentist ID");
-            }
-            return ResponseEntity.status(HttpStatus.OK).body(appointments);
-            
-            }
+            appointments = appointmentService.getAvailableAppointmentsByDentistId(dentistId);
+        } else {
+
+            appointments = appointmentService.getAppointmentsByDentistId(dentistId);
+        }
+
+        if (appointments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("There are no appointments associated with that dentist ID");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(appointments);
+
+    }
 
     @GetMapping(value = "/patient/{patientId}")
     public ResponseEntity<?> getAppointmentsByPatientId(@PathVariable("patientId") Long patientId) {
@@ -135,7 +138,6 @@ public class AppointmentController {
                 appointment.setPatientId(null);
             }
 
-
             if (incompleteAppointment.getStartTime() != null) {
                 appointment.setStartTime(incompleteAppointment.getStartTime());
             }
@@ -146,10 +148,31 @@ public class AppointmentController {
 
             appointmentService.save(appointment);
 
-            // Publish event for email notification when patient is added
-            appointmentService.publishAppointmentCreatedEvent(appointment);
-
             return ResponseEntity.ok(appointment);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
+    @PatchMapping("/add-patient")
+    public ResponseEntity<?> addPatientToAppointment(@RequestBody Appointment appointmentWithPatient) {
+        Optional<Appointment> optionalAppointment = appointmentService
+                .getAppointmentById(appointmentWithPatient.getId());
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+
+            if (appointmentWithPatient.getPatientId() != null) {
+                appointment.setPatientId(appointmentWithPatient.getPatientId());
+                appointmentService.save(appointment);
+
+                // Publish event for email notification when patient is added
+                appointmentService.publishAppointmentCreatedEvent(appointment);
+
+                return ResponseEntity.ok(appointment);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient ID is required to add a patient");
+            }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }
@@ -159,10 +182,52 @@ public class AppointmentController {
     public ResponseEntity<?> deleteAppointment(@PathVariable("id") Long id) {
         Optional<Appointment> appointment = appointmentService.getAppointmentById(id);
         if (appointment.isPresent()) {
+            Appointment toBeDeleted = appointment.get();
+
+            if (toBeDeleted.getPatientId() != null) {
+                // Notify patient that their appointment has been cancelled, since the slot is deleted
+                appointmentService.publishAppointmentMessage("/appointments/cancelled-by-dentist", toBeDeleted);
+            }
             appointmentService.deleteAppointment(id);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }
     }
+
+    @PatchMapping(value = "/{id}/cancel")
+    public ResponseEntity<?> cancelAppointment(
+            @PathVariable("id") Long id,
+            HttpServletRequest request) {
+    
+        Optional<Appointment> optionalAppointment = appointmentService.getAppointmentById(id);
+    
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+    
+            // Extract the token from the Authorization header
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or missing token");
+            }
+            String token = authorizationHeader.substring(7); // Remove "Bearer "
+    
+            // Get the role from the token
+            String role = jwtUtil.getRoleFromToken(token);
+    
+            if ("PATIENT".equals(role)) {
+                appointmentService.publishAppointmentMessage("/appointments/cancelled-by-patient", appointment);
+            } else if ("DENTIST".equals(role)) {
+                appointmentService.publishAppointmentMessage("/appointments/cancelled-by-dentist", appointment);
+            }
+    
+            appointment.setPatientId(null);
+            appointmentService.save(appointment);
+    
+            return ResponseEntity.ok(appointment);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
 }

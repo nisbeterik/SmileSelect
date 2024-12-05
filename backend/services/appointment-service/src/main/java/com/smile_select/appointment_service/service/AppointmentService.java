@@ -100,8 +100,8 @@ public class AppointmentService {
 
             String message = objectMapper.writeValueAsString(messageMap);
             System.out.println("Message being published: " + message);
-            mqttGateway.publishMessage(message, "/appointments/created");
-            System.out.println("Published appointment created event to topic: /appointments/created");
+            mqttGateway.publishMessage(message, "/appointments/booked");
+            System.out.println("Published appointment created event to topic: /appointments/booked");
         } catch (Exception e) {
             System.err.println("Failed to publish appointment created event: " + e.getMessage());
             e.printStackTrace();
