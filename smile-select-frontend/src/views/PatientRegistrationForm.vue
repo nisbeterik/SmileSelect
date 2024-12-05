@@ -72,7 +72,7 @@ export default {
   methods: {
     async submitPatient() {
       try {
-        const response = await axios.post('/patients', this.formData);
+        const response = await axios.post('/patients/register', this.formData);
         console.log('Registration Successful:', response.data);
 
         // Emit success event to parent component
