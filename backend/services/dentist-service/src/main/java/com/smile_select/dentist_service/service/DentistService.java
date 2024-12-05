@@ -69,26 +69,16 @@ public class DentistService {
         return dentistRepository.findAll();
     }
 
-    public Dentist getDentistById (Long id, String userEmail) {
-        Optional<Dentist> optionalDentist = dentistRepository.findById(id);
-
-        if (optionalDentist.isEmpty()) {
-            throw new ResourceNotFoundException("Dentist not found or access denied for ID: " + id);
-        }
-
-        Dentist dentist = optionalDentist.get();
-
-        if (!dentist.getEmail().equals(userEmail)) {
-            throw new ResourceNotFoundException("Access denied for : " + id);
-        }
-
-        return dentist;
+    public Dentist getDentistById (Long id) {
+        return dentistRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with ID: " + id));
     }
 
-    public Dentist updateDentist(Long id, Dentist dentistUpdate, String userEmail) {
-        Dentist dentist = getDentistById(id, userEmail);
-
-        // Update basic information
+    public Dentist updateDentist(Long id, Dentist dentistUpdate) {
+        Dentist dentist = dentistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with ID: " + id));
+    
+        // Update basic information if provided
         if (dentistUpdate.getFirstName() != null) {
             dentist.setFirstName(dentistUpdate.getFirstName());
         }
@@ -98,19 +88,19 @@ public class DentistService {
         if (dentistUpdate.getEmail() != null) {
             dentist.setEmail(dentistUpdate.getEmail());
         }
+    
+        // Update password if provided
         if (dentistUpdate.getPassword() != null && !dentistUpdate.getPassword().isEmpty()) {
             dentist.setPassword(passwordEncoder.encode(dentistUpdate.getPassword()));
         }
-
-        // Update the associated clinic
+    
+        // Update clinic association if provided
         if (dentistUpdate.getClinicId() != null) {
-            Optional<Clinic> selectedClinic = clinicRepository.findById(dentistUpdate.getClinicId());
-            if (selectedClinic.isEmpty()) {
-                throw new ResourceNotFoundException("Selected clinic does not exist");
-            }
-            dentist.setClinic(selectedClinic.get());
+            Clinic clinic = clinicRepository.findById(dentistUpdate.getClinicId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Selected clinic does not exist"));
+            dentist.setClinic(clinic);
         }
-
+    
         return dentistRepository.save(dentist);
     }
 
