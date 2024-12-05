@@ -134,6 +134,9 @@ test_dentist_service:
     - mkdir -p backend/services/dentist-service/src/main/resources  
     - echo "JWT_TOKEN=$JWT_TOKEN" > backend/services/dentist-service/src/main/resources/env.properties
     - echo "JWT_EXPIRATION=$JWT_EXPIRATION" >> backend/services/dentist-service/src/main/resources/env.properties
+
+    # Install postgres
+    - apt-get update && apt-get install -y postgresql-client
     
     - until pg_isready -h db -U postgres; do sleep 2; done
     - echo "Running tests for Dentist Service..."
