@@ -124,14 +124,19 @@ compile_patient_service:
 #     - compile_auth_service
 
 test_dentist_service:
-   stage: test
-   script:
-     - echo "Running tests for Dentist Service..."
-     - mvn -B test --file backend/services/dentist-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_dentist_service
+  stage: test
+  script:
+    - echo "Creating env.properties file with JWT_TOKEN and JWT_EXPIRATION..."
+    - mkdir -p backend/services/dentist-service/src/main/resources  # Ensure the directory exists
+    - echo "JWT_TOKEN=$JWT_TOKEN" > backend/services/dentist-service/src/main/resources/env.properties
+    - echo "JWT_EXPIRATION=$JWT_EXPIRATION" >> backend/services/dentist-service/src/main/resources/env.properties
+    - echo "Running tests for Dentist Service..."
+    - mvn -B test --file backend/services/dentist-service/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_dentist_service
+
 
 # test_gateway_service:
 #   stage: test
