@@ -17,13 +17,18 @@ import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 /**
  * Service class to manage Dentist entities.
- * Provides methods to perform operations such as finding, saving, updating, and deleting dentist records.
+ * Provides methods to perform operations such as finding, saving, updating, and
+ * deleting dentist records.
  */
 @Service
 public class DentistService {
@@ -34,7 +39,6 @@ public class DentistService {
     private ClinicRepository clinicRepository;
     @Autowired
     private MqttGateway mqttGateway;
-
 
     // ObjectMapper with support for LocalDate and LocalDateTime
     private final ObjectMapper objectMapper = new ObjectMapper()
@@ -53,8 +57,6 @@ public class DentistService {
     }
 
     public Dentist saveDentist(Dentist dentist) {
-        // Hash the password before saving a dentist
-        dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
         return dentistRepository.save(dentist);
     }
 
@@ -66,26 +68,16 @@ public class DentistService {
         return dentistRepository.findAll();
     }
 
-    public Dentist getDentistById (Long id, String userEmail) {
-        Optional<Dentist> optionalDentist = dentistRepository.findById(id);
-
-        if (optionalDentist.isEmpty()) {
-            throw new ResourceNotFoundException("Dentist not found or access denied for ID: " + id);
-        }
-
-        Dentist dentist = optionalDentist.get();
-
-        if (!dentist.getEmail().equals(userEmail)) {
-            throw new ResourceNotFoundException("Access denied for : " + id);
-        }
-
-        return dentist;
+    public Dentist findById(Long id) {
+        return dentistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with ID: " + id));
     }
 
-    public Dentist updateDentist(Long id, Dentist dentistUpdate, String userEmail) {
-        Dentist dentist = getDentistById(id, userEmail);
+    public Dentist updateDentist(Long id, Dentist dentistUpdate) {
+        Dentist dentist = dentistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with ID: " + id));
 
-        // Update basic information
+        // Update basic information if provided
         if (dentistUpdate.getFirstName() != null) {
             dentist.setFirstName(dentistUpdate.getFirstName());
         }
@@ -95,17 +87,17 @@ public class DentistService {
         if (dentistUpdate.getEmail() != null) {
             dentist.setEmail(dentistUpdate.getEmail());
         }
+
+        // Update password if provided
         if (dentistUpdate.getPassword() != null && !dentistUpdate.getPassword().isEmpty()) {
             dentist.setPassword(passwordEncoder.encode(dentistUpdate.getPassword()));
         }
 
-        // Update the associated clinic
+        // Update clinic association if provided
         if (dentistUpdate.getClinicId() != null) {
-            Optional<Clinic> selectedClinic = clinicRepository.findById(dentistUpdate.getClinicId());
-            if (selectedClinic.isEmpty()) {
-                throw new ResourceNotFoundException("Selected clinic does not exist");
-            }
-            dentist.setClinic(selectedClinic.get());
+            Clinic clinic = clinicRepository.findById(dentistUpdate.getClinicId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Selected clinic does not exist"));
+            dentist.setClinic(clinic);
         }
 
         return dentistRepository.save(dentist);
@@ -158,7 +150,6 @@ public class DentistService {
 
             // Publish response to MQTT
             System.out.println("Publishing login response under topic: " + topic);
-            System.out.println("Payload " + responsePayload);
             mqttGateway.publishMessage(responsePayload, topic);
 
         } catch (Exception e) {
@@ -166,6 +157,47 @@ public class DentistService {
         }
 
     }
+
+    public void handleAppointmentCancellation(String payload) {
+        System.out.println("Received message for patient cancellation");
+        try {
+            // Parse appointment payload
+            JsonNode jsonNode = objectMapper.readTree(payload);
+
+            // Extract necessary information for notification
+            String startTime = jsonNode.get("startTime").asText();
+            Long dentistId = jsonNode.get("dentistId").asLong();
+            Long appointmentId = jsonNode.get("id").asLong();
+
+            // Find patient
+            Optional<Dentist> optionalDentist = dentistRepository.findById(dentistId);
+            String messageToBePublished;
+            String topic = "/notifications/cancelled-by-patient";
+
+            if (optionalDentist.isPresent()) {
+
+                Dentist dentist = optionalDentist.get();
+
+                // Create JSON-data to send to notification service
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("dentistFirstName", dentist.getFirstName());
+                messageMap.put("dentistEmail", dentist.getEmail());
+                messageMap.put("appointmentStartTime", startTime);
+                messageMap.put("appointmentId", appointmentId);
+
+                // Publish cancellation to via MQTT to send notification
+                messageToBePublished = objectMapper.writeValueAsString(messageMap);
+                System.out.println("Publishing message: " + messageToBePublished);
+                System.out.println("Topic: " + topic);
+
+                mqttGateway.publishMessage(messageToBePublished, topic);
+
+            } else {
+                // Handle case where dentist does not exist
+                throw new Exception("Patient not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
-
-

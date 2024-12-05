@@ -17,10 +17,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.*;
 
 import jakarta.persistence.criteria.Predicate;
@@ -107,6 +111,7 @@ public class PatientService {
                 .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
+
     public Patient getPatientByIdAsDentist(Long id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
@@ -137,7 +142,8 @@ public class PatientService {
         }
         patientRepository.save(patient);
     }
-    //find a patient from partial information
+
+    // find a patient from partial information
     public List<Patient> searchPatients(String query) {
         if (query == null || query.trim().isEmpty()) {
             return new ArrayList<>();
@@ -153,25 +159,22 @@ public class PatientService {
                 predicates.add(criteriaBuilder.equal(root.get("id"), id));
             } catch (NumberFormatException error) {
                 predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.like( //checks email
+                        criteriaBuilder.like( // checks email
                                 criteriaBuilder.lower(root.get("email")),
-                                "%" + finalSearchQuery + "%"
-                        ),
-                        criteriaBuilder.like( //checks first name
+                                "%" + finalSearchQuery + "%"),
+                        criteriaBuilder.like( // checks first name
                                 criteriaBuilder.lower(root.get("first_name")),
-                                "%" + finalSearchQuery + "%"
-                        ),
-                        criteriaBuilder.like( //checks last name
+                                "%" + finalSearchQuery + "%"),
+                        criteriaBuilder.like( // checks last name
                                 criteriaBuilder.lower(root.get("last_name")),
-                                "%" + finalSearchQuery + "%"
-                        )
-                ));
+                                "%" + finalSearchQuery + "%")));
             }
             System.out.println(predicates + "Efter");
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         });
     }
-    public void handlePatientLoginRequest(String payload){
+
+    public void handlePatientLoginRequest(String payload) {
 
         try {
             // Parse loginRequest payload
@@ -208,6 +211,7 @@ public class PatientService {
             e.printStackTrace();
         }
     }
+
     // Finding Patient id for email notification function
     public Patient getPatientByIdForEmail(Long id) {
         return patientRepository.findById(id)
@@ -255,4 +259,48 @@ public class PatientService {
 
 
 
+
+    public void handleAppointmentCancellation(String payload) {
+        System.out.println("Received message for dentist cancellation");
+        try {
+            // Parse appointment payload
+            JsonNode jsonNode = objectMapper.readTree(payload);
+
+            // Extract necessary information for notification
+            String startTime = jsonNode.get("startTime").asText();
+            Long patientId = jsonNode.get("patientId").asLong();
+            Long appointmentId = jsonNode.get("id").asLong();
+
+            // Find patient
+            Optional<Patient> optionalPatient = patientRepository.findById(patientId);
+            String messageToBePublished;
+            String topic = "/notifications/cancelled-by-dentist";
+
+            if (optionalPatient.isPresent()) {
+
+                Patient patient = optionalPatient.get();
+
+                // Create JSON-data to send to notification service
+
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("patientFirstName", patient.getFirstName());
+                messageMap.put("patientEmail", patient.getEmail());
+                messageMap.put("appointmentStartTime", startTime);
+                messageMap.put("appointmentId", appointmentId);
+
+                // Publish cancellation to via MQTT to send notification
+                messageToBePublished = objectMapper.writeValueAsString(messageMap);
+                System.out.println("Publishing message: " + messageToBePublished);
+                System.out.println("Topic: " + topic);
+
+                mqttGateway.publishMessage(messageToBePublished, topic);
+
+            } else {
+                // Handle case where patient does not exist
+                throw new Exception("Patient not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

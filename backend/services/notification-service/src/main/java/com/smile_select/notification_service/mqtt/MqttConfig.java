@@ -46,6 +46,7 @@ public class MqttConfig {
                 clientId,
                 mqttClientFactory(),
                 "#"
+
         );
 
         adapter.setCompletionTimeout(5000);

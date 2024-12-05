@@ -40,12 +40,16 @@ public class MqttTopicHandler {
                 patientService.processAppointmentCreated(message.getPayload());
                 break;
 
+            case "/appointments/cancelled-by-dentist":
+                patientService.handleAppointmentCancellation(message.getPayload());
+                break;
+
             case "/appointments/booked":
                 patientService.processAppointmentCreated(message.getPayload());
                 break;
         }
-
     }
 }
+
 
 
