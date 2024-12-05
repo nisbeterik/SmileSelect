@@ -1,8 +1,8 @@
 package com.smile_select.patient_service.model;
 
 import java.time.LocalDate;
-
 import jakarta.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "patient_preferred_date")
@@ -12,20 +12,33 @@ public class PatientPreferredDate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "patient_id", nullable = false)
-    private LocalDate patientId;
+    @ManyToOne
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
 
     @Column(name = "preferred_date", nullable = false)
     private LocalDate preferredDate;
 
     public PatientPreferredDate() {
     }
-    
 
-    public PatientPreferredDate(Long id, LocalDate patientId, LocalDate preferredDate) {
+    public PatientPreferredDate(Long id, Patient patient, LocalDate preferredDate) {
         this.id = id;
-        this.patientId = patientId;
+        this.patient = patient;
         this.preferredDate = preferredDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PatientPreferredDate that = (PatientPreferredDate) o;
+        return Objects.equals(preferredDate, that.preferredDate) && Objects.equals(patient, that.patient);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(preferredDate, patient);
     }
 
     public Long getId() {
@@ -36,20 +49,20 @@ public class PatientPreferredDate {
         this.id = id;
     }
 
-    public LocalDate getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(LocalDate patientId) {
-        this.patientId = patientId;
-    }
-
     public LocalDate getPreferredDate() {
         return preferredDate;
     }
 
     public void setPreferredDate(LocalDate preferredDate) {
         this.preferredDate = preferredDate;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
 }
