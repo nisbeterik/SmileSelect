@@ -48,7 +48,7 @@ public class PatientController {
     @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<PatientDTO> getPatientById(@PathVariable("id") Long id) {
         String userEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Patient patient = patientService.getPatientById(id, userEmail);
+        Patient patient = patientService.getPatientByIdAndEmail(id, userEmail);
 
         PatientDTO response = new PatientDTO(patient.getId(), patient.getFirstName(), patient.getLastName(),
                 patient.getEmail());

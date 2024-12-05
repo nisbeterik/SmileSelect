@@ -40,11 +40,9 @@ public class AppointmentController {
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
+
         Appointment createdAppointment = appointmentService.save(appointment);
         appointmentService.publishAppointmentMessage("/appointments/created", createdAppointment);
-
-        // Publish created appointment to "/appointments/created" topic
-        appointmentService.publishAppointmentCreatedEvent(createdAppointment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
@@ -150,10 +148,31 @@ public class AppointmentController {
 
             appointmentService.save(appointment);
 
-            // Publish event for email notification when patient is added
-            appointmentService.publishAppointmentCreatedEvent(appointment);
-
             return ResponseEntity.ok(appointment);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
+    @PatchMapping("/add-patient")
+    public ResponseEntity<?> addPatientToAppointment(@RequestBody Appointment appointmentWithPatient) {
+        Optional<Appointment> optionalAppointment = appointmentService
+                .getAppointmentById(appointmentWithPatient.getId());
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+
+            if (appointmentWithPatient.getPatientId() != null) {
+                appointment.setPatientId(appointmentWithPatient.getPatientId());
+                appointmentService.save(appointment);
+
+                // Publish event for email notification when patient is added
+                appointmentService.publishAppointmentCreatedEvent(appointment);
+
+                return ResponseEntity.ok(appointment);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient ID is required to add a patient");
+            }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }

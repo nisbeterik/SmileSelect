@@ -169,7 +169,7 @@ export default defineComponent({
           patientId: patient.id,
         };
 
-        const updateResponse = await axios.patch(`/appointments`, appointmentData);
+        const updateResponse = await axios.patch(`/appointments/add-patient`, appointmentData);
 
         console.log("Appointment updated successfully:", updateResponse.data);
         this.isModalVisible = false;

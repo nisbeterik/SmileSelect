@@ -593,7 +593,7 @@ export default {
     async addPatientToAppointment() {
       await this.findPatientByEmail();
       if (this.patientId) {
-        const response = await this.$axios.patch(`/appointments`,
+        const response = await this.$axios.patch(`/appointments/add-patient`,
           {
             "id": this.selectedEvent.id,
             "patientId": this.patientId
