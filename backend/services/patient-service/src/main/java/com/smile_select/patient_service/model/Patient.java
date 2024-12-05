@@ -2,6 +2,7 @@ package com.smile_select.patient_service.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "patient")
@@ -29,12 +30,15 @@ public class Patient {
     @Column(name = "role")
     private String role = "PATIENT";
 
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PatientPreferredDate> preferredDates;
+
     // No-argument constructor
     public Patient() {
     }
 
     // All-argument constructor
-    public Patient(Long id, String firstName, String lastName, String email, String password, LocalDate dateOfBirth, String role) {
+    public Patient(Long id, String firstName, String lastName, String email, String password, LocalDate dateOfBirth, String role, List<PatientPreferredDate> preferredDates) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -42,6 +46,7 @@ public class Patient {
         this.password = password;
         this.dateOfBirth = dateOfBirth;
         this.role = role;
+        this.preferredDates = preferredDates;
     }
 
     // Getters and setters
@@ -107,4 +112,14 @@ public class Patient {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public List<PatientPreferredDate> getPreferredDates() {
+        return preferredDates;
+    }
+
+    public void setPreferredDates(List<PatientPreferredDate> preferredDates) {
+        this.preferredDates = preferredDates;
+    }
+
+    
 }
