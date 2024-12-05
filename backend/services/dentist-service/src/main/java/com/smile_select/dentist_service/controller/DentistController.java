@@ -3,7 +3,6 @@ package com.smile_select.dentist_service.controller;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import com.smile_select.dentist_service.dto.DentistDTO;
 import com.smile_select.dentist_service.exception.ResourceNotFoundException;
 import com.smile_select.dentist_service.model.Clinic;
@@ -17,10 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.smile_select.dentist_service.model.Dentist;
-import com.smile_select.dentist_service.repository.DentistRepository;
 
 /**
- * RESTful controller responsible for handling dentist registration and basic CRUD operations.
+ * RESTful controller responsible for handling dentist registration and basic
+ * CRUD operations.
  * Exposes endpoints at the base path /api/accounts.
  */
 @RestController
@@ -28,14 +27,11 @@ import com.smile_select.dentist_service.repository.DentistRepository;
 public class DentistController {
 
     @Autowired
-    private DentistRepository dentistRepository;
-    @Autowired
     private ClinicRepository clinicRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private DentistService dentistService;
-
 
     /**
      * Register a new dentist
@@ -62,11 +58,10 @@ public class DentistController {
         dentist.setClinic(selectedClinic.get());
         dentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
 
-        dentistRepository.save(dentist);
+        dentistService.saveDentist(dentist);
 
         return new ResponseEntity<>("Dentist registered successfully!", HttpStatus.CREATED);
     }
-
 
     /**
      * Get ALL dentists
@@ -99,13 +94,12 @@ public class DentistController {
      *
      * @param id - The ID of the dentist.
      * @return The details of the dentist, or a 404 Not Found status if not found.
-     * Ensures only the authenticated user can access
+     *         Ensures only the authenticated user can access
      */
     @GetMapping("/{id}")
     public ResponseEntity<DentistDTO> getDentistById(@PathVariable("id") Long id) {
-        // Retrieve the authenticated dentist's email
-        String dentistEmail = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Dentist dentist = dentistService.getDentistById(id, dentistEmail);
+
+        Dentist dentist = dentistService.getDentistById(id);
 
         // Map dentist details along with associated clinic details to the DTO
         DentistDTO response = new DentistDTO(
@@ -120,62 +114,59 @@ public class DentistController {
                 dentist.getClinic().getStreet(),
                 dentist.getClinic().getZip(),
                 dentist.getClinic().getCity(),
-                dentist.getClinic().getHouseNumber()
-        );
+                dentist.getClinic().getHouseNumber());
 
         return ResponseEntity.ok(response);
     }
-
 
     /**
      * Updates an existing dentist's information
      *
      * @param id      - the ID of the dentist to be updated
      * @param dentist the Dentist object with updated information
-     * @return ResponseEntity with a message indicating the outcome of the update operation
+     * @return ResponseEntity with a message indicating the outcome of the update
+     *         operation
      */
     @PutMapping("/{id}")
     public ResponseEntity<String> updateDentist(
             @PathVariable Long id,
             @Valid @RequestBody Dentist dentist) {
-        Optional<Dentist> existingDentistOpt = dentistRepository.findById(id);
 
-        if (existingDentistOpt.isPresent()) {
-            Dentist existingDentist = existingDentistOpt.get();
+        Dentist existingDentist = dentistService.getDentistById(id);
 
-            // Update basic details
-            existingDentist.setFirstName(dentist.getFirstName());
-            existingDentist.setLastName(dentist.getLastName());
-            existingDentist.setEmail(dentist.getEmail());
-            if (dentist.getPassword() != null && !dentist.getPassword().isEmpty()) {
-                existingDentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
-            }
+        // ADD AUTHORIZATION LOGIC HERE, COMPARE ID IN PARAM TO ID IN TOKEN
 
-            // Update the associated clinic if a new clinicId is provided
-            if (dentist.getClinicId() != null) {
-                Optional<Clinic> selectedClinic = clinicRepository.findById(dentist.getClinicId());
-                if (selectedClinic.isEmpty()) {
-                    return new ResponseEntity<>("Selected clinic does not exist", HttpStatus.BAD_REQUEST);
-                }
-                existingDentist.setClinic(selectedClinic.get());
-            }
-
-            // Save updated dentist
-            dentistRepository.save(existingDentist);
-
-            return ResponseEntity.ok("Dentist updated successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentist not found");
+        // Update basic details
+        existingDentist.setFirstName(dentist.getFirstName());
+        existingDentist.setLastName(dentist.getLastName());
+        existingDentist.setEmail(dentist.getEmail());
+        if (dentist.getPassword() != null && !dentist.getPassword().isEmpty()) {
+            existingDentist.setPassword(passwordEncoder.encode(dentist.getPassword()));
         }
-    }
 
+        // Update the associated clinic if a new clinicId is provided
+        if (dentist.getClinicId() != null) {
+            Optional<Clinic> selectedClinic = clinicRepository.findById(dentist.getClinicId());
+            if (selectedClinic.isEmpty()) {
+                return new ResponseEntity<>("Selected clinic does not exist", HttpStatus.BAD_REQUEST);
+            }
+            existingDentist.setClinic(selectedClinic.get());
+        }
+
+        // Save updated dentist
+        dentistService.saveDentist(existingDentist);
+
+        return ResponseEntity.ok("Dentist updated successfully");
+
+    }
 
     /**
      * Deletes the dentist with the specified ID.
      *
      * @param id - the ID of the dentist to delete
-     * @return a ResponseEntity containing a success message if the dentist was deleted,
-     * or a not found message if no dentist with the specified ID exists
+     * @return a ResponseEntity containing a success message if the dentist was
+     *         deleted,
+     *         or a not found message if no dentist with the specified ID exists
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDentist(@PathVariable Long id) {
