@@ -27,11 +27,11 @@ export default {
         console.log(response.data);
 
         const dentists = response.data
-            .map(
-                (dentist) =>
-                    `ID: ${dentist.id}, Name: ${dentist.firstName} ${dentist.lastName}`
-            )
-            .join('\n');
+          .map(
+            (dentist) =>
+              `ID: ${dentist.id}, Name: ${dentist.firstName} ${dentist.lastName}`
+          )
+          .join('\n');
 
         this.message = `Fetched ${response.data.length} dentists:\n${dentists}`;
       } catch (error) {
@@ -74,8 +74,8 @@ export default {
 
       try {
         const response = await axios.put(
-            `/dentists/${id}`,
-            updatedData
+          `/dentists/${id}`,
+          updatedData
         );
         console.log(response.data);
         this.message = response.data;

@@ -6,5 +6,5 @@ import com.smile_select.notification_service.model.Notification;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long>{
-    
+
 }

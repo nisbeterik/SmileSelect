@@ -43,9 +43,10 @@ public class MqttConfig {
     public MessageProducer inbound() {
         String clientId = "serverIn-" + UUID.randomUUID().toString();
         MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter(
-            clientId, 
-            mqttClientFactory(), 
-            "#"
+                clientId,
+                mqttClientFactory(),
+                "#"
+
         );
 
         adapter.setCompletionTimeout(5000);
@@ -67,7 +68,7 @@ public class MqttConfig {
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("/notifications");
-        messageHandler.setDefaultRetained(false); 
+        messageHandler.setDefaultRetained(false);
         return messageHandler;
     }
 }

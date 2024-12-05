@@ -1,16 +1,7 @@
 <template>
   <div>
-    <FullCalendar
-      ref="calendar"
-      :options="calendarOptions"
-      @select="handleSelect"
-    />
-
-    <div
-      v-if="showCreateAppointmentModal"
-      class="modal"
-      @click.self="cancelAppointment"
-    >
+    <FullCalendar ref="calendar" :options="calendarOptions" @select="handleSelect" />
+    <div v-if="showCreateAppointmentModal" class="modal" @click.self="closeCurrentModal()">
       <div class="modal-content">
         <h3>Create Appointment</h3>
 
@@ -21,12 +12,7 @@
         <div class="time-input-group">
           <label for="startTime">Start:</label>
           <div class="time-controls">
-            <input
-              type="time"
-              v-model="selectedSlot.startTime"
-              step="300"
-              required
-            />
+            <input type="time" v-model="selectedSlot.startTime" step="300" required />
             <button class="time-btn" @click="adjustTime('start', -5)">-</button>
             <button class="time-btn" @click="adjustTime('start', 5)">+</button>
           </div>
@@ -35,27 +21,26 @@
         <div class="time-input-group">
           <label for="endTime">End:</label>
           <div class="time-controls">
-            <input
-              type="time"
-              v-model="selectedSlot.endTime"
-              step="300"
-              required
-            />
+            <input type="time" v-model="selectedSlot.endTime" step="300" required />
             <button class="time-btn" @click="adjustTime('end', -5)">-</button>
             <button class="time-btn" @click="adjustTime('end', 5)">+</button>
           </div>
         </div>
 
-        <button @click="saveAppointment">Save Appointment</button>
-        <button @click="cancelAppointment">Cancel</button>
+        <div class="patient-group">
+          <label for="assign-patient">Patient</label>
+          <div class="time-controls">
+            <input type="text-field" v-model="patientQuery" />
+            <button class="patient-check" @click="findPatientByEmail()"> check </button>
+          </div>
+        </div>
+
+        <button @click="saveAppointment()">Save Appointment</button>
+        <button @click="closeCurrentModal()">Cancel</button>
       </div>
     </div>
 
-    <div
-      v-if="showAppointmentDetailsModal"
-      class="modal"
-      @click.self="closeEventModal"
-    >
+    <div v-if="showAppointmentDetailsModal" class="modal" @click.self="closeCurrentModal">
       <div class="modal-content">
         <h3>Appointment Details:</h3>
         <p>
@@ -70,19 +55,29 @@
           <strong>Time:</strong><br />
           {{ selectedEvent.time }}
         </p>
-        <div
-          v-if="selectedEvent.patientId && selectedEvent.patientId !== 'null'"
-        >
+        <div v-if="selectedEvent.patientId && selectedEvent.patientId !== 'null'">
           <p>
             <strong>Patient Name:</strong><br />
             {{ selectedEvent.patientName }}
+            <button @click="removePatientFromAppointment">Remove</button>
           </p>
           <p>
             <strong>Patient Email:</strong><br />
             {{ selectedEvent.patientEmail }}
           </p>
+
         </div>
-        <button @click="closeEventModal">Close</button>
+        <div v-else>
+          <div class="patient-group">
+            <label for="assign-patient">Add Patient</label>
+            <div class="time-controls">
+              <input type="text-field" v-model="patientQuery" />
+              <button class="patient-check" @click="addPatientToAppointment()"> Add </button>
+            </div>
+          </div>
+        </div>
+        <button @click="closeCurrentModal">Close</button>
+        <button @click="deleteAppointment">Delete</button>
       </div>
     </div>
   </div>
@@ -92,10 +87,13 @@
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
+import { useAuthStore } from '@/stores/auth';
 
 const bookedColor = '#FF5733';
 const availableColor = '#28A745';
+const selectedColor = '#C6B700';
 
 export default {
   components: {
@@ -109,9 +107,14 @@ export default {
     clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
   },
   data() {
+    const authStore = useAuthStore();
     return {
+      token: authStore.token,
+      multiSlotMode: false, // Tracks if multi-slot mode is active
+      selectedSlots: [],
+      selectedEventId: null,
       calendarOptions: {
-        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
+        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
         initialView: 'timeGridWeek',
         firstDay: 1,
         weekends: false,
@@ -120,19 +123,28 @@ export default {
         selectable: true,
         select: this.handleSelect,
         eventClick: this.handleEventClick,
+        eventDidMount: this.eventDidMount,
         slotMinTime: '07:00:00',
         slotMaxTime: '19:00:00',
         slotDuration: '00:15:00',
         snapDuration: '00:05:00',
         headerToolbar: {
-          left: 'prev,next today,toggleWeekends',
+          left: 'prev,next today,toggleWeekends multiSlotMode,createTimeSlots',
           center: 'title',
-          right: 'prev,next,dayGridMonth,timeGridWeek',
+          right: 'prev,next,dayGridMonth,timeGridWeek,listWeek',
         },
         customButtons: {
           toggleWeekends: {
             text: 'Toggle Weekends',
             click: this.toggleWeekends,
+          },
+          multiSlotMode: {
+            text: 'MultiSlotMode',
+            click: this.toggleMultiSlotMode,
+          },
+          createTimeSlots: {
+            text: 'Create Time Slots',
+            click: this.createMultipleTimeSlots
           },
         },
       },
@@ -143,12 +155,25 @@ export default {
         endTime: null,
         date: null,
       },
+      patientQuery: null,
+      patientId: null,
+      searchResults: null,
       selectedEvent: null,
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
       intervalId: null,
     };
   },
   methods: {
+
+    toggleMultiSlotMode() {
+      if (this.multiSlotMode === true) {
+        this.multiSlotMode = false;
+        this.selectedSlots = [];
+        this.loadAppointments();
+      } else {
+        this.multiSlotMode = true;
+      }
+    },
     toggleWeekends() {
       const weekendsStatus = this.calendarOptions.weekends;
       if (weekendsStatus === true) {
@@ -181,9 +206,9 @@ export default {
               .getHours()
               .toString()
               .padStart(2, '0')}:${date
-              .getMinutes()
-              .toString()
-              .padStart(2, '0')}`;
+                .getMinutes()
+                .toString()
+                .padStart(2, '0')}`;
           }
         } else {
           if (newTime > this.selectedSlot.startTime) {
@@ -231,34 +256,90 @@ export default {
     },
 
     handleSelect(info) {
-      const calendarApi = this.$refs.calendar.getApi();
-      const isWeekView = calendarApi.view.type === 'timeGridWeek';
+      if (this.multiSlotMode == true || info.jsEvent.shiftKey) {
+        const slot = {
+          date: this.formatDate(info.start),
+          startTime: this.formatTime(info.start),
+          endTime: this.formatTime(info.end),
+        };
 
-      this.selectedSlot.date = this.formatDate(info.start);
 
-      if (isWeekView) {
-        this.selectedSlot.startTime = this.formatTime(info.start);
-        this.selectedSlot.endTime = this.formatTime(info.end);
-      } else {
-        this.selectedSlot.startTime = '08:00';
-        this.selectedSlot.endTime = '10:00';
-      }
+        this.selectedSlots.push(slot);
+        this.createMultiSlotModeTempSlot(slot);
 
-      const overlap = this.checkOverlap(this.selectedSlot);
-      if (!overlap) {
-        this.showCreateAppointmentModal = true;
+      } else { //single slot creating
+
+        const calendarApi = this.$refs.calendar.getApi();
+        const isWeekView = calendarApi.view.type === 'timeGridWeek';
+
+        this.selectedSlot.date = this.formatDate(info.start);
+
+        if (isWeekView) {
+          this.selectedSlot.startTime = this.formatTime(info.start);
+          this.selectedSlot.endTime = this.formatTime(info.end);
+        } else {
+          this.selectedSlot.startTime = '08:00';
+          this.selectedSlot.endTime = '10:00';
+        }
+
+        const overlap = this.checkOverlap(this.selectedSlot);
+        if (!overlap) {
+          this.showCreateAppointmentModal = true;
+        }
       }
     },
 
-    cancelAppointment() {
-      this.showCreateAppointmentModal = false;
-      this.selectedSlot = { startTime: '', endTime: '', date: null };
+    createMultiSlotModeTempSlot() {
+      var index = -1;
+
+      this.selectedSlots.forEach(slot => {
+        var overlap = false;
+
+        if ((index * -1) === this.selectedSlots.length) { //checks if the latest slot overlaps
+          overlap = this.checkOverlap(slot);
+
+        }
+        if (overlap) {
+          this.selectedSlots.pop();
+        } else {
+          this.calendarOptions.events.push({
+            id: index,
+            title: 'Wating for creation',
+            start: `${slot.date}T${slot.startTime}`,
+            end: `${slot.date}T${slot.endTime}`,
+            backgroundColor: selectedColor,
+          });
+          index--;
+        }
+
+      });
+    },
+
+    async createMultipleTimeSlots() {
+
+      this.calendarOptions.events = this.calendarOptions.events.filter(event => event.id >= 0);
+
+      try {
+        const appointmentPromises = [];
+        for (const slot of this.selectedSlots) {
+          const promise = this.saveAppointment(slot);
+          appointmentPromises.push(promise);
+        }
+
+        await Promise.all(appointmentPromises);
+
+        this.selectedSlots = [];
+
+      } catch (error) {
+        console.error('Error creating time slots:', error);
+        alert('Failed to create time slots.');
+      }
     },
 
     async getPatientInfo(patientId) {
       try {
         const response = await this.$axios.get(
-          `/accounts/patients/${patientId}`
+          `/patients/booking/${patientId}`
         );
         return response.data;
       } catch (error) {
@@ -271,6 +352,7 @@ export default {
 
     async handleEventClick(info) {
       const event = info.event;
+
       const eventTime =
         this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
       const patientId = event.extendedProps?.patientId;
@@ -297,21 +379,57 @@ export default {
           console.error('Failed to fetch patient details:', error);
         }
       }
+      if (!event.extendedProps.originalColor) {
+        event.setExtendedProp('originalColor', event.backgroundColor);
+      }
+      event.setProp('backgroundColor', selectedColor);
 
-      console.log(this.selectedEvent);
+      this.selectedEventId = event.id;
+
+      const calendarApi = this.$refs.calendar.getApi();
+      calendarApi.refetchEvents();
+
       this.showAppointmentDetailsModal = true;
     },
 
-    closeEventModal() {
+    closeCurrentModal() { //resets all modal settings
+
+      if (this.selectedEventId) {
+        const calendarApi = this.$refs.calendar.getApi();
+        const selectedEvent = calendarApi.getEventById(this.selectedEventId);
+
+        if (selectedEvent) {
+          const originalColor = selectedEvent.extendedProps.originalColor
+            || (selectedEvent.extendedProps.patientId === null ? availableColor : bookedColor);
+          selectedEvent.setProp('backgroundColor', originalColor);
+        }
+      }
+
       this.selectedEvent = null;
+      this.patientId = null;
+      this.patientQuery = null;
       this.showAppointmentDetailsModal = false;
+      document.querySelectorAll('.fc-event').forEach((el) => el.classList.remove('selected-event'));
+      this.showCreateAppointmentModal = false;
+      this.selectedSlot = { startTime: '', endTime: '', date: null };
     },
 
-    async saveAppointment() {
+    async saveAppointment(slotData = null) {
+      let slot;
+      if (slotData === null) {
+        slot = { ...this.selectedSlot };
+      } else {
+        slot = slotData;
+      }
+
       try {
-        const overlap = this.checkOverlap(this.selectedSlot);
+        if (this.patientQuery) {
+          await this.findPatientByEmail();
+        }
+
+        const overlap = this.checkOverlap(slot);
         if (overlap) {
-          this.cancelAppointment();
+          this.closeCurrentModal();
           return;
         }
 
@@ -320,29 +438,42 @@ export default {
         };
 
         const startDateTime = formatToLocalDateTime(
-          this.selectedSlot.date,
-          this.selectedSlot.startTime
+          slot.date,
+          slot.startTime
         );
         const endDateTime = formatToLocalDateTime(
-          this.selectedSlot.date,
-          this.selectedSlot.endTime
+          slot.date,
+          slot.endTime
         );
+
+        var appointmentColor = bookedColor;
+        var appointmentTitle = 'Booked';
+
+        if (this.patientId === null) {
+          appointmentColor = availableColor;
+          appointmentTitle = 'Available';
+        }
+
 
         var newAppointment = {
           dentistId: `${this.HARDCODED_DENTIST_ID}`,
           startTime: `${startDateTime}`,
           endTime: `${endDateTime}`,
+          patientId: `${this.patientId}`
         };
 
-        await this.$axios.post('/appointments', newAppointment);
+        const response = await this.$axios.post('/appointments', newAppointment);
+        console.log(response)
+        const appointmentId = response.data.id;
+
 
         this.calendarOptions.events.push({
-          title: 'Available',
-          start: `${this.selectedSlot.date}T${this.selectedSlot.startTime}`,
-          end: `${this.selectedSlot.date}T${this.selectedSlot.endTime}`,
-          backgroundColor: availableColor,
+          id: appointmentId,
+          title: appointmentTitle,
+          start: `${slot.date}T${slot.startTime}`,
+          end: `${slot.date}T${slot.endTime}`,
+          backgroundColor: appointmentColor,
         });
-        console.log('Appointment saved');
       } catch (error) {
         alert('Error saving appointment');
         console.error(
@@ -350,8 +481,7 @@ export default {
           error.response?.data || error.message
         );
       }
-
-      this.cancelAppointment();
+      this.closeCurrentModal();
     },
 
     // TODO: Make this method load only appointments for the logged in dentist instead of all appointments
@@ -360,6 +490,9 @@ export default {
         this.calendarOptions.events = [];
         var response = await this.$axios.get(`/appointments/dentist/${this.HARDCODED_DENTIST_ID}`); // PLACEHOLDER ID
         var existingAppointments = response.data;
+
+        if (this.selectedSlots) { this.createMultiSlotModeTempSlot() }
+
 
         Object.values(existingAppointments).forEach((appointment) => {
           var appointmentColor = bookedColor;
@@ -371,6 +504,7 @@ export default {
           }
 
           this.calendarOptions.events.push({
+            id: `${appointment.id}`,
             title: appointmentTitle,
             start: `${appointment.startTime}`,
             end: `${appointment.endTime}`,
@@ -378,19 +512,115 @@ export default {
             backgroundColor: appointmentColor,
           });
         });
-        console.log('Appointments fetched');
       } catch (error) {
         console.error(
-          'Error saving appointment:',
+          'Error loading appointment:',
           error.response?.data || error.message
         );
       }
     },
-  },
+    async deleteAppointment() {
+      try {
+        const appointmentId = this.selectedEvent.id;
+
+        var response = await this.$axios.delete(`/appointments/${appointmentId}`);
+        var deletedAppointment = response.data;
+        console.log(deletedAppointment)
+
+        this.calendarOptions.events = this.calendarOptions.events.filter(event => event.id !== appointmentId);
+
+        this.closeCurrentModal();
+
+      } catch (error) {
+        alert('Error deleting appointment');
+        console.error(
+          'Error deleteing appointment:',
+          error.response?.data || error.message
+        );
+      }
+    },
+    async searchPatients() {
+      try {
+        var response = await this.$axios.get(`/patients/search`, {
+          params: {
+            query: this.patientQuery
+          }
+        });
+
+        // Store or process the results
+        this.searchResults = response.data;
+        console.log(this.searchResults)
+      } catch (error) {
+        console.error('Error searching patients:', error);
+      }
+    },
+    async findPatientByEmail() {
+      try {
+        var response = await this.$axios.get(`/patients/email/${this.patientQuery}`);
+        console.log(response.data);
+        this.patientId = response.data.id;
+
+        console.log(this.patientId, "ideeet");
+
+
+      } catch (error) {
+        console.error('Error finding patient email patients:', error);
+      }
+    },
+    async removePatientFromAppointment() {
+      const appointmentId = this.selectedEvent.id;
+      if (!this.token) {
+        console.error("Authorization token is missing");
+        return;
+      }
+      const headers = {
+        Authorization: `Bearer ${this.token}`,
+      };
+      if (this.selectedEvent.patientId) {
+        try {
+          const response = await this.$axios.patch(
+            `/appointments/${appointmentId}/cancel`,
+            { headers } 
+          );
+          if (response.status === 200) {
+            this.selectedEvent.patientId = null;
+          }
+        } catch (error) {
+          console.error("Error removing patient from appointment:", error.response?.data || error.message);
+        }
+      }
+    },
+    async addPatientToAppointment() {
+      await this.findPatientByEmail();
+      if (this.patientId) {
+        const response = await this.$axios.patch(`/appointments/add-patient`,
+          {
+            "id": this.selectedEvent.id,
+            "patientId": this.patientId
+          })
+        if (response.status === 200) {
+          this.selectedEvent.patientId = this.patientId;
+        }
+      }
+    },
+
+  }
 };
 </script>
 
 <style scoped>
+:root {
+  --selected-event-color: #333333;
+  /* Default color for the selected event */
+}
+
+.active-button {
+  background-color: #007bff;
+  /* Highlight color */
+  color: white;
+  border-color: #0056b3;
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -408,6 +638,12 @@ export default {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+}
+
+.selected-event {
+  background-color: var(--selected-event-color) !important;
+  border-color: var(--selected-event-color) !important;
+  filter: brightness(70%)
 }
 
 .time-input-group {

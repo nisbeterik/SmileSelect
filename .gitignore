@@ -20,6 +20,7 @@ target/
 backend/services/auth-service/src/main/resources/env.properties
 backend/services/dentist-service/src/main/resources/env.properties
 backend/services/patient-service/src/main/resources/env.properties
+backend/services/notification-service/src/main/resources/env.properties
 # Environment variable files
 .env
 .env.local
@@ -63,5 +64,6 @@ pnpm-debug.log*
 
 /smile-select-frontend/dist
 .vscode/settings.json
-backend/services/appointment-service/src/main/resources/env.properties
 backend/services/notification-service/src/main/resources/env.properties
+.DS_Store
+backend/services/appointment-service/src/main/resources/env.properties

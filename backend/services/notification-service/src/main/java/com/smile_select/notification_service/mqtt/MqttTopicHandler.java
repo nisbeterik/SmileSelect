@@ -20,20 +20,24 @@ public class MqttTopicHandler {
 
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handleMessage(
-        Message<String> message, 
-        @Header(MqttHeaders.RECEIVED_TOPIC) String topic
+            Message<String> message,
+            @Header(MqttHeaders.RECEIVED_TOPIC) String topic
     ) {
         switch (topic) {
-            case "/appointments/new":
+            case "/notifications/created":
                 notificationService.processNewAppointmentSlot(message.getPayload());
                 break;
 
-            case "/appointments/patient-cancelled":
+            case "/notifications/cancelled-by-patient":
                 notificationService.processAppointmentCancellationByPatient(message.getPayload());
                 break;
 
-            case "/appointments/dentist-cancelled":
+            case "/notifications/cancelled-by-dentist":
                 notificationService.processAppointmentCancellationByDentist(message.getPayload());
+                break;
+
+            case "/notifications/booked":
+                notificationService.processAppointmentWithEmail(message.getPayload());
                 break;
         }
     }

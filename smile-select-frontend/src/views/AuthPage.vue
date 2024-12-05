@@ -9,8 +9,8 @@
       <button @click="toggleForm" class="toggle-btn">
         {{
           showLogin
-              ? 'Not registered yet? Sign up here'
-              : 'Already registered? Log in here'
+            ? 'Not registered yet? Sign up here'
+            : 'Already registered? Log in here'
         }}
       </button>
     </div>
