@@ -123,15 +123,15 @@ compile_patient_service:
 #   dependencies:
 #     - compile_auth_service
 
-# test_dentist_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Dentist Service..."
-#     - mvn -B test --file backend/services/dentist-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_dentist_service
+ test_dentist_service:
+   stage: test
+   script:
+     - echo "Running tests for Dentist Service..."
+     - mvn -B test --file backend/services/dentist-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_dentist_service
 
 # test_gateway_service:
 #   stage: test
