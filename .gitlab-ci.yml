@@ -145,11 +145,6 @@ test_dentist_service:
   services:
     - name: postgres:latest
       alias: postgres
-      environment:
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: dentistDB
-    - command: ["postgres", "-c", "listen_addresses='*'"]
   script:
     - echo "Waiting for PostgreSQL to be ready..."
     - apt-get update && apt-get install -y postgresql-client
@@ -160,7 +155,7 @@ test_dentist_service:
     - echo "JWT_TOKEN=$JWT_TOKEN" > backend/services/dentist-service/src/main/resources/env.properties
     - echo "JWT_EXPIRATION=$JWT_EXPIRATION" >> backend/services/dentist-service/src/main/resources/env.properties
     - echo "Running tests for Dentist Service..."
-    - mvn -B test --file backend/services/dentist-service/pom.xml
+    - mvn -B test --file backend/services/dentist-service/pom.xml -Dspring.profiles.active=ci
   tags:
     - docker
   dependencies:
