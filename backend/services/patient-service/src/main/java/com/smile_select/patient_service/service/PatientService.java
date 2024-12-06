@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.smile_select.patient_service.dto.PatientDTO;
+import com.smile_select.patient_service.dto.PatientFirstNameAndEmailDTO;
 import com.smile_select.patient_service.dto.PatientUpdateDTO;
 import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import com.smile_select.patient_service.model.Patient;
@@ -194,7 +196,7 @@ public class PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
     }
 
-    public void processAppointmentCreated(String payload) {
+    public void processAppointmentBooked(String payload) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(payload);
@@ -222,6 +224,40 @@ public class PatientService {
             // Publish to the topic
             mqttGateway.publishMessage(messageToPublish, "/notifications/booked");
             System.out.println("Published message to /notifications/booked");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processAppointmentCreated(String payload) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(payload);
+
+            Long appointmentId = rootNode.path("id").asLong();
+            String startTime = rootNode.path("startTime").asText();
+
+            // Prepare message to publish
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("appointmentId", appointmentId);
+            messageMap.put("startTime", startTime);
+
+            // Finf all patients with a preferred date equaling start time date
+            
+            LocalDateTime localDateTime = LocalDateTime.parse(startTime);
+            LocalDate localDate = localDateTime.toLocalDate();
+
+            // Get a list of emails for the patients who have entered that preferred daye
+            List<PatientFirstNameAndEmailDTO> emailsAndNamesList = patientPreferredDateRepository.findEmailsAndFirstNamesByPreferredDate(localDate);
+            
+            messageMap.put("emailsAndNamesList", emailsAndNamesList);
+
+            String messageToPublish = objectMapper.writeValueAsString(messageMap);
+
+            // Publish to the topic
+            mqttGateway.publishMessage(messageToPublish, "/notifications/created");
+            System.out.println("Published message to /notifications/created");
+            System.out.println(messageToPublish);
         } catch (Exception e) {
             e.printStackTrace();
         }
