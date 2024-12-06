@@ -135,6 +135,11 @@ test_dentist_service:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -p 5432 -U postgres; do sleep 2; done
     - echo "PostgreSQL is ready."
+    - echo "Creating env.properties file with JWT_TOKEN and JWT_EXPIRATION..."
+    - mkdir -p backend/services/dentist-service/src/main/resources 
+    - echo "JWT_TOKEN=$JWT_TOKEN" > backend/services/dentist-service/src/main/resources/env.properties
+    - echo "JWT_EXPIRATION=$JWT_EXPIRATION" >> backend/services/dentist-service/src/main/resources/env.properties
+    - echo "Running tests for Dentist Service..."
     - mvn -B test --file backend/services/dentist-service/pom.xml -Dspring.profiles.active=ci
   variables:
     POSTGRES_PASSWORD: postgres
