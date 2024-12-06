@@ -134,8 +134,6 @@ test_dentist_service:
   script:
     - echo "Waiting for PostgreSQL to be ready..."
     - apt-get update && apt-get install -y postgresql-client
-    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 2; done
-    - echo "PostgreSQL is ready."
     - echo "Creating env.properties file with JWT_TOKEN and JWT_EXPIRATION..."
     - mkdir -p backend/services/dentist-service/src/main/resources
     - echo "JWT_TOKEN=$JWT_TOKEN" > backend/services/dentist-service/src/main/resources/env.properties
@@ -148,6 +146,7 @@ test_dentist_service:
     POSTGRES_DB: dentistDB
     POSTGRES_HOST: postgres
     POSTGRES_PORT: 5432
+    POSTGRES_HOST_AUTH_METHOD: trust
   tags:
     - docker
   dependencies:
