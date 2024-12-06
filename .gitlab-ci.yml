@@ -140,8 +140,9 @@ test_dentist_service:
     - echo "JWT_TOKEN=$JWT_TOKEN" > backend/services/dentist-service/src/main/resources/env.properties
     - echo "JWT_EXPIRATION=$JWT_EXPIRATION" >> backend/services/dentist-service/src/main/resources/env.properties
     - echo "Running tests for Dentist Service..."
-    - mvn help:active-profiles -Dspring.profiles.active=ci
-    - mvn -B test --file backend/services/dentist-service/pom.xml -Dspring.profiles.active=ci
+    - cd backend/services/dentist-service  
+    - mvn help:active-profiles -Dspring.profiles.active=ci  
+    - mvn -B test --file pom.xml -Dspring.profiles.active=ci  
   variables:
     POSTGRES_PASSWORD: postgres
     POSTGRES_USER: postgres
