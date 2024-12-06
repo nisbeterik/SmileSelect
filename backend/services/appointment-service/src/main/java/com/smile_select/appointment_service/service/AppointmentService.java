@@ -189,4 +189,47 @@ public class AppointmentService {
             e.printStackTrace();
         }
     }
+
+    // Save already existing methods in case of problems
+    /*
+    public Appointment save(Appointment appointment) {
+        return appointmentRepository.save(appointment);
+    }
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
+    public Optional<Appointment> getAppointmentById(Long id) {
+        return appointmentRepository.findById(id);
+    }
+
+    public List<Appointment> getAppointmentsAfterDate(LocalDate startDate) {
+        return appointmentRepository.findByStartTimeDateAfter(startDate);
+    }
+
+    public List<Appointment> getAppointmentsBeforeDate(LocalDate endDate) {
+        return appointmentRepository.findByStartTimeDateBefore(endDate);
+    }
+
+    public List<Appointment> getAppointmentsBetweenDates(LocalDate startDate, LocalDate endDate) {
+        return appointmentRepository.findByStartTimeDateBetween(startDate, endDate);
+    }
+
+    public void deleteAppointment(Long id) {
+        appointmentRepository.deleteById(id);
+    }
+
+    public List<Appointment> getAppointmentsByDentistId(Long dentistId) {
+        return appointmentRepository.findByDentistId(dentistId);
+    }
+
+    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+
+    public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
+        return appointmentRepository.findAvailableAppointmentsByDentistId(dentistId);
+    }
+    */
 }
