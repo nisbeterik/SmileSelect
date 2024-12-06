@@ -127,23 +127,9 @@ compile_patient_service:
 test_dentist_service:
   stage: test
   image: maven:3.9.9-eclipse-temurin-21
-  services:
-    - name: postgres:latest
-      alias: postgres
   script:
-    - echo "Waiting for PostgreSQL to be ready..."
-    - apt-get update && apt-get install -y postgresql-client
-    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 2; done
-    - echo "PostgreSQL is ready."
     - cd backend/services/dentist-service  
-    - mvn -B test --file pom.xml -Dspring.profiles.active=ci  
-  variables:
-    POSTGRES_PASSWORD: postgres
-    POSTGRES_USER: postgres
-    POSTGRES_DB: dentistDB
-    POSTGRES_HOST: postgres
-    POSTGRES_PORT: 5432
-    POSTGRES_HOST_AUTH_METHOD: trust
+    - mvn -B test --file pom.xml 
   tags:
     - docker
   dependencies:
