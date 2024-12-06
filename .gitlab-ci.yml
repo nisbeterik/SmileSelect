@@ -4,9 +4,6 @@ stages:
   
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  POSTGRES_USER: postgres
-  POSTGRES_DB: dentistDB
-  POSTGRES_HOST: postgres
   POSTGRES_PORT: 5432
 
 cache:
@@ -133,6 +130,10 @@ test_dentist_service:
   services:
     - name: postgres:latest
       alias: postgres
+      environment:
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_DB: dentistDB
   script:
     - echo "Waiting for PostgreSQL to be ready..."
     - apt-get update && apt-get install -y postgresql-client
