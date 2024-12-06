@@ -1,5 +1,6 @@
 package com.smile_select.patient_service.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class PatientController {
         if (patientService.findPatientByEmail(patient.getEmail()).isPresent()) {
             return new ResponseEntity<>("Email is already in use", HttpStatus.BAD_REQUEST);
         }
-        
+
         patientService.savePatient(patient);
         return new ResponseEntity<>("Patient registered successfully!", HttpStatus.CREATED);
     }
@@ -154,10 +155,18 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    // Retrieve preferred dates 
+    // Retrieve preferred dates for a patient
+    @GetMapping("/{id}/preferred-dates")
+    public ResponseEntity<List<LocalDate>> getAllPreferredDatesByPatientId(@PathVariable("id") Long id) {
+        Patient patient = patientService.getPatientById(id);
+        Set<PatientPreferredDate> preferredDates = patient.getPreferredDates();
 
-    
+        // Extract only the dates
+        List<LocalDate> dates = preferredDates.stream()
+                .map(PatientPreferredDate::getPreferredDate)
+                .collect(Collectors.toList());
 
-
+        return ResponseEntity.status(HttpStatus.OK).body(dates);
+    }
 
 }
