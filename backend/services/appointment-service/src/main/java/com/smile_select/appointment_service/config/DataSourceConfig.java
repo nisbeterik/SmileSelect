@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
@@ -31,6 +32,7 @@ public class DataSourceConfig {
     private String fallbackPassword;
 
     @Bean(name = "primaryDataSource")
+    @Primary
     public DataSource primaryDataSource() {
         return DataSourceBuilder.create()
                 .url(primaryUrl)
