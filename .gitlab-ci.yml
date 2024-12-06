@@ -2,8 +2,24 @@ stages:
   - compile
   - test
 
+
+services:
+  - name: postgres:latest
+    alias: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    health_check:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  POSTGRES_USER: postgres
+  POSTGRES_DB: dentistDB
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: 5432
 
 cache:
   paths:
@@ -125,18 +141,19 @@ compile_patient_service:
 
 test_dentist_service:
   stage: test
+  image: maven:3.9.9-eclipse-temurin-21
   services:
-    - name: postgres:13
-      alias: db
-      variables:
-        POSTGRES_USER: postgres
+    - name: postgres:latest
+      alias: postgres
+      environment:
         POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: postgres
-      command: ["postgres", "-c", "listen_addresses='*'"]
+        POSTGRES_USER: postgres
+        POSTGRES_DB: dentistDB
+    - command: ["postgres", "-c", "listen_addresses='*'"]
   script:
     - echo "Waiting for PostgreSQL to be ready..."
     - apt-get update && apt-get install -y postgresql-client
-    - until pg_isready -h db -p 5432 -U postgres; do sleep 2; done
+    - until pg_isready -h postgres -p 5432 -U postgres; do sleep 2; done
     - echo "PostgreSQL is ready."
     - echo "Creating env.properties file with JWT_TOKEN and JWT_EXPIRATION..."
     - mkdir -p backend/services/dentist-service/src/main/resources
@@ -148,7 +165,6 @@ test_dentist_service:
     - docker
   dependencies:
     - compile_dentist_service
-
 
 # test_gateway_service:
 #   stage: test
