@@ -33,7 +33,7 @@ public class Patient {
     private String role = "PATIENT";
 
     @JsonIgnore
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PatientPreferredDate> preferredDates;
 
     public Patient() {

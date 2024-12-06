@@ -1,8 +1,10 @@
 package com.smile_select.patient_service.controller;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import com.smile_select.patient_service.exception.ResourceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,6 +112,7 @@ public class PatientController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // Add a preferred appointment dates
     @PostMapping("/preferred-date")
     public ResponseEntity<?> createPatientPreferredDate(@RequestBody PatientPreferredDate request) {
         if (request.getPatient() == null || request.getPatient().getId() == null) {
@@ -123,14 +126,20 @@ public class PatientController {
 
         request.setPatient(patient);
 
+        // Remove old dates
+        patientService.removeOldPreferredDates(patient.getId());
+
+        // Retrieve dates set from patient
+        Set<PatientPreferredDate> preferredDates = patient.getPreferredDates();
+
         // Check if there are already 5 preferred dates
-        if (patient.getPreferredDates().size() >= 5) {
+        if (preferredDates.size() >= 5) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Patient cannot have more than 5 preferred dates.");
         }
 
         // Check if the preferred date already exists in the patient's preferred dates
-        if (patient.getPreferredDates().contains(request)) {
+        if (preferredDates.contains(request)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Preferred date already exists for this patient.");
         }
 
@@ -144,5 +153,11 @@ public class PatientController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
+
+    // Retrieve preferred dates 
+
+    
+
+
 
 }

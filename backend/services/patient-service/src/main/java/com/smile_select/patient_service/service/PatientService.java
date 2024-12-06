@@ -270,4 +270,14 @@ public class PatientService {
             e.printStackTrace();
         }
     }
+
+    public void removeOldPreferredDates(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        LocalDate today = LocalDate.now();
+
+        // Remove old dates from the preferred dates set
+        patient.getPreferredDates().removeIf(date -> date.getPreferredDate().isBefore(today));
+    }
 }
