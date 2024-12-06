@@ -138,6 +138,7 @@ test_dentist_service:
     # Install postgres
     - apt-get update && apt-get install -y postgresql-client
     
+    - psql -h db -U postgres -c '\l'
     - until pg_isready -h db -U postgres; do sleep 2; done
     - echo "Running tests for Dentist Service..."
     - psql -h db -U postgres -c "CREATE DATABASE dentistDB;"
