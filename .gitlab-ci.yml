@@ -1,18 +1,6 @@
 stages:
   - compile
   - test
-
-
-services:
-  - name: postgres:latest
-    alias: postgres
-    environment:
-      POSTGRES_PASSWORD: postgres
-    health_check:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      retries: 5
-      timeout: 5s
   
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
