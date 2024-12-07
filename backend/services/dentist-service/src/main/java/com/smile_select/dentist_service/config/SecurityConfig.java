@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
-@Profile("!ci")
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

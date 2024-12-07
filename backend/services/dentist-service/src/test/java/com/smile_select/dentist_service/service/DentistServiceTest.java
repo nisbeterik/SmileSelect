@@ -1,21 +1,23 @@
-package com.smile_select.dentist_service;
+package com.smile_select.dentist_service.service;
 
 import com.smile_select.dentist_service.model.Dentist;
 import com.smile_select.dentist_service.repository.DentistRepository;
-import com.smile_select.dentist_service.service.DentistService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@MockBean
+@ExtendWith(MockitoExtension.class)
 public class DentistServiceTest {
 
     @Mock
@@ -36,6 +38,10 @@ public class DentistServiceTest {
         dentist.setPassword("password");
     }
 
+
+    /*
+     * Tests for a valid input email that exists 
+     */
     @Test
     void testFindDentistByEmail() {
         
@@ -49,6 +55,9 @@ public class DentistServiceTest {
         assertEquals("Doe", result.get().getLastName());
     }
 
+    /*
+     * Tests for if email input does not exist
+     */
     @Test
     void testFindDentistByEmailNotFound() {
        
@@ -57,4 +66,23 @@ public class DentistServiceTest {
         assertEquals(false, result.isPresent());
     }
 
+    /*
+     * Tests for email in input being valid
+     */
+    @Test
+    void testFindDentistByEmailValidEmailInput () {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            dentistService.findDentistByEmail("invalid-email");
+        });
+
+        assertEquals("Invalid email format: invalid-email", exception.getMessage());
+    }
+
+    @Test
+    void testFindDentistByEmailNullEmailInput () {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->   {
+            dentistService.findDentistByEmail(null);
+        });
+        assertEquals("Invalid email format: null", exception.getMessage());
+    }
 }

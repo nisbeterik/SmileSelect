@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@Profile("!ci")
 @PropertySource("classpath:env.properties") // Loads the env.properties file from the classpath
 public class EnvConfig {
 }
