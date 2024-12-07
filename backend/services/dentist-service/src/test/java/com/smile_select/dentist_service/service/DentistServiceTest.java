@@ -39,9 +39,11 @@ public class DentistServiceTest {
     }
 
 
-    /*
-     * Tests for a valid input email that exists 
-     */
+    /***
+     * findDentistByEmail() tests
+     ***/
+
+    // Test for a valid input email that exists 
     @Test
     void testFindDentistByEmail() {
         
@@ -55,9 +57,7 @@ public class DentistServiceTest {
         assertEquals("Doe", result.get().getLastName());
     }
 
-    /*
-     * Tests for if email input does not exist
-     */
+    // Test for if email input does not exist
     @Test
     void testFindDentistByEmailNotFound() {
        
@@ -66,9 +66,7 @@ public class DentistServiceTest {
         assertEquals(false, result.isPresent());
     }
 
-    /*
-     * Tests for email in input being valid
-     */
+    //Test for email input being valid
     @Test
     void testFindDentistByEmailValidEmailInput () {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -78,11 +76,22 @@ public class DentistServiceTest {
         assertEquals("Invalid email format: invalid-email", exception.getMessage());
     }
 
+    // Test for email input being null
     @Test
     void testFindDentistByEmailNullEmailInput () {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->   {
             dentistService.findDentistByEmail(null);
         });
         assertEquals("Invalid email format: null", exception.getMessage());
+    }
+
+    // Test for email input being an empty string
+    @Test
+    void testFindDentistByEmailEmptyEmailInput() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->   {
+            dentistService.findDentistByEmail("");
+        });
+
+        assertEquals("Invalid email format: ", exception.getMessage());
     }
 }
