@@ -206,4 +206,65 @@ public class DentistServiceTest {
 
         assertEquals("Dentist not found with ID: 2", exception.getMessage());
     }
+
+
+    /**
+     * Tests for updateDentist() 
+     */
+    @Test
+    void testUpdateDentist() {
+        // Arrange
+        // Mock existing dentist to be updated
+        Dentist existingDentist = new Dentist();
+        existingDentist.setFirstName("John");
+        existingDentist.setLastName("Doe");
+        existingDentist.setEmail("john.doe@example.com");
+        existingDentist.setPassword("oldpassword");
+    
+        // Mock clinic object for association
+        Clinic clinic = new Clinic();
+        clinic.setId(1L);
+        clinic.setName("Dental Clinic");
+    
+        // Mock the responses from the repositories
+        when(dentistRepository.findById(1L)).thenReturn(Optional.of(existingDentist));
+        when(clinicRepository.findById(1L)).thenReturn(Optional.of(clinic));
+    
+        // Create an updated dentist object
+        Dentist updatedDentist = new Dentist();
+        updatedDentist.setFirstName("UpdatedFirstName");
+        updatedDentist.setLastName("UpdatedLastName");
+        updatedDentist.setEmail("updated@example.com");
+        updatedDentist.setPassword("newpassword");
+        updatedDentist.setClinicId(1L); // Setting the clinicId for association
+    
+        // Mock the behavior of the save method to return the updated dentist
+        when(dentistRepository.save(any(Dentist.class))).thenReturn(existingDentist); // Returning the updated object
+    
+        // Act
+        Dentist result = dentistService.updateDentist(1L, updatedDentist);
+    
+        // Assert
+        assertNotNull(result); // Ensure that the result is not null
+        assertEquals("UpdatedFirstName", result.getFirstName());
+        assertEquals("UpdatedLastName", result.getLastName());
+        assertEquals("updated@example.com", result.getEmail());
+        assertNotNull(result.getClinic()); // Ensure the clinic is set
+        assertEquals(clinic.getId(), result.getClinic().getId()); // Ensure the clinic is the one associated
+    }
+
+    @Test
+    void testUpdateDentistNotFound() {
+        Dentist updatedDentist = new Dentist();
+        updatedDentist.setFirstName("UpdatedFirstName");
+
+        when(dentistRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            dentistService.updateDentist(1L, updatedDentist);
+        });
+
+        assertEquals("Dentist not found with ID: 1", exception.getMessage());
+    }
+
 }
