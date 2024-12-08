@@ -67,3 +67,4 @@ pnpm-debug.log*
 .vscode/settings.json
 backend/services/notification-service/src/main/resources/env.properties
 .DS_Store
+backend/services/appointment-service/src/main/resources/env.properties

@@ -1,7 +1,6 @@
-package com.smile_select.dentist_service.config;
+package com.smile_select.appointment_service.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration

@@ -26,6 +26,10 @@ public class MqttTopicHandler {
                 dentistService.handleDentistLoginRequest(message.getPayload());
                 break;
 
+            case "/appointments/cancelled-by-patient":
+                dentistService.handleAppointmentCancellation(message.getPayload());
+                break;
+
         }
 
     }
