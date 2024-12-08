@@ -3,26 +3,23 @@ package com.smile_select.dentist_service.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.smile_select.dentist_service.exception.ResourceNotFoundException;
 import com.smile_select.dentist_service.model.Dentist;
-import com.smile_select.dentist_service.mqtt.MqttGateway;
+import com.smile_select.dentist_service.model.Clinic;
+import com.smile_select.dentist_service.repository.ClinicRepository;
 import com.smile_select.dentist_service.repository.DentistRepository;
+import com.smile_select.dentist_service.mqtt.MqttGateway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DentistServiceTest {
@@ -31,22 +28,31 @@ public class DentistServiceTest {
     private DentistRepository dentistRepository;
 
     @Mock
+    private ClinicRepository clinicRepository;
+
+    @Mock
     private MqttGateway mqttGateway;
 
     @InjectMocks
     private DentistService dentistService;
 
     private Dentist dentist;
+    private Clinic clinic;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         dentist = new Dentist();
+        dentist.setId(1L);
         dentist.setEmail("dentist@example.com");
         dentist.setFirstName("John");
         dentist.setLastName("Doe");
         dentist.setPassword("password");
+
+        clinic = new Clinic();
+        clinic.setId(1L);
+        clinic.setName("Dental Clinic");
     }
+
 
     /***
      * findDentistByEmail() tests
@@ -143,4 +149,20 @@ public class DentistServiceTest {
 
         assertEquals(expectedMessageJson, messageCaptor.getValue());
     }
+    
+
+    /**
+     * Tests for saveDentist()
+     */
+    @Test
+    void testSaveDentist() {
+        when(dentistRepository.save(any(Dentist.class))).thenReturn(dentist);
+
+        Dentist savedDentist = dentistService.saveDentist(dentist);
+
+        assertNotNull(savedDentist);
+        assertEquals("dentist@example.com", savedDentist.getEmail());
+    }
+
+    
 }
