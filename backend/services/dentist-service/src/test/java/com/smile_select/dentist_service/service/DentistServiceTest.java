@@ -164,5 +164,23 @@ public class DentistServiceTest {
         assertEquals("dentist@example.com", savedDentist.getEmail());
     }
 
+    /**
+     * Test getAllDentists()
+     */
+
+    @Test
+    void testGetAllDentists() {
+        List<Dentist> dentistList = new ArrayList<>();
+        dentistList.add(dentist);
+
+        when(dentistRepository.findAll()).thenReturn(dentistList);
+
+        List<Dentist> result = dentistService.getAllDentists();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("John", result.get(0).getFirstName());
+    }
+
     
 }
