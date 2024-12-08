@@ -182,5 +182,28 @@ public class DentistServiceTest {
         assertEquals("John", result.get(0).getFirstName());
     }
 
-    
+    /**
+     * Tests for findById()
+     */
+
+    @Test
+    void testFindById() {
+        when(dentistRepository.findById(1L)).thenReturn(Optional.of(dentist));
+
+        Dentist result = dentistService.findById(1L);
+
+        assertNotNull(result);
+        assertEquals("dentist@example.com", result.getEmail());
+    }
+
+    @Test
+    void testFindByIdNotFound() {
+        when(dentistRepository.findById(2L)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            dentistService.findById(2L);
+        });
+
+        assertEquals("Dentist not found with ID: 2", exception.getMessage());
+    }
 }
