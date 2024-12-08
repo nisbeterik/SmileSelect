@@ -267,4 +267,35 @@ public class DentistServiceTest {
         assertEquals("Dentist not found with ID: 1", exception.getMessage());
     }
 
+    @Test
+    void testDeleteDentistById() {
+        when(dentistRepository.findById(1L)).thenReturn(Optional.of(dentist));
+
+        dentistService.deleteDentistById(1L, "dentist@example.com");
+
+        verify(dentistRepository).delete(dentist);
+    }
+
+    @Test
+    void testDeleteDentistByIdNotFound() {
+        when(dentistRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            dentistService.deleteDentistById(1L, "dentist@example.com");
+        });
+
+        assertEquals("Dentist not found with ID: 1", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteDentistByIdAccessDenied() {
+        when(dentistRepository.findById(1L)).thenReturn(Optional.of(dentist));
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            dentistService.deleteDentistById(1L, "other@example.com");
+        });
+
+        assertEquals("Access denied for deleting dentist ID: 1", exception.getMessage());
+    }
+
 }
