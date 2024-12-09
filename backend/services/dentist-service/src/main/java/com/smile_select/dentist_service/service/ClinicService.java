@@ -55,4 +55,20 @@ public class ClinicService {
             return true;
         }).orElse(false);
     }
+
+    public Optional<Clinic> patchClinic(long id, ClinicUpdateDTO clinicPatchDTO) {
+        return clinicRepository.findById(id).map(clinic -> {
+            // Apply non-null fields from DTO to the existing entity
+            if (clinicPatchDTO.getName() != null) clinic.setName(clinicPatchDTO.getName());
+            if (clinicPatchDTO.getLongitude() != null) clinic.setLongitude(clinicPatchDTO.getLongitude());
+            if (clinicPatchDTO.getLatitude() != null) clinic.setLatitude(clinicPatchDTO.getLatitude());
+            if (clinicPatchDTO.getStreet() != null) clinic.setStreet(clinicPatchDTO.getStreet());
+            if (clinicPatchDTO.getZip() != null) clinic.setZip(clinicPatchDTO.getZip());
+            if (clinicPatchDTO.getCity() != null) clinic.setCity(clinicPatchDTO.getCity());
+            if (clinicPatchDTO.getHouseNumber() != null) clinic.setHouseNumber(clinicPatchDTO.getHouseNumber());
+
+            // Save the updated clinic and return it
+            return clinicRepository.save(clinic);
+        });
+    }
 }

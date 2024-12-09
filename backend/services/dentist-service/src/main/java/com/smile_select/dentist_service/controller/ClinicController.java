@@ -83,4 +83,19 @@ public class ClinicController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * PATCH /clinics/{id} - Partially update an existing clinic
+     * If clinic exists and data is valid, return 200 OK with updated clinic data.
+     * If clinic not found, return 404 Not Found.
+     * If data is invalid, return 400 Bad Request.
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<Clinic> patchClinic(
+            @PathVariable("id") long id,
+            @Valid @RequestBody ClinicUpdateDTO clinicPatchDTO) {
+        return clinicService.patchClinic(id, clinicPatchDTO)
+                .map(updatedClinic -> ResponseEntity.ok(updatedClinic))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
