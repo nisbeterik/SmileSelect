@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.smile_select.patient_service.dto.PatientDTO;
 import com.smile_select.patient_service.dto.PatientFirstNameAndEmailDTO;
 import com.smile_select.patient_service.dto.PatientUpdateDTO;
 import com.smile_select.patient_service.exception.ResourceNotFoundException;
@@ -58,8 +57,6 @@ public class PatientService {
     }
 
     public Patient savePatient(Patient patient) {
-        // Hash the password before saving a patient
-        patient.setPassword(passwordEncoder.encode(patient.getPassword()));
         return patientRepository.save(patient);
     }
 
@@ -315,5 +312,17 @@ public class PatientService {
 
         // Remove old dates from the preferred dates set
         patient.getPreferredDates().removeIf(date -> date.getPreferredDate().isBefore(today));
+    }
+
+    public PatientPreferredDate getPatientPreferredDateById(Long id){
+        PatientPreferredDate preferredDate = patientPreferredDateRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Preferred date not found"));
+            return preferredDate;
+    }
+
+    public void deletePatientPreferredDate(Long id){
+        PatientPreferredDate preferredDate = patientPreferredDateRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Preferred date not found"));
+        patientPreferredDateRepository.deleteById(preferredDate.getId());
     }
 }
