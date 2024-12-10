@@ -594,6 +594,30 @@ export default {
         );
       }
     },
+
+    handleIncomingAppointment(appointment) {
+      // Verify the appointment is for the current dentist
+      if (appointment.dentistId === this.HARDCODED_DENTIST_ID) {
+        const appointmentColor = appointment.patientId ? this.bookedColor : this.availableColor;
+        const appointmentTitle = appointment.patientId ? 'Booked' : 'Available';
+
+        // avoiding dups
+        const existingEventIndex = this.calendarOptions.events.findIndex(
+          event => event.id === `${appointment.id}`
+        );
+
+        if (existingEventIndex === -1) {
+          this.calendarOptions.events.push({
+            id: `${appointment.id}`,
+            title: appointmentTitle,
+            start: appointment.startTime,
+            end: appointment.endTime,
+            patientId: `${appointment.patientId}`,
+            backgroundColor: appointmentColor,
+          });
+        }
+      }
+    },
     async deleteAppointment() {
       try {
         const appointmentId = this.selectedEvent.id;
