@@ -103,10 +103,15 @@ export default {
   mounted() {
     this.loadAppointments();
     //this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
-    this.setupMqttConnection();
+    this.initMqttConnection();
   },
   beforeUnmount() {
     clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
+    if (this.mqttClient) {
+      this.mqttClient.end(true, () => {
+        console.log('MQTT connection closed');
+      });
+    }
   },
   data() {
     const authStore = useAuthStore();
