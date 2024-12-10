@@ -106,7 +106,7 @@ export default {
     this.initMqttConnection();
   },
   beforeUnmount() {
-    clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
+    //clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
     if (this.mqttClient) {
       this.mqttClient.end(true, () => {
         console.log('MQTT connection closed');
@@ -167,14 +167,14 @@ export default {
       searchResults: null,
       selectedEvent: null,
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
-      intervalId: null,
+      //intervalId: null,
 
       //mqtt
       mqttClient: null,
       mqttConnected: false,
       mqttOptions: {
         host: 'localhost',
-        port: 1883,
+        port: 9001,
         protocol: 'ws',
         clientId: `vue-client-${Math.random().toString(36).substr(2, 9)}`,
       }
@@ -184,7 +184,7 @@ export default {
     initMqttConnection(){
       try {
         const { host, port, protocol, clientId } = this.mqttOptions;
-        const url = `${protocol}://${host}:${port}/mqtt`;
+        const url = `${protocol}://${host}:${port}`;
 
         this.mqttClient = mqtt.connect(url, {
           clientId,
@@ -601,7 +601,7 @@ export default {
         const appointmentColor = appointment.patientId ? this.bookedColor : this.availableColor;
         const appointmentTitle = appointment.patientId ? 'Booked' : 'Available';
 
-        // avoiding dups
+        // avoiding dupes
         const existingEventIndex = this.calendarOptions.events.findIndex(
           event => event.id === `${appointment.id}`
         );
