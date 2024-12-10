@@ -159,7 +159,7 @@ export default {
       patientId: null,
       searchResults: null,
       selectedEvent: null,
-      HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
+      HARDCODED_DENTIST_ID: 6, // REMOVE ME LATER
       intervalId: null,
     };
   },
@@ -591,8 +591,9 @@ export default {
       }
     },
     async addPatientToAppointment() {
-      await this.findPatientByEmail();
-      if (this.patientId) {
+      try{
+        await this.findPatientByEmail();
+        if (this.patientId) {
         const response = await this.$axios.patch(`/appointments/add-patient`,
           {
             "id": this.selectedEvent.id,
@@ -601,6 +602,9 @@ export default {
         if (response.status === 200) {
           this.selectedEvent.patientId = this.patientId;
         }
+      }
+      } catch(error){
+        console.error("Error adding patient to appointment:", error.response?.data || error.message);
       }
     },
 
