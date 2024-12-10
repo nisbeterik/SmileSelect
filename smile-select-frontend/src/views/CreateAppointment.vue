@@ -598,7 +598,7 @@ export default {
     handleIncomingAppointment(appointment) {
       // Verify the appointment is for the current dentist
       if (appointment.dentistId === this.HARDCODED_DENTIST_ID) {
-        const appointmentColor = appointment.patientId ? this.bookedColor : this.availableColor;
+        const appointmentColor = appointment.patientId ? bookedColor : availableColor;
         const appointmentTitle = appointment.patientId ? 'Booked' : 'Available';
 
         // avoiding dupes
