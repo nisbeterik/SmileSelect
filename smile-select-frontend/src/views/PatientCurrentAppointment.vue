@@ -2,7 +2,7 @@
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6">
-                <h3>Your Appointments</h3>
+                <h3>{{ appointmentText}}</h3>
                 <div v-for="appointment in appointments" :key="appointment.id" class="card mb-3">
                     <div class="card-body">
                         <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
@@ -31,6 +31,7 @@ export default {
             token: authStore.token,
             patientId: authStore.id,
             appointments: [],
+            appointmentText: "Your appointment(s)"
         };
     },
     methods: {
@@ -48,8 +49,12 @@ export default {
                 }
 
                 this.appointments = appointments;
+                if (this.appointments.length === 0){
+                    this.appointmentText = "No appointment(s) scheduled"
+                }
             } catch (error) {
                 console.error('Error fetching appointments:', error);
+                this.appointmentText = "No appointment(s) scheduled"
             }
         },
 
