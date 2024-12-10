@@ -90,6 +90,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useAuthStore } from '@/stores/auth';
+import mqtt from 'mqtt';
 
 const bookedColor = '#FF5733';
 const availableColor = '#28A745';
@@ -101,10 +102,16 @@ export default {
   },
   mounted() {
     this.loadAppointments();
-    this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
+    //this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
+    this.initMqttConnection();
   },
   beforeUnmount() {
-    clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
+    //clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
+    if (this.mqttClient) {
+      this.mqttClient.end(true, () => {
+        console.log('MQTT connection closed');
+      });
+    }
   },
   data() {
     const authStore = useAuthStore();
@@ -160,10 +167,78 @@ export default {
       searchResults: null,
       selectedEvent: null,
       HARDCODED_DENTIST_ID: 123, // REMOVE ME LATER
-      intervalId: null,
+      //intervalId: null,
+
+      //mqtt
+      mqttClient: null,
+      mqttConnected: false,
+      mqttOptions: {
+        host: 'localhost',
+        port: 9001,
+        protocol: 'ws',
+        clientId: `vue-client-${Math.random().toString(36).substr(2, 9)}`,
+      }
     };
   },
   methods: {
+    initMqttConnection(){
+      try {
+        const { host, port, protocol, clientId } = this.mqttOptions;
+        const url = `${protocol}://${host}:${port}`;
+
+        this.mqttClient = mqtt.connect(url, {
+          clientId,
+          clean: false,
+          reconnectPeriod: 5000, // 5 seconds before reconnection
+          connectTimeout: 30000, // 30 seconds for timeout
+        });
+
+        // Successful connection
+        this.mqttClient.on('connect', () => {
+          console.log('MQTT Connected');
+          this.mqttConnected = true;
+
+          // Subscribe to relevant topics
+          this.mqttClient.subscribe('/appointments/created', (err) => {
+            if (err) {
+              console.error('Failed to subscribe to appointments/created', err);
+            } else {
+              console.log('Subscribed to /appointments/created');
+            }
+          });
+        });
+
+        //for handling incoming messages
+        this.mqttClient.on('message', (topic, message) => {
+          try {
+            const appointmentData = JSON.parse(message.toString());
+            this.handleIncomingAppointment(appointmentData);
+          } catch (error) {
+            console.error('Error processing MQTT message:', error);
+          }
+        });
+
+        // Error handling
+        this.mqttClient.on('error', (error) => {
+          console.error('MQTT Connection Error:', error);
+          this.mqttConnected = false;
+        });
+
+        // Reconnection handling
+        this.mqttClient.on('reconnect', () => {
+          console.log('Attempting to reconnect to MQTT');
+        });
+
+        // Offline event
+        this.mqttClient.on('offline', () => {
+          console.log('MQTT Client is offline');
+          this.mqttConnected = false;
+        });
+
+      } catch (error) {
+        console.error('Failed to initialize MQTT connection:', error);
+      }
+    },
 
     toggleMultiSlotMode() {
       if (this.multiSlotMode === true) {
@@ -517,6 +592,30 @@ export default {
           'Error loading appointment:',
           error.response?.data || error.message
         );
+      }
+    },
+
+    handleIncomingAppointment(appointment) {
+      // Verify the appointment is for the current dentist
+      if (appointment.dentistId === this.HARDCODED_DENTIST_ID) {
+        const appointmentColor = appointment.patientId ? bookedColor : availableColor;
+        const appointmentTitle = appointment.patientId ? 'Booked' : 'Available';
+
+        // avoiding dupes
+        const existingEventIndex = this.calendarOptions.events.findIndex(
+          event => event.id === `${appointment.id}`
+        );
+
+        if (existingEventIndex === -1) {
+          this.calendarOptions.events.push({
+            id: `${appointment.id}`,
+            title: appointmentTitle,
+            start: appointment.startTime,
+            end: appointment.endTime,
+            patientId: `${appointment.patientId}`,
+            backgroundColor: appointmentColor,
+          });
+        }
       }
     },
     async deleteAppointment() {
