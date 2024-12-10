@@ -40,6 +40,11 @@ public class AppointmentController {
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
+
+        if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
+        }
+
         Appointment createdAppointment = appointmentService.save(appointment);
 
         String topic;
@@ -91,7 +96,7 @@ public class AppointmentController {
         if (appointment.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no appointment with that ID");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(appointment);
+        return ResponseEntity.status(HttpStatus.OK).body(appointment.get());
     }
 
     @GetMapping(value = "/dentist/{dentistId}")
@@ -168,6 +173,10 @@ public class AppointmentController {
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
 
+            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
+            }
+
             if (appointmentWithPatient.getPatientId() != null) {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
                 appointmentService.save(appointment);
@@ -210,6 +219,10 @@ public class AppointmentController {
     
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
+
+            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
+            }
     
             // Extract the token from the Authorization header
             String authorizationHeader = request.getHeader("Authorization");

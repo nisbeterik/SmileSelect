@@ -107,4 +107,13 @@ public class AppointmentService {
             e.printStackTrace();
         }
     }
+
+    public boolean checkIfDateInvalid(LocalDateTime dateTime){
+        LocalDateTime now = LocalDateTime.now();
+        if (dateTime.isBefore(now)){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
