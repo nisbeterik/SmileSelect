@@ -20,7 +20,7 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 
 ## <a id="dependencies-requirements"></a>Dependencies & Requirements
 
-
+ 
 ## <a id="installation-usage"></a>Installation & Usage
 
 

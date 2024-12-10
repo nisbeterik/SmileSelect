@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -53,6 +54,9 @@ public class DentistService {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Optional<Dentist> findDentistByEmail(String email) {
+        if (!EmailValidator.getInstance().isValid(email)) {
+            throw new IllegalArgumentException("Invalid email format: " + email);
+        }
         return dentistRepository.findByEmail(email);
     }
 
