@@ -1,6 +1,7 @@
 package com.smile_select.patient_service.controller;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import com.smile_select.patient_service.dto.PatientDTO;
@@ -28,13 +30,16 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     // Register new patient
     @PostMapping("/register")
     public ResponseEntity<String> registerPatient(@Valid @RequestBody Patient patient) {
         if (patientService.findPatientByEmail(patient.getEmail()).isPresent()) {
             return new ResponseEntity<>("Email is already in use", HttpStatus.BAD_REQUEST);
         }
-
+        // Hash the password before saving a patient
+        patient.setPassword(passwordEncoder.encode(patient.getPassword()));
         patientService.savePatient(patient);
         return new ResponseEntity<>("Patient registered successfully!", HttpStatus.CREATED);
     }
@@ -114,7 +119,7 @@ public class PatientController {
     }
 
     // Add a preferred appointment dates
-    @PostMapping("/preferred-date")
+    @PostMapping("/preferred-dates")
     public ResponseEntity<?> createPatientPreferredDate(@RequestBody PatientPreferredDate request) {
         if (request.getPatient() == null || request.getPatient().getId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient ID is required.");
@@ -136,12 +141,12 @@ public class PatientController {
         // Check if there are already 5 preferred dates
         if (preferredDates.size() >= 5) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Patient cannot have more than 5 preferred dates.");
+                    .body("You cannot have more than 5 preferred dates at once");
         }
 
         // Check if the preferred date already exists in the patient's preferred dates
         if (preferredDates.contains(request)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Preferred date already exists for this patient.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Preferred date already exists");
         }
 
         // Save the new preferred date
@@ -157,16 +162,35 @@ public class PatientController {
 
     // Retrieve preferred dates for a patient
     @GetMapping("/{id}/preferred-dates")
-    public ResponseEntity<List<LocalDate>> getAllPreferredDatesByPatientId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<PatientPreferredDateDTO>> getAllPreferredDatesByPatientId(@PathVariable("id") Long id) {
         Patient patient = patientService.getPatientById(id);
+
+        // Remove old dates
+        patientService.removeOldPreferredDates(patient.getId());
+        patientService.savePatient(patient);
+
         Set<PatientPreferredDate> preferredDates = patient.getPreferredDates();
 
-        // Extract only the dates
-        List<LocalDate> dates = preferredDates.stream()
-                .map(PatientPreferredDate::getPreferredDate)
+        List<PatientPreferredDateDTO> dtos = preferredDates.stream()
+                .map(preferredDate -> new PatientPreferredDateDTO(
+                        preferredDate.getId(),
+                        patient.getId(),
+                        preferredDate.getPreferredDate()))
+                .sorted(Comparator.comparing(PatientPreferredDateDTO::getPreferredDate))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.status(HttpStatus.OK).body(dates);
+        return ResponseEntity.status(HttpStatus.OK).body(dtos);
+    }
+
+    @DeleteMapping("/preferred-dates/{id}")
+    public ResponseEntity<?> deletePreferredDate(@PathVariable Long id) {
+        try {
+            patientService.deletePatientPreferredDate(id);
+            return ResponseEntity.ok("Preferred date deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
     }
 
 }
