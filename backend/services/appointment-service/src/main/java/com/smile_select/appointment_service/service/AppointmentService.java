@@ -2,7 +2,6 @@ package com.smile_select.appointment_service.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.mqtt.MqttGateway;
 import com.smile_select.appointment_service.repository.AppointmentRepository;
@@ -240,35 +238,5 @@ public class AppointmentService {
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
         return appointmentRepository.findAvailableAppointmentsByDentistId(dentistId);
     }
-
-    // Method for publishing an MQTT message containting a stringified appointment JSON-object
-    public void publishAppointmentMessage(String topic, Appointment appointment) {
-        try {
-            String message = objectMapper.writeValueAsString(appointment);
-            mqttGateway.publishMessage(message, topic);
-            System.out.println("Published message to topic: " + topic);
-        } catch (Exception e) {
-            System.err.println("Failed to publish message to topic " + topic + ": " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void publishAppointmentCreatedEvent(Appointment appointment) {
-        try {
-            // Use the class-level objectMapper
-            Map<String, Object> messageMap = new HashMap<>();
-            messageMap.put("appointmentId", appointment.getId());
-            messageMap.put("patientId", appointment.getPatientId());
-            messageMap.put("startTime", appointment.getStartTime()); // LocalDateTime
-
-            String message = objectMapper.writeValueAsString(messageMap);
-            System.out.println("Message being published: " + message);
-            mqttGateway.publishMessage(message, "/appointments/booked");
-            System.out.println("Published appointment created event to topic: /appointments/booked");
-        } catch (Exception e) {
-            System.err.println("Failed to publish appointment created event: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-        */
+    */   
 }
