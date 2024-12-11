@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: "AboutUs",
+  name: "AboutUsComponent",
   data() {
     return {
       aboutContent: [
