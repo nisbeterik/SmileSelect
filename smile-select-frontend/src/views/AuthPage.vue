@@ -1,5 +1,5 @@
 <template>
-  <div class="login-div">
+  <div class="login-div" >
     <!-- Toggle between Login and Registration forms -->
     <div v-if="!isLoggedIn" class="card">
       <!-- Show Login Form -->
@@ -60,26 +60,28 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .login-div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-    width: 100%; /* Full viewport width */
-    margin: 0;
-    background-color: black; /* Optional: add a light background color for contrast */
-    box-sizing: border-box; /* Ensure padding/borders don't affect the size */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  width: 100%; /* Full viewport width */
+  margin: 0;
+  box-sizing: border-box; /* Ensure padding/borders don't affect the size */
+  background: url('../../public/images/wavyBackground.png') no-repeat center center;
+  background-size: cover;
+  backdrop-filter: blur(20px);
 }
-
-.card {
+.login-div .card {
   max-width: 500px;
   width: 100%;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
 }
 
 body {
