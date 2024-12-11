@@ -1,5 +1,9 @@
 <template>
   <div class="login-div" >
+    <!-- Back Arrow -->
+    <button class="back-arrow" @click="goBack">
+      ←
+    </button>
     <!-- Toggle between Login and Registration forms -->
     <div v-if="!isLoggedIn" class="card">
       <!-- Show Login Form -->
@@ -46,6 +50,9 @@ export default {
     this.selectedRole = this.$route.query.role || 'PATIENT';
   },
   methods: {
+    goBack() {
+      this.$router.push('/'); // Navigate to the home screen
+    },
     handleLoginSuccess() {
       this.isLoggedIn = true; // Hide forms on login success// Store the role received from LoginView
     },
@@ -67,6 +74,26 @@ export default {
 </script>
 
 <style>
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  border:none;
+  padding: 5px 15px 5px 15px;
+  font-size: 25px;
+  color: White;
+  cursor: pointer;
+  background-color: #206050;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.back-arrow:hover {
+  background-color: #003020;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  transform: scale(1.1);
+}
+
 .login-div {
   display: flex;
   justify-content: center;

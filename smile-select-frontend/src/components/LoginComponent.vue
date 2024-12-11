@@ -90,6 +90,7 @@ export default {
   margin: 0;
   padding: 20px;
   border-radius: 8px;
+  color: #003020;
 }
 .form-group {
   margin-bottom: 15px;
