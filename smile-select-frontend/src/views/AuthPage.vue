@@ -5,6 +5,7 @@
       <!-- Show Login Form -->
       <LoginComponent v-if="showLogin" @loginSuccess="handleLoginSuccess" />
 
+      <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" />
       <!-- Toggle button -->
       <button @click="toggleForm" class="toggle-btn">
         {{
@@ -13,6 +14,7 @@
             : 'Already registered? Log in here'
         }}
       </button>
+
     </div>
 
     <!-- Show dashboard or success message after login -->
@@ -26,30 +28,34 @@
 
 <script>
 import LoginComponent from '@/components/LoginComponent.vue';
+import DentistRegistrationComponent from '@/components/DentistRegistrationComponent.vue';
 
 export default {
   data() {
     return {
       isLoggedIn: false, // Tracks if the user is logged in
       showLogin: true, // Controls which form is shown by default
-      userRole: '', // Stores the user's role
+      selectedRole: '', // Stores the user's role
     };
   },
   components: {
     LoginComponent,
+    DentistRegistrationComponent,
+  },
+  created() {
+    this.selectedRole = this.$route.query.role || 'PATIENT';
   },
   methods: {
-    handleLoginSuccess(role) {
-      this.isLoggedIn = true; // Hide forms on login success
-      this.userRole = role; // Store the role received from LoginView
+    handleLoginSuccess() {
+      this.isLoggedIn = true; // Hide forms on login success// Store the role received from LoginView
     },
     toggleForm() {
       this.showLogin = !this.showLogin; // Toggle between login and registration forms
     },
     navigateToDashboard() {
-      if (this.userRole === 'DENTIST') {
+      if (this.selectedRole === 'DENTIST') {
         this.$router.push('/dentist-dashboard');
-      } else if (this.userRole === 'PATIENT') {
+      } else if (this.selectedRole === 'PATIENT') {
         this.$router.push('/patient-dashboard');
       } else {
         // Default action, redirect to home or show an error
