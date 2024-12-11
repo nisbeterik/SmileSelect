@@ -2,7 +2,7 @@
 //import HomePage from "@/views/HomePage.vue";
 import MapPage from "@/views/MapPage.vue";
 import CreateAppointment from "@/views/CreateAppointment.vue";
-import DentistRegistrationForm from "@/views/DentistRegistrationForm.vue";
+import DentistRegistrationForm from "@/components/DentistRegistrationComponent.vue";
 import PatientRegistrationForm from "@/views/PatientRegistrationForm.vue";
 import { createRouter, createWebHistory } from 'vue-router';
 // import AuthPage from '@/views/AuthPage.vue';
