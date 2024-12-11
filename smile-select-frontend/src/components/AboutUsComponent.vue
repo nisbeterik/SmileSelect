@@ -1,6 +1,6 @@
 <template>
   <section id="about" class="about-section">
-    <h2>About Us</h2>
+    <h2>Our Mission</h2>
     <div class="about-cards">
       <div class="about-card" v-for="(content, index) in aboutContent" :key="index">
         <p v-html="content"></p>
@@ -15,14 +15,12 @@ export default {
   data() {
     return {
       aboutContent: [
-        "<strong>For Patients:</strong> Whether you're looking for a routine check-up or urgent dental care, Smile Select allows you to browse available time slots across multiple clinics. With just a few clicks, you can find a time that fits your schedule and book your appointment seamlessly.",
-        "<strong>For Dentists:</strong> Simplify your clinic’s appointment management. Create available time slots, manage patient bookings, and ensure your schedule stays organized—all from one convenient platform.",
-        "At Smile Select, we’re proud to provide a solution that prioritizes your dental health and convenience. By connecting patients with qualified dental professionals in Gothenburg, we aim to make dental care accessible and hassle-free for everyone.",
-        "<strong>Your smile matters to us.</strong> Explore Smile Select today and discover a smarter way to book dental appointments.",
-        "<strong>For Patients:</strong> Whether you're looking for a routine check-up or urgent dental care, Smile Select allows you to browse available time slots across multiple clinics. With just a few clicks, you can find a time that fits your schedule and book your appointment seamlessly.",
-        "<strong>For Dentists:</strong> Simplify your clinic’s appointment management. Create available time slots, manage patient bookings, and ensure your schedule stays organized—all from one convenient platform.",
-        "At Smile Select, we’re proud to provide a solution that prioritizes your dental health and convenience. By connecting patients with qualified dental professionals in Gothenburg, we aim to make dental care accessible and hassle-free for everyone.",
-        "<strong>Your smile matters to us.</strong> Explore Smile Select today and discover a smarter way to book dental appointments."
+        "<strong>Accessible Dental Care</strong><br>We believe everyone deserves easy access to quality dental care. Smile Select bridges the gap between patients and dentists.",
+        "<strong>Empowering Patients</strong><br>Your dental health is in your hands. Find the right dentist and book appointments effortlessly, all in one place.",
+        "<strong>Supporting Dentists</strong><br>Our platform helps dentists manage their schedules efficiently, so they can focus on what they do best—caring for patients.",
+        "<strong>Innovation for Smiles</strong><br>We're committed to leveraging technology to make dental care smarter, faster, and more convenient.",
+        "<strong>Local Expertise</strong><br>Serving Gothenburg with pride, Smile Select connects patients with trusted local dental professionals.",
+        "<strong>Your Smile, Our Mission</strong><br>Your satisfaction and dental health drive us to deliver the best scheduling experience possible."
       ]
     };
   }
@@ -65,7 +63,6 @@ export default {
   margin: 0;
 }
 
-/* Center cards if there are fewer cards than the viewport width */
 @media (min-width: 600px) {
   .about-cards {
     justify-content: center;
