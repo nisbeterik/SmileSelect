@@ -34,7 +34,7 @@
 import { useAuthStore } from '@/stores/auth';
 
 export default {
-  name: 'LoginView',
+  name: 'LoginComponent',
   data() {
     return {
       email: '',

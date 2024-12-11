@@ -1,4 +1,4 @@
-// import LoginView from "@/views/LoginView.vue";
+// import LoginView from "@/views/LoginComponent.vue";
 //import HomePage from "@/views/HomePage.vue";
 import MapPage from "@/views/MapPage.vue";
 import CreateAppointment from "@/views/CreateAppointment.vue";
