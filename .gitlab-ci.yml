@@ -155,15 +155,15 @@ test_dentist_service:
 #   dependencies:
 #     - compile_notification_service
 
-# test_patient_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Patient Service..."
-#     - mvn -B test --file backend/services/patient-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_patient_service
+test_patient_service:
+   stage: test
+   script:
+     - echo "Running tests for Patient Service..."
+     - mvn -B test --file backend/services/patient-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_patient_service
 
 # Job for frontend
 build_vue_frontend:
