@@ -65,10 +65,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  width: 100%; /* Full viewport width */
+  height: 100vh;
+  width: 100%;
   margin: 0;
-  box-sizing: border-box; /* Ensure padding/borders don't affect the size */
+  box-sizing: border-box;
   background: url('../../public/images/wavyBackground.png') no-repeat center center;
   background-size: cover;
   backdrop-filter: blur(20px);
@@ -95,7 +95,6 @@ body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  max-width: ;
 }
 .toggle-btn:hover {
   background-color: #003020;
