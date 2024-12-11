@@ -6,7 +6,7 @@
         <nav>
           <ul>
             <li><a href="#home">Home</a></li>
-            <li><a href="#services">Services</a></li>
+            <li><a href="">Admin Tool</a></li>
             <li><a href="#about">About Us</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -16,35 +16,38 @@
 
     <main>
       <section id="home" class="hero-section">
-        <div class="hero-content">
-          <h2>Your Smile, Our Priority</h2>
-          <p>Welcome to Smile Select, where we bring out the best in your smile. Book your appointment today!</p>
-          <button @click="bookAppointment">Book Appointment</button>
+        <div class="hero-half" v-for="(image, index) in images" :key="index" :style="{ backgroundImage: `url(${image.src})` }">
+          <div class="hero-content">
+            <h2>{{ image.title }}</h2>
+            <p>{{ image.description }}</p>
+            <button @click="image.action">{{ image.buttonText }}</button>
+          </div>
         </div>
-        <div class="hero-images">
-          <img src="/images/dentist1.jpg" alt="Smiling person" />
-        </div>
-      </section>
-
-      <section id="services" class="services-section">
-        <h2>Our Services</h2>
-        <ul>
-          <li>Teeth Cleaning</li>
-          <li>Orthodontics</li>
-          <li>Cosmetic Dentistry</li>
-          <li>Emergency Dental Care</li>
-        </ul>
       </section>
 
       <section id="about" class="about-section">
         <h2>About Us</h2>
-        <p>At Smile Select, we are committed to providing top-notch dental care with state-of-the-art technology and a compassionate approach.</p>
+        <p>
+          Welcome to <strong>Smile Select</strong>, your trusted companion for dental care scheduling in Gothenburg. We are revolutionizing the way patients and dental clinics connect, making it easier than ever to book and manage dental appointments.
+        </p>
+        <p>
+          With <strong>Smile Select</strong>, you gain access to a streamlined platform designed to meet the needs of both patients and dentists:
+        </p>
+
+          <p><strong>For Patients:</strong> Whether you're looking for a routine check-up or urgent dental care, Smile Select allows you to browse available time slots across multiple clinics. With just a few clicks, you can find a time that fits your schedule and book your appointment seamlessly.</p>
+          <p><strong>For Dentists:</strong> Simplify your clinic’s appointment management. Create available time slots, manage patient bookings, and ensure your schedule stays organized—all from one convenient platform.</p>
+        <p>
+          At Smile Select, we’re proud to provide a solution that prioritizes your dental health and convenience. By connecting patients with qualified dental professionals in Gothenburg, we aim to make dental care accessible and hassle-free for everyone.
+        </p>
+        <p>
+          <strong>Your smile matters to us.</strong> Explore Smile Select today and discover a smarter way to book dental appointments.
+        </p>
       </section>
 
       <section id="contact" class="contact-section">
         <h2>Contact Us</h2>
         <p>Email: info@smileselect.com</p>
-        <p>Phone: +1 (555) 123-4567</p>
+        <p>Phone: +46 31-20 20 20</p>
         <p>Address: 123 Smile St, Happy Town</p>
       </section>
     </main>
@@ -58,12 +61,26 @@
 <script>
 export default {
   name: "App",
-  methods: {
-    bookAppointment() {
-      alert("Redirecting to appointment booking page...");
-      // Add routing logic here if using Vue Router
-    }
-  }
+  data() {
+    return {
+      images: [
+        {
+          src: "/images/dentist1.jpg",
+          title: "Are you a dentist?",
+          description: "Manage appointments and patients",
+          buttonText: "Dentist Login",
+          action: () => alert("Learn More about Professional Dental Care clicked"),
+        },
+        {
+          src: "/images/patient1.jpg",
+          title: "Are you a patient?",
+          description: "Get the smile you've always wanted.",
+          buttonText: "Patient Login",
+          action: () => this.$router.push('/auth')
+        },
+      ],
+    };
+  },
 };
 </script>
 
@@ -104,29 +121,31 @@ body {
 }
 
 .hero-section {
-  padding: 50px;
-  background-color: #f0f8ff;
   display: flex;
-  justify-content: space-between;
+  height: 40vh;
+  overflow: hidden;
+}
+
+.hero-half {
+  flex: 1;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
 .hero-content {
-  max-width: 50%;
-}
-
-.hero-images {
-  display: flex;
-  gap: 20px;
-}
-
-.hero-images img {
-  width: 200px;
-  height: auto;
+  background: rgba(0, 70, 40, 0.2);
+  backdrop-filter: blur(5px);
+  padding: 20px;
   border-radius: 10px;
+  color: white;
+  text-align: center;
 }
 
-.hero-section button {
+.hero-content button {
   padding: 10px 20px;
   background-color: #206050;
   color: white;
@@ -134,14 +153,18 @@ body {
   cursor: pointer;
 }
 
-.services-section, .about-section, .contact-section {
-  padding: 30px;
+ .about-section, .contact-section {
+  border-bottom: 10px;
+  border-color: #206050;
+  padding: 100px;
+  max-width: 80vw;
+  margin: auto;
 }
 
 .app-footer {
   background-color: #206050;
   color: white;
-  padding: 10px;
+  padding: 5px;
   position: fixed;
   width: 100%;
   bottom: 0;
