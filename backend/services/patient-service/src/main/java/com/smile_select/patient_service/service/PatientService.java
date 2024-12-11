@@ -3,7 +3,6 @@ package com.smile_select.patient_service.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -14,7 +13,6 @@ import com.smile_select.patient_service.mqtt.MqttGateway;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.*;
 
 import jakarta.persistence.criteria.Predicate;
 
