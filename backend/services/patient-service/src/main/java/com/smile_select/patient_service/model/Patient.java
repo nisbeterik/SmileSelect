@@ -2,6 +2,9 @@ package com.smile_select.patient_service.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "patient")
@@ -29,12 +32,15 @@ public class Patient {
     @Column(name = "role")
     private String role = "PATIENT";
 
-    // No-argument constructor
+    @JsonIgnore
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PatientPreferredDate> preferredDates;
+
     public Patient() {
     }
 
-    // All-argument constructor
-    public Patient(Long id, String firstName, String lastName, String email, String password, LocalDate dateOfBirth, String role) {
+    public Patient(Long id, String firstName, String lastName, String email, String password, LocalDate dateOfBirth,
+            String role, Set<PatientPreferredDate> preferredDates) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -42,11 +48,9 @@ public class Patient {
         this.password = password;
         this.dateOfBirth = dateOfBirth;
         this.role = role;
+        this.preferredDates = preferredDates;
     }
 
-    // Getters and setters
-
-    // id
     public Long getId() {
         return id;
     }
@@ -55,7 +59,6 @@ public class Patient {
         this.id = id;
     }
 
-    // firstName
     public String getFirstName() {
         return firstName;
     }
@@ -64,7 +67,6 @@ public class Patient {
         this.firstName = firstName;
     }
 
-    // lastName
     public String getLastName() {
         return lastName;
     }
@@ -73,7 +75,6 @@ public class Patient {
         this.lastName = lastName;
     }
 
-    // email
     public String getEmail() {
         return email;
     }
@@ -82,7 +83,6 @@ public class Patient {
         this.email = email;
     }
 
-    // password
     public String getPassword() {
         return password;
     }
@@ -91,7 +91,6 @@ public class Patient {
         this.password = password;
     }
 
-    // dateOfBirth
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -107,4 +106,17 @@ public class Patient {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public Set<PatientPreferredDate> getPreferredDates() {
+        return preferredDates;
+    }
+
+    public void setPreferredDates(Set<PatientPreferredDate> preferredDates) {
+        this.preferredDates = preferredDates;
+    }
+
+    
+
 }
+   
+    

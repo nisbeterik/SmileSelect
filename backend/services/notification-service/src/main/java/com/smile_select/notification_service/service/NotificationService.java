@@ -12,6 +12,7 @@ import com.smile_select.notification_service.repository.NotificationRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 
 @Service
 public class NotificationService {
@@ -29,11 +30,11 @@ public class NotificationService {
     }
 
     // Method for publishing MQTT messages
-    public void publishMessage(String payload, String topic){
+    public void publishMessage(String payload, String topic) {
         mqttGateway.publishMessage(payload, topic);
     }
 
-    public void sendEmail(String to, String subject, String content){
+    public void sendEmail(String to, String subject, String content) {
         emailService.sendEmail(to, subject, content);
     }
 
@@ -42,9 +43,57 @@ public class NotificationService {
     }
 
     public void processNewAppointmentSlot(String payload) {
-        System.out.println("New appointment slot posted: ");
-        System.out.println(payload);
-        // LOGIC HERE
+        System.out.println("Received message for new appointment slot posted");
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            JsonNode rootNode = objectMapper.readTree(payload);
+
+            String startTime = rootNode.path("startTime").asText();
+            String appointmentId = rootNode.path("appointmentId").asText();
+
+            // Convert startTime to LocalDateTime
+            LocalDateTime formatedTime = objectMapper.convertValue(startTime, LocalDateTime.class);
+
+            // Format startTime to a nicer format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
+            String formattedStartTime = formatedTime.format(formatter);
+
+            // Extract the list of patients (with emails and first names) from the payload
+            Iterator<JsonNode> patientsIterator = rootNode.path("emailsAndNamesList").elements();
+            
+            while (patientsIterator.hasNext()) {
+                JsonNode patientNode = patientsIterator.next();
+
+                // Extract email and first name 
+                String email = patientNode.path("email").asText(); 
+                String firstName = patientNode.path("firstName").asText(); 
+
+                // Prepare email content
+                String subject = "New Appointment Slot Available";
+                String content = "Dear " + firstName + "\n\n" +
+                        "A new open appointment slot has been posted for: " + formattedStartTime + "\n"
+                        + "Appointment ID: " + appointmentId + "\n"
+                        + "Please check your availability.\n\n" +
+                        "Best regards,\n" +
+                        "SmileSelect Team";
+
+                // Send email asynchronously
+                emailService.sendEmail(email, subject, content);
+
+                // Save the notification (optional)
+                Notification notification = new Notification();
+                notification.setEmail(email);
+                notification.setTime(LocalDateTime.now());
+                notification.setMessage(content);
+                save(notification);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void processAppointmentCancellationByPatient(String payload) {
@@ -157,13 +206,11 @@ public class NotificationService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a");
             String formattedStartTime = formatedTime.format(formatter);
 
-
             System.out.println("appointmentId: " + appointmentId);
             System.out.println("patientId: " + patientId);
             System.out.println("patientEmail: " + patientEmail);
             System.out.println("patientFirstName: " + patientFirstName);
             System.out.println("startTime: " + startTime);
-
 
             if (patientEmail == null || patientEmail.isEmpty()) {
                 System.out.println("Patient email is missing in the payload.");

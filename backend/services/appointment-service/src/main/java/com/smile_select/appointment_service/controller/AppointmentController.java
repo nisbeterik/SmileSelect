@@ -40,10 +40,16 @@ public class AppointmentController {
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
-
         Appointment createdAppointment = appointmentService.save(appointment);
-        appointmentService.publishAppointmentMessage("/appointments/created", createdAppointment);
 
+        String topic;
+        if (appointment.getPatientId() == null){
+            topic = "/appointments/created";
+        } else {
+            // Handle case where dentist added the slot together with a patient booking
+            topic = "/appointments/booked";
+        }
+        appointmentService.publishAppointmentMessage(topic, createdAppointment);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 

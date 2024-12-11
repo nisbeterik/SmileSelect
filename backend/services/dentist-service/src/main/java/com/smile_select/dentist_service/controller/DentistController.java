@@ -40,7 +40,7 @@ public class DentistController {
      * @param dentist Dentist details
      * @return ResponseEntity with the response message
      */
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<String> registerDentist(@Valid @RequestBody Dentist dentist) {
         if (dentistService.findDentistByEmail(dentist.getEmail()).isPresent()) {
             return new ResponseEntity<>("Email is already in use", HttpStatus.BAD_REQUEST);
