@@ -10,6 +10,7 @@
       <LoginComponent v-if="showLogin" @loginSuccess="handleLoginSuccess" />
 
       <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" />
+      <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" />
       <!-- Toggle button -->
       <button @click="toggleForm" class="toggle-btn">
         {{
@@ -33,6 +34,7 @@
 <script>
 import LoginComponent from '@/components/LoginComponent.vue';
 import DentistRegistrationComponent from '@/components/DentistRegistrationComponent.vue';
+import PatientRegistrationComponent from '@/components/PatientRegistrationComponent.vue';
 
 export default {
   data() {
@@ -45,6 +47,7 @@ export default {
   components: {
     LoginComponent,
     DentistRegistrationComponent,
+    PatientRegistrationComponent
   },
   created() {
     this.selectedRole = this.$route.query.role || 'PATIENT';
