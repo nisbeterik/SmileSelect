@@ -3,7 +3,7 @@
     <!-- Toggle between Login and Registration forms -->
     <div v-if="!isLoggedIn">
       <!-- Show Login Form -->
-      <DentistLoginView v-if="showLogin" @loginSuccess="handleLoginSuccess" />
+      <LoginView v-if="showLogin" @loginSuccess="handleLoginSuccess" />
 
       <!-- Toggle button -->
       <button @click="toggleForm" class="toggle-btn">
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import DentistLoginView from '@/views/DentistLoginView.vue';
+import LoginView from '@/views/LoginView.vue';
 
 export default {
   data() {
@@ -36,7 +36,7 @@ export default {
     };
   },
   components: {
-    DentistLoginView,
+    LoginView,
   },
   methods: {
     handleLoginSuccess(role) {
