@@ -69,17 +69,22 @@ export default {
           title: "Are you a dentist?",
           description: "Manage appointments and patients",
           buttonText: "Dentist Login",
-          action: () => alert("Learn More about Professional Dental Care clicked"),
+          action: () => this.navigateToLogin('DENTIST'),
         },
         {
           src: "/images/patient1.jpg",
           title: "Are you a patient?",
           description: "Get the smile you've always wanted.",
           buttonText: "Patient Login",
-          action: () => this.$router.push('/auth')
+          action: () => this.navigateToLogin('PATIENT'),
         },
       ],
     };
+  },
+  methods: {
+    navigateToLogin(role) {
+      this.$router.push({ path: '/auth', query: { role } });
+    },
   },
 };
 </script>

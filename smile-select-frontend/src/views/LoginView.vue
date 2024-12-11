@@ -3,14 +3,6 @@
     <h2>Login</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <label for="role">Role</label>
-        <select id="role" v-model="role" required>
-          <option value="PATIENT">Patient</option>
-          <option value="DENTIST">Dentist</option>
-        </select>
-      </div>
-
-      <div class="form-group">
         <label for="email">Email</label>
         <input
           type="email"
@@ -19,6 +11,7 @@
           placeholder="Enter your email"
           required
         />
+        <p>{{this.role}}</p>
       </div>
 
       <div class="form-group">
@@ -42,14 +35,17 @@
 import { useAuthStore } from '@/stores/auth';
 
 export default {
-  name: 'DentistLoginView',
+  name: 'LoginView',
   data() {
     return {
       email: '',
       password: '',
-      role: 'PATIENT',
+      role: '',
       errorMessage: '',
     };
+  },
+  created() {
+    this.role = this.$route.query.role || 'PATIENT';
   },
   methods: {
     async handleLogin() {
