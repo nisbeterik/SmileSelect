@@ -1,5 +1,5 @@
 // import LoginView from "@/views/LoginView.vue";
-import HomePage from "@/views/HomePage.vue";
+//import HomePage from "@/views/HomePage.vue";
 import MapPage from "@/views/MapPage.vue";
 import CreateAppointment from "@/views/CreateAppointment.vue";
 import DentistRegistrationForm from "@/views/DentistRegistrationForm.vue";
@@ -10,9 +10,10 @@ import PatientDashboard from '@/views/PatientDashboard.vue';
 import DentistDashboard from '@/views/DentistDashboard.vue';
 import AuthPage from "@/views/AuthPage.vue";
 import AvailabilityPage from "@/views/AvailabilityPage.vue";
+import Home from "@/views/Home.vue";
 
 const routes = [
-  { path: "/", name: "Home", component: HomePage },
+  { path: "/", name: "Home", component: Home },
   { path: "/auth", name: "AuthPage", component: AuthPage },
   { path: "/available-slots", name: "AvailabilityPage", component: AvailabilityPage },
   { path: "/patient-dashboard", name: "PatientDashboard", component: PatientDashboard },
