@@ -28,6 +28,9 @@ export default {
 </script>
 
 <style scoped>
+h2 {
+  color: #003020;
+}
 .about-section {
   padding: 50px 20px;
   background: url('../../public/images/wavyBackground.png') no-repeat center top;
@@ -51,14 +54,19 @@ export default {
   flex: 0 0 auto;
   min-width: 300px;
   max-width: 300px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
   color: #000;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   scroll-snap-align: start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.about-card:hover {
+  transform: scale(1.02); /* Scales the card slightly */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Adds a stronger shadow */
+}
 .about-card p {
   margin: 0;
 }
