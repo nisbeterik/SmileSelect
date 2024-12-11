@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h2>Login</h2>
+    <h2>{{ headerText }}</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
         <label for="email">Email</label>
@@ -11,7 +11,6 @@
           placeholder="Enter your email"
           required
         />
-        <p>{{this.role}}</p>
       </div>
 
       <div class="form-group">
@@ -46,6 +45,11 @@ export default {
   },
   created() {
     this.role = this.$route.query.role || 'PATIENT';
+  },
+  computed: {
+    headerText() {
+      return this.role === 'DENTIST' ? 'Dentist Login' : 'Patient Login';
+    },
   },
   methods: {
     async handleLogin() {
