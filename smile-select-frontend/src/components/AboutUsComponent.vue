@@ -64,8 +64,8 @@ h2 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .about-card:hover {
-  transform: scale(1.02); /* Scales the card slightly */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Adds a stronger shadow */
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 .about-card p {
   margin: 0;

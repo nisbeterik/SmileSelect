@@ -136,56 +136,28 @@ body {
   backdrop-filter: blur(10px);
   padding: 20px;
   border-radius: 8px;
-  color: Black;
+  color: #003020;
   text-align: center;
-  border: 1px solid #ccc;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hero-content:hover{
+  transform: scale(1.02); /* Scales the card slightly */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Adds a stronger shadow */
 }
 
 .hero-content button {
   padding: 10px 20px;
-
   background-color: #206050;
   border-radius: 8px;
   color: white;
   border: none;
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .hero-content button:hover {
   background-color: #003020;
-}
-
-.about-section {
-  padding: 50px 20px;
-  background: url('../../public/images/wavyBackground.png') no-repeat center top;
-  background-size: cover;
-  color: white;
-  text-align: center;
-  overflow-x: hidden;
-}
-
-.about-cards {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 20px;
-  margin-top: 20px;
-}
-
-.about-card {
-  flex: 0 0 auto;
-  min-width: 300px;
-  max-width: 300px;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #000;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  scroll-snap-align: start;
-}
-
-.about-card p {
-  margin: 0;
+  transform: scale(1.02); /* Scales the card slightly */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Adds a stronger shadow */
 }
 
 .contact-section {
