@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +39,14 @@ public class PatientServiceTest {
 
     @BeforeEach
     void setUp() {
+        patient = new Patient();
+        patient.setId(1L);
+        patient.setEmail("patient@example.com");
+        patient.setFirstName("James");
+        patient.setLastName("Bond");
+        patient.setPassword("password");
+        patient.setRole("PATIENT");
 
+        patient.setDateOfBirth(LocalDate.of(2000, 1, 1));
     }
 }
