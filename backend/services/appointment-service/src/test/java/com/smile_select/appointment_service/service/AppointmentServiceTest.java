@@ -1,8 +1,6 @@
 package com.smile_select.appointment_service.service;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -19,7 +17,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.mqtt.MqttGateway;
-import com.smile_select.appointment_service.repository.AppointmentRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class AppointmentServiceTest {
