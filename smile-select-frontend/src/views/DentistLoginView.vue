@@ -42,7 +42,7 @@
 import { useAuthStore } from '@/stores/auth';
 
 export default {
-  name: 'LoginView',
+  name: 'DentistLoginView',
   data() {
     return {
       email: '',
