@@ -73,7 +73,8 @@ export default {
                 catch (error) {
                     // Handle any errors that occur during the process
                     this.infoText = `Failed to save dates: ${error.response?.data || error.message}`;
-                }
+                    this.loadExistingPreferredDates();
+                }   
             }
         },
 
