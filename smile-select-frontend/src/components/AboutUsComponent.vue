@@ -15,8 +15,10 @@ export default {
   data() {
     return {
       aboutContent: [
-        "Welcome to <strong>Smile Select</strong>, your trusted companion for dental care scheduling in Gothenburg. We are revolutionizing the way patients and dental clinics connect, making it easier than ever to book and manage dental appointments.",
-        "With <strong>Smile Select</strong>, you gain access to a streamlined platform designed to meet the needs of both patients and dentists:",
+        "<strong>For Patients:</strong> Whether you're looking for a routine check-up or urgent dental care, Smile Select allows you to browse available time slots across multiple clinics. With just a few clicks, you can find a time that fits your schedule and book your appointment seamlessly.",
+        "<strong>For Dentists:</strong> Simplify your clinic’s appointment management. Create available time slots, manage patient bookings, and ensure your schedule stays organized—all from one convenient platform.",
+        "At Smile Select, we’re proud to provide a solution that prioritizes your dental health and convenience. By connecting patients with qualified dental professionals in Gothenburg, we aim to make dental care accessible and hassle-free for everyone.",
+        "<strong>Your smile matters to us.</strong> Explore Smile Select today and discover a smarter way to book dental appointments.",
         "<strong>For Patients:</strong> Whether you're looking for a routine check-up or urgent dental care, Smile Select allows you to browse available time slots across multiple clinics. With just a few clicks, you can find a time that fits your schedule and book your appointment seamlessly.",
         "<strong>For Dentists:</strong> Simplify your clinic’s appointment management. Create available time slots, manage patient bookings, and ensure your schedule stays organized—all from one convenient platform.",
         "At Smile Select, we’re proud to provide a solution that prioritizes your dental health and convenience. By connecting patients with qualified dental professionals in Gothenburg, we aim to make dental care accessible and hassle-free for everyone.",
@@ -44,6 +46,7 @@ export default {
   scroll-snap-type: x mandatory;
   padding: 20px;
   margin-top: 20px;
+  justify-content: flex-start;
 }
 
 .about-card {
@@ -62,16 +65,11 @@ export default {
   margin: 0;
 }
 
-.about-cards::-webkit-scrollbar {
-  height: 8px;
+/* Center cards if there are fewer cards than the viewport width */
+@media (min-width: 600px) {
+  .about-cards {
+    justify-content: center;
+  }
 }
 
-.about-cards::-webkit-scrollbar-thumb {
-  background-color: #206050;
-  border-radius: 4px;
-}
-
-.about-cards::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
 </style>
