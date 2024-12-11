@@ -1,8 +1,5 @@
 package com.smile_select.patient_service.mqtt;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smile_select.patient_service.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
@@ -10,9 +7,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import com.smile_select.patient_service.service.PatientService;
 import org.springframework.integration.mqtt.support.MqttHeaders;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class MqttTopicHandler {
@@ -45,7 +39,7 @@ public class MqttTopicHandler {
                 break;
 
             case "/appointments/booked":
-                patientService.processAppointmentCreated(message.getPayload());
+                patientService.processAppointmentBooked(message.getPayload());
                 break;
         }
     }

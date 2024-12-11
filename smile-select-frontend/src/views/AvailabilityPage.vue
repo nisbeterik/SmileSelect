@@ -82,7 +82,7 @@ export default defineComponent({
       calendarOptions: {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         headerToolbar: {
-          left: "prev, next, today",
+          left: "prev,next,today",
           center: "title",
           right: "dayGridMonth,timeGridWeek",
         },
@@ -97,6 +97,9 @@ export default defineComponent({
         slotMaxTime: "23:00:00",
         allDaySlot: false,
         eventClick: this.handleEventClick,
+        validRange: {
+        start: new Date().toISOString().split('T')[0],
+      }
       },
       clinics: [],
       dentists: [],

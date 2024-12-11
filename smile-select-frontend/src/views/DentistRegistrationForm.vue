@@ -89,7 +89,7 @@ export default {
     },
     async submitDentist() {
       try {
-        const response = await axios.post('/dentists', this.formData);
+        const response = await axios.post('/dentists/register', this.formData);
         console.log('Registration Successful:', response.data);
 
         // Emit success event to parent component

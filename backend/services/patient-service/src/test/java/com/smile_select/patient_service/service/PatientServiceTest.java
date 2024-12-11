@@ -49,37 +49,37 @@ public class PatientServiceTest {
      */
     @Test
     public void testGetPatientById_PatientNotFound() {
-
         when(patientRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<Patient> result = patientService.getPatientById(1L);
+        ResourceNotFoundException exception = assertThrows(
+                ResourceNotFoundException.class,
+                () -> patientService.getPatientById(1L));
 
-        assertFalse(result.isPresent());
+        assertEquals("Patient not found with ID: 1", exception.getMessage());
         verify(patientRepository, times(1)).findById(1L);
     }
 
     @Test
     public void testGetPatientById_InvalidPatientId() {
 
-        when(patientRepository.findById(null)).thenThrow(new IllegalArgumentException("Patient ID must not be null"));
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> patientService.getPatientById(null));
 
-        Optional<Patient> result = patientService.getPatientById(null);
+        assertEquals("Patient ID cannot be null.", exception.getMessage());
 
-        assertFalse(result.isPresent());
-        verify(patientRepository, times(1)).findById(null);
     }
 
     @Test
     public void testGetPatientById_ValidId() {
-
         when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
 
-        Optional<Patient> result = patientService.getPatientById(1L);
+        Patient result = patientService.getPatientById(1L);
 
-        assertTrue(result.isPresent(), "Expected result to contain a patient");
-        assertEquals(1L, result.get().getId(), "Patient ID should match");
-        assertEquals("James", result.get().getFirstName(), "First name should match");
-        assertEquals("Bond", result.get().getLastName(), "Last name should match");
+        assertNotNull(result, "Expected a valid patient to be returned");
+        assertEquals(1L, result.getId(), "Patient ID should match");
+        assertEquals("James", result.getFirstName(), "First name should match");
+        assertEquals("Bond", result.getLastName(), "Last name should match");
 
         verify(patientRepository, times(1)).findById(1L);
     }

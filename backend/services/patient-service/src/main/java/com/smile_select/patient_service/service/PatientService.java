@@ -6,15 +6,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.smile_select.patient_service.dto.PatientFirstNameAndEmailDTO;
 import com.smile_select.patient_service.dto.PatientUpdateDTO;
 import com.smile_select.patient_service.exception.ResourceNotFoundException;
 import com.smile_select.patient_service.model.Patient;
+import com.smile_select.patient_service.model.PatientPreferredDate;
 import com.smile_select.patient_service.mqtt.MqttGateway;
+import com.smile_select.patient_service.repository.PatientPreferredDateRepository;
 import com.smile_select.patient_service.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +40,9 @@ public class PatientService {
     @Autowired
     private PatientRepository patientRepository;
 
+    @Autowired
+    private PatientPreferredDateRepository patientPreferredDateRepository;
+
     // ObjectMapper with support for LocalDate and LocalDateTime
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule()
@@ -48,15 +52,16 @@ public class PatientService {
                             new LocalDateSerializer(DateTimeFormatter.ISO_LOCAL_DATE)))
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-
     public Optional<Patient> findPatientByEmail(String email) {
         return patientRepository.findByEmail(email);
     }
 
     public Patient savePatient(Patient patient) {
-        // Hash the password before saving a patient
-        patient.setPassword(passwordEncoder.encode(patient.getPassword()));
         return patientRepository.save(patient);
+    }
+
+    public PatientPreferredDate savePatientPreferredDate(PatientPreferredDate preferredDate) {
+        return patientPreferredDateRepository.save(preferredDate);
     }
 
     public boolean checkPassword(Patient patient, String rawPassword) {
@@ -68,39 +73,13 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    // Retrieve patient by ID
-    /*
-     * public Patient getPatientById(Long id, String userEmail) {
-     * // Mock authentication
-     * String authenticatedEmail = "love.strandang@gmail.com"; // Use a hardcoded
-     * email to simulate an authenticated
-     * // user
-     * return patientRepository.findById(id)
-     * .filter(patient -> patient.getEmail().equals(authenticatedEmail))
-     * .orElseThrow(() -> new
-     * ResourceNotFoundException("Patient not found or access denied for ID: " +
-     * id));
-     * }
-     */
-
-
-    public Optional<Patient> getPatientById(Long patientId) {
-        try {
-            // Attempt to fetch the patient from the repository
-            return patientRepository.findById(patientId);
-        } catch (IllegalArgumentException ex) {
-            // Handle case where patientId is null or invalid
-            System.out.println("Invalid patient ID provided: " + patientId + ". Error: " + ex.getMessage());
-            return Optional.empty();
-        } catch (DataAccessException ex) {
-            // Handle database-related exceptions
-            System.out.println("Database error occurred while fetching patient with ID: " + patientId + ". Error: " + ex.getMessage());
-            return Optional.empty();
-        } catch (Exception ex) {
-            // Handle any other unexpected exceptions
-            System.out.println("An unexpected error occurred while fetching patient with ID: " + patientId + ". Error: " + ex.getMessage());
-            return Optional.empty();
+    public Patient getPatientById(Long patientId) {
+        if (patientId == null) {
+            throw new IllegalArgumentException("Patient ID cannot be null.");
         }
+
+        return patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + patientId));
     }
 
     public Patient getPatientByIdAndEmail(Long id, String userEmail) {
@@ -115,7 +94,6 @@ public class PatientService {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
-
 
     // Delete a patient
     public void deletePatientById(Long id, String userEmail) {
@@ -217,7 +195,7 @@ public class PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with ID: " + id));
     }
 
-    public void processAppointmentCreated(String payload) {
+    public void processAppointmentBooked(String payload) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(payload);
@@ -228,36 +206,61 @@ public class PatientService {
 
             // Fetch patient email
             System.out.println("Fetching email for patientId: " + patientId);
-            Optional<Patient> retrievedPatient = getPatientById(patientId);
+            Patient patient = getPatientById(patientId);
 
+            System.out.println("Retrieved patientEmail: " + patient.getEmail());
 
-            if (retrievedPatient.isPresent()) {
-                Patient patient = retrievedPatient.get();
-                System.out.println("Retrieved patientEmail: " + patient.getEmail());
+            // Prepare message to publish
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("appointmentId", appointmentId);
+            messageMap.put("patientId", patientId);
+            messageMap.put("patientEmail", patient.getEmail());
+            messageMap.put("patientFirstName", patient.getFirstName());
+            messageMap.put("startTime", startTime);
 
-                // Prepare message to publish
-                Map<String, Object> messageMap = new HashMap<>();
-                messageMap.put("appointmentId", appointmentId);
-                messageMap.put("patientId", patientId);
-                messageMap.put("patientEmail", patient.getEmail());
-                messageMap.put("patientFirstName", patient.getFirstName());
-                messageMap.put("startTime", startTime);
+            String messageToPublish = objectMapper.writeValueAsString(messageMap);
 
-                String messageToPublish = objectMapper.writeValueAsString(messageMap);
-
-                // Publish to the topic
-                mqttGateway.publishMessage(messageToPublish, "/notifications/booked");
-                System.out.println("Published message to /notifications/booked");
-            } else {
-                System.err.println("Patient email not found for patientId: " + patientId);
-            }
+            // Publish to the topic
+            mqttGateway.publishMessage(messageToPublish, "/notifications/booked");
+            System.out.println("Published message to /notifications/booked");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void processAppointmentCreated(String payload) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(payload);
 
+            Long appointmentId = rootNode.path("id").asLong();
+            String startTime = rootNode.path("startTime").asText();
 
+            // Prepare message to publish
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("appointmentId", appointmentId);
+            messageMap.put("startTime", startTime);
+
+            // Finf all patients with a preferred date equaling start time date
+            
+            LocalDateTime localDateTime = LocalDateTime.parse(startTime);
+            LocalDate localDate = localDateTime.toLocalDate();
+
+            // Get a list of emails for the patients who have entered that preferred daye
+            List<PatientFirstNameAndEmailDTO> emailsAndNamesList = patientPreferredDateRepository.findEmailsAndFirstNamesByPreferredDate(localDate);
+            
+            messageMap.put("emailsAndNamesList", emailsAndNamesList);
+
+            String messageToPublish = objectMapper.writeValueAsString(messageMap);
+
+            // Publish to the topic
+            mqttGateway.publishMessage(messageToPublish, "/notifications/created");
+            System.out.println("Published message to /notifications/created");
+            System.out.println(messageToPublish);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void handleAppointmentCancellation(String payload) {
         System.out.println("Received message for dentist cancellation");
@@ -301,5 +304,27 @@ public class PatientService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void removeOldPreferredDates(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        LocalDate today = LocalDate.now();
+
+        // Remove old dates from the preferred dates set
+        patient.getPreferredDates().removeIf(date -> date.getPreferredDate().isBefore(today));
+    }
+
+    public PatientPreferredDate getPatientPreferredDateById(Long id){
+        PatientPreferredDate preferredDate = patientPreferredDateRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Preferred date not found"));
+            return preferredDate;
+    }
+
+    public void deletePatientPreferredDate(Long id){
+        PatientPreferredDate preferredDate = patientPreferredDateRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Preferred date not found"));
+        patientPreferredDateRepository.deleteById(preferredDate.getId());
     }
 }

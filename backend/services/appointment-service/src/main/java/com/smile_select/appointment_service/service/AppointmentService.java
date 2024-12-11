@@ -2,7 +2,6 @@ package com.smile_select.appointment_service.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.smile_select.appointment_service.model.Appointment;
 import com.smile_select.appointment_service.mqtt.MqttGateway;
 import com.smile_select.appointment_service.repository.AppointmentRepository;
@@ -190,6 +188,15 @@ public class AppointmentService {
         }
     }
 
+    public boolean checkIfDateInvalid(LocalDateTime dateTime){
+        LocalDateTime now = LocalDateTime.now();
+        if (dateTime.isBefore(now)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Save already existing methods in case of problems
     /*
     public Appointment save(Appointment appointment) {
@@ -231,5 +238,5 @@ public class AppointmentService {
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
         return appointmentRepository.findAvailableAppointmentsByDentistId(dentistId);
     }
-    */
+    */   
 }
