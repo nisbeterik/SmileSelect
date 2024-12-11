@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="login-div">
     <!-- Toggle between Login and Registration forms -->
-    <div v-if="!isLoggedIn">
+    <div v-if="!isLoggedIn" class="card">
       <!-- Show Login Form -->
       <LoginView v-if="showLogin" @loginSuccess="handleLoginSuccess" />
 
@@ -61,16 +61,41 @@ export default {
 </script>
 
 <style scoped>
+.login-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    width: 100%; /* Full viewport width */
+    margin: 0;
+    background-color: black; /* Optional: add a light background color for contrast */
+    box-sizing: border-box; /* Ensure padding/borders don't affect the size */
+}
+
+.card {
+  max-width: 500px;
+  width: 100%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+body {
+  margin: 0;
+}
 .toggle-btn {
   margin-top: 20px;
-  background-color: #007bff;
+  background-color: #206050;
   color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  max-width: ;
 }
 .toggle-btn:hover {
-  background-color: #0056b3;
+  background-color: #003020;
 }
 </style>

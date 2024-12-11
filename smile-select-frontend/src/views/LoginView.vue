@@ -86,12 +86,10 @@ export default {
 
 <style scoped>
 .login-container {
-  max-width: 400px;
-  margin: auto;
+  max-width: 500px;
+  margin: 0;
   padding: 20px;
-  border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .form-group {
   margin-bottom: 15px;
@@ -109,14 +107,14 @@ export default {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #007bff;
+  background-color: #206050;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 button:hover {
-  background-color: #0056b3;
+  background-color: #003020;
 }
 .error {
   color: red;
