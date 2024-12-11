@@ -95,6 +95,8 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: url('../../public/images/wavyBackground.png') no-repeat center top;
+  background-size: cover;
 }
 
 #app {
@@ -158,13 +160,25 @@ body {
   cursor: pointer;
 }
 
- .about-section, .contact-section {
-  border-bottom: 10px;
-  border-color: #206050;
+ .about-section {
   padding: 100px;
-  max-width: 80vw;
-  margin: auto;
+  max-width: 100vw;
+
+   backdrop-filter: blur(5px)brightness(80%);
+   color: white;
+   max-height: 600px;
+  }
+
+
+.contact-section {
+  padding: 100px;
+  max-width: 100vw;
+  margin: 0;
+  color: Black;
+  background: white;
 }
+
+
 
 .app-footer {
   background-color: #206050;
