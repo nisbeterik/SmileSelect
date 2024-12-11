@@ -144,27 +144,33 @@ body {
 }
 
 .hero-content {
-  background: rgba(0, 70, 40, 0.2);
-  backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
   padding: 20px;
-  border-radius: 10px;
-  color: white;
+  border-radius: 8px;
+  color: Black;
   text-align: center;
+  border: 1px solid #ccc;
 }
 
 .hero-content button {
   padding: 10px 20px;
+
   background-color: #206050;
+  border-radius: 8px;
   color: white;
   border: none;
   cursor: pointer;
+}
+.hero-content button:hover {
+  background-color: #003020;
 }
 
  .about-section {
   padding: 100px;
   max-width: 100vw;
 
-   backdrop-filter: blur(5px)brightness(80%);
+   backdrop-filter: brightness(40%);
    color: white;
    max-height: 600px;
   }
