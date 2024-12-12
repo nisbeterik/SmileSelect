@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="form-container">
     <div v-if="!isRegistered">
       <h1>Dentist Registration</h1>
       <form @submit.prevent="submitDentist">

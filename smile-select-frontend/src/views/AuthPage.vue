@@ -1,7 +1,7 @@
 <template>
   <div class="login-div" >
     <!-- Back Arrow -->
-    <button class="back-arrow" @click="goBack">
+    <button v-if="!isLoggedIn" class="back-arrow" @click="goBack">
       ←
     </button>
     <!-- Toggle between Login and Registration forms -->
