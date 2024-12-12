@@ -8,6 +8,7 @@
           <input
             type="text"
             id="first_name_dentist"
+            placeholder="John"
             v-model="formData.firstName"
             required
           /><br /><br />
@@ -18,6 +19,7 @@
           <input
             type="text"
             id="last_name_dentist"
+            placeholder="Johnsson"
             v-model="formData.lastName"
             required
           /><br /><br />
@@ -28,6 +30,7 @@
           <input
             type="email"
             id="email_dentist"
+            placeholder="john.johnsson@example.com"
             v-model="formData.email"
             required
           /><br /><br />
@@ -37,6 +40,7 @@
           <input
             type="password"
             id="password_dentist"
+            placeholder="S3ctr€T!96"
             v-model="formData.password"
             required
           /><br /><br />
@@ -144,6 +148,9 @@ export default {
 ::v-deep(.multiselect-option-selected) {
   background-color: #206050 !important; /* Green for selected */
   color: white !important; /* White text for contrast */
+}
+::v-deep(.multiselect-fake-input) {
+  display: none; /* Hides the fake input */
 }
 .clinic-field {
   border: 0px;
