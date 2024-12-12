@@ -1,10 +1,11 @@
 <template>
   <div class="patient-dashboard">
-    <header class="dashboard-header">
-      <div class="header-content">
-        <h1>Welcome to the Dashboard</h1>
-      </div>
-    </header>
+    <div class="background-layer"></div>
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h1>Welcome to the Dashboard</h1>
+        </div>
+      </header>
         <!-- Top row with PreferredDatePicker and PatientCurrentAppointment -->
         <div class="top-row">
           <div class="preferred-date-picker">
@@ -19,7 +20,8 @@
         <div class="glass-card availability-page">
           <AvailabilityPage />
         </div>
-      </div>
+
+    </div>
     </template>
 
 <script>
@@ -76,5 +78,15 @@ export default {
   padding-top: 15px;
   justify-content: center;
   align-items: center;
+}
+.background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../../public/images/wavyBackground.png') no-repeat center center;
+  background-size: cover;
+  z-index: -1;
 }
 </style>
