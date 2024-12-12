@@ -83,11 +83,13 @@ public class PatientService {
     }
 
     public Patient getPatientByIdAndEmail(Long id, String userEmail) {
+        if (id == null) {
+            throw new ResourceNotFoundException("Patient ID must not be null");
+        }
         return patientRepository.findById(id)
                 .filter(patient -> patient.getEmail().equals(userEmail)) // Ensure only the owner can access their data
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
     }
-
     public Patient getPatientByIdAsDentist(Long id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or access denied for ID: " + id));
