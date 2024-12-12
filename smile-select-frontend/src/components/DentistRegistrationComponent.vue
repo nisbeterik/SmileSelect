@@ -43,15 +43,15 @@
         </div>
         <div class="form-group">
           <label for="clinic_dentist">Select Clinic:</label>
-          <select
+          <Multiselect
+            class="clinic-field"
+            :options="formattedClinics"
             id="clinic_dentist"
             v-model="formData.clinicId"
             required
+            searchable
           >
-            <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
-              {{ clinic.name }}, {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}
-            </option>
-          </select>
+          </Multiselect>
           <br /><br />
         </div>
 
@@ -69,8 +69,12 @@
 <script>
 import axios from '@/axios';
 import '/src/CSS/global.css';
+import Multiselect from '@vueform/multiselect';
 
 export default {
+  components: {
+    Multiselect
+  },
   data() {
     return {
       formData: {
@@ -83,6 +87,14 @@ export default {
       clinics: [], // List of clinics fetched from the backend
       isRegistered: false,
     };
+  },
+  computed: {
+    formattedClinics() {
+      return this.clinics.map(clinic => ({
+        value: clinic.id,
+        label: `${clinic.name}, ${clinic.street}, ${clinic.houseNumber}, ${clinic.city}`,
+      }));
+    },
   },
   mounted() {
     this.fetchClinics();
@@ -113,5 +125,35 @@ export default {
 </script>
 
 <style scoped>
+/* Style for dropdown options */
+::v-deep(.multiselect-option) {
+  background-color: rgba(255, 255, 255, 0.5) !important; /* Set a semi-transparent white background */
+  color: #333 !important;
+  padding: 5px 10px; /* Add some spacing */
+  border-radius: 4px; /* Optional: Add rounded corners */
+  cursor: pointer; /* Make it clear the options are clickable */
+  margin: 3px;
+}
+
+/* Hover effect for options */
+::v-deep(.multiselect-option:hover) {
+  background-color: rgba(200, 200, 200, 0.8) !important; /* Slightly darker on hover */
+}
+
+/* Selected option styling */
+::v-deep(.multiselect-option-selected) {
+  background-color: #206050 !important; /* Green for selected */
+  color: white !important; /* White text for contrast */
+}
+.clinic-field {
+  border: 0px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+}
 
 </style>
