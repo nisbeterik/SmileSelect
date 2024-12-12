@@ -32,8 +32,8 @@
         <p v-else>No dentists available.</p>
       </div>
     </div>
-    <div v-if="isBookingConfirmed" class="modal-overlay">
-      <div class="modal">
+    <div v-if="isBookingConfirmed" class="availability-modal-overlay">
+      <div class="availability-modal">
         <h2>Booking Confirmed</h2>
         <p>Your appointment has been successfully booked!</p>
         <button @click="closeBookingConfirmation" class="btn-confirm">Close</button>
@@ -50,8 +50,8 @@
         </template>
       </FullCalendar>
     </div>
-    <div v-if="isModalVisible" class="modal-overlay">
-      <div class="modal">
+    <div v-if="isModalVisible" class="availability-modal-overlay">
+      <div class="availability-modal">
         <h2>Confirm Booking</h2>
         <p>Are you sure you want to book this appointment?</p>
         <input v-model="email" type="email" placeholder="Enter your email" class="modal-email-input" />
@@ -249,7 +249,7 @@ b {
   margin: 0 auto;
 }
 
-.modal-overlay {
+.availability-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -262,7 +262,7 @@ b {
   z-index: 1000;
 }
 
-.modal {
+.availability-modal {
   background: white;
   padding: 2em;
   border-radius: 5px;
