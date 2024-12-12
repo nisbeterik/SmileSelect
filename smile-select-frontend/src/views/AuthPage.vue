@@ -1,7 +1,7 @@
 <template>
   <div class="login-div" >
     <!-- Back Arrow -->
-    <button v-if="!isLoggedIn" class="back-arrow" @click="goBack">
+    <button class="back-arrow" @click="goBack">
       ←
     </button>
     <!-- Toggle between Login and Registration forms -->
@@ -20,13 +20,6 @@
         }}
       </button>
 
-    </div>
-
-    <!-- Show dashboard or success message after login -->
-    <div v-else>
-      <h2>Welcome!</h2>
-      <p>You are successfully logged in.</p>
-      <button @click="navigateToDashboard">Go to Dashboard</button>
     </div>
   </div>
 </template>
@@ -58,7 +51,8 @@ export default {
       this.$router.push('/'); // Navigate to the home screen
     },
     handleLoginSuccess() {
-      this.isLoggedIn = true; // Hide forms on login success// Store the role received from LoginView
+      this.isLoggedIn = true;
+      this.navigateToDashboard();// Hide forms on login success// Store the role received from LoginView
     },
     toggleForm() {
       this.showLogin = !this.showLogin; // Toggle between login and registration forms
