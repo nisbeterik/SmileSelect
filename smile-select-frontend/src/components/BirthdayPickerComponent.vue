@@ -1,23 +1,26 @@
 <template>
   <div class="form-group">
     <label for="dob_patient">Date of Birth:</label>
-    <div class="dob-field horizontal-fields">
+    <div class="dob-select horizontal-fields">
       <Multiselect
         :options="years"
         v-model="selectedYear"
         placeholder="Year"
+        class="dob-field"
         searchable
       />
       <Multiselect
         :options="months"
         v-model="selectedMonth"
         placeholder="Month"
+        class="dob-field"
         searchable
       />
       <Multiselect
         :options="daysInMonth"
         v-model="selectedDay"
         placeholder="Day"
+        class="dob-field"
         searchable
       />
     </div>
@@ -85,8 +88,14 @@ export default {
 </script>
 
 <style scoped>
+::v-deep(.multiselect-dropdown) {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
 ::v-deep(.multiselect-option) {
-  background-color: white;
   color: #333;
   padding: 5px 10px;
   font-size: 14px;
@@ -95,14 +104,32 @@ export default {
   margin: 3px;
 }
 ::v-deep(.multiselect-option:hover) {
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.1);;
 }
 .horizontal-fields {
   display: flex;
-  gap: 10px; /* Space between the fields */
-  align-items: center; /* Aligns fields vertically if they have different heights */
+  gap: 10px;
+  align-items: center;
 }
 .dob-field {
+  border: 0px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+}
+.dob-select{
+  border: 0px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
   flex: 1; /* Makes all fields the same width */
 }
 </style>

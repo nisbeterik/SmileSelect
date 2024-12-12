@@ -18,7 +18,14 @@
 .button-primary:hover {
     background-color: var(--primary-hover-color);
 }
-
+/*container*/
+.form-container {
+    max-width: 500px;
+    margin: 0;
+    padding: 20px;
+    border-radius: 8px;
+    color: #003020;
+}
 /*Forms*/
 .form-group {
     margin-bottom: 15px;
@@ -29,9 +36,15 @@
 }
 .form-group input,
 .form-group select {
+    border: 0px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
+
 }
 /*Utils*/
 .back-arrow {
