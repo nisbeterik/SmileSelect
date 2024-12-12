@@ -3,51 +3,59 @@
     <div v-if="!isRegistered">
       <h1>Dentist Registration</h1>
       <form @submit.prevent="submitDentist">
-        <label for="first_name_dentist">First Name:</label>
-        <input
-          type="text"
-          id="first_name_dentist"
-          v-model="formData.firstName"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="first_name_dentist">First Name:</label>
+          <input
+            type="text"
+            id="first_name_dentist"
+            v-model="formData.firstName"
+            required
+          /><br /><br />
+        </div>
 
-        <label for="last_name_dentist">Last Name:</label>
-        <input
-          type="text"
-          id="last_name_dentist"
-          v-model="formData.lastName"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="last_name_dentist">Last Name:</label>
+          <input
+            type="text"
+            id="last_name_dentist"
+            v-model="formData.lastName"
+            required
+          /><br /><br />
+        </div>
 
-        <label for="email_dentist">Email:</label>
-        <input
-          type="email"
-          id="email_dentist"
-          v-model="formData.email"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="email_dentist">Email:</label>
+          <input
+            type="email"
+            id="email_dentist"
+            v-model="formData.email"
+            required
+          /><br /><br />
+        </div>
+        <div class="form-group">
+          <label for="password_dentist">Password:</label>
+          <input
+            type="password"
+            id="password_dentist"
+            v-model="formData.password"
+            required
+          /><br /><br />
+        </div>
+        <div class="form-group">
+          <label for="clinic_dentist">Select Clinic:</label>
+          <select
+            id="clinic_dentist"
+            v-model="formData.clinicId"
+            required
+          >
+            <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
+              {{ clinic.name }}, {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}
+            </option>
+          </select>
+          <br /><br />
+        </div>
 
-        <label for="password_dentist">Password:</label>
-        <input
-          type="password"
-          id="password_dentist"
-          v-model="formData.password"
-          required
-        /><br /><br />
-
-        <label for="clinic_dentist">Select Clinic:</label>
-        <select
-          id="clinic_dentist"
-          v-model="formData.clinicId"
-          required
-        >
-          <option v-for="clinic in clinics" :key="clinic.id" :value="clinic.id">
-            {{ clinic.name }}, {{ clinic.street }}, {{ clinic.houseNumber }}, {{ clinic.city }}
-          </option>
-        </select>
-        <br /><br />
-
-        <button type="submit">Register as Dentist</button>
+        <button type="submit" class="button-primary">Register as Dentist</button>
       </form>
     </div>
     <div v-else>
@@ -60,6 +68,7 @@
 
 <script>
 import axios from '@/axios';
+import '/src/CSS/global.css';
 
 export default {
   data() {
@@ -102,7 +111,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 
