@@ -12,7 +12,7 @@
       <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" />
       <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" />
       <!-- Toggle button -->
-      <button @click="toggleForm" class="button-primary">
+      <button @click="toggleForm" class="button-secondary">
         {{
           showLogin
             ? 'Not registered yet? Sign up here'
@@ -103,7 +103,7 @@ export default {
 body {
   margin: 0;
 }
-.button-primary {
+.button-secondary {
   margin-top: 20px;
 }
 </style>
