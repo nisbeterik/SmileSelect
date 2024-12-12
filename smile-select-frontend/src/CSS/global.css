@@ -1,8 +1,8 @@
 :root {
     --primary-color: #206050;
     --primary-hover-color: #003020;
-    --secondary-color: #ddd;
-    --secondary-hover-color: #bbb;
+    --secondary-color: rgba(240, 240, 240, 0.6);
+    --secondary-hover-color: rgba(100, 100, 100, 0.8);;
 }
 
 /*Buttons*/
