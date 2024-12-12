@@ -101,3 +101,19 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
     transform: scale(1.1);
 }
+/*Div*/
+.glass-card {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+   transition: height 3s ease;
+}
+
+/*alignment*/
+.align-right {
+    margin-left: auto;
+}
