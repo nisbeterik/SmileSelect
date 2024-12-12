@@ -42,15 +42,8 @@
           /><br /><br />
         </div>
 
-        <div class="form-group">
-          <label for="dob_patient">Date of Birth:</label>
-          <input
-            type="date"
-            id="dob_patient"
-            v-model="formData.dateOfBirth"
-            required
-          /><br /><br />
-        </div>
+        <BirthdayPickerComponent @dateSelected="updateDob" />
+
 
         <button type="submit" class="button-primary">Register as Patient</button>
       </form>
@@ -65,8 +58,13 @@
 <script>
 import axios from '@/axios';
 import '/src/CSS/global.css';
+import BirthdayPickerComponent from '@/components/BirthdayPickerComponent.vue';
+
 
 export default {
+  components: {
+    BirthdayPickerComponent,
+  },
   data() {
     return {
       formData: {
@@ -80,6 +78,9 @@ export default {
     };
   },
   methods: {
+    updateDob(dob) {
+      this.formData.dateOfBirth = dob;
+    },
     async submitPatient() {
       try {
         const response = await axios.post('/patients/register', this.formData);
