@@ -1,22 +1,26 @@
 <template>
-  <div class="dashboard">
+  <div class="patient-dashboard">
     <header class="dashboard-header">
       <div class="header-content">
         <h1>Welcome to the Dashboard</h1>
       </div>
     </header>
+        <!-- Top row with PreferredDatePicker and PatientCurrentAppointment -->
+        <div class="top-row">
+          <div class="preferred-date-picker">
+            <PreferredDatePicker />
+          </div>
+          <div class="glass-card patient-current-appointment">
+            <PatientCurrentAppointment />
+          </div>
+        </div>
 
-    <div class="text-center mb-4">
-      <PreferredDatePicker/>
-    </div>
-    <div class="text-center mb-4">
-      <PatientCurrentAppointment />
-    </div>
-    <div class="text-center mb-4">
-      <AvailabilityPage />
-    </div>
-  </div>
-</template>
+        <!-- Bottom row with AvailabilityPage -->
+        <div class="glass-card availability-page">
+          <AvailabilityPage />
+        </div>
+      </div>
+    </template>
 
 <script>
 import PatientCurrentAppointment from '@/views/PatientCurrentAppointment.vue';
@@ -38,10 +42,33 @@ export default {
 .header-title {
   padding: 20px;
 }
+.patient-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
 .dashboard-header {
   background-color: #206050;
   color: white;
   padding: 10px 10px;
+}
+.preferred-date-picker {
+}
+
+.patient-current-appointment {
+  flex: 1;
+  width: 100%;
+  margin: 20px;
+  height: 750px;
+}
+
+.availability-page {
+  margin-top: 20px;
 }
 
 .header-content {
