@@ -4,8 +4,14 @@
         <p>You will be notified if an open appointment slot is published</p>
         <p>{{ infoText }}</p>
 
-        <Datepicker v-model="selectedDates" :multi-dates="{ limit: 5 }" :enable-time-picker="false"
-            :disabled-dates="disableDatesBeforeToday" @update:modelValue="handleDateSelection" class="custom-datepicker" />
+        <Datepicker
+          v-model="selectedDates"
+          :multi-dates="{ limit: 5 }"
+          :enable-time-picker="false"
+          :disabled-dates="disableDatesBeforeToday"
+          @update:modelValue="handleDateSelection"
+          class="custom-datepicker"
+        />
 
         <button class="button-primary" @click="handleSelect" :disabled="selectedDates.length === 0">
             Save Dates
@@ -146,25 +152,25 @@ export default {
   font-size: 18px;
 }
 
-/* Style the date picker input field */
+
 .custom-datepicker input {
-  width: 200px; /* Adjust the width of the input field */
-  max-width: 100%; /* Ensure it doesn't stretch beyond its container */
+  width: 100%; /* Ensure the input field spans the entire width */
+  box-sizing: border-box;
 }
 
-/* Style the date picker dropdown calendar */
-.custom-datepicker .datepicker {
-  width: auto; /* Let the dropdown resize to fit the calendar content */
-  max-width: 300px; /* Restrict the width of the calendar */
-  min-width: 200px; /* Ensure the calendar has a minimum width */
-}
 
-/* Optional: Style the container to ensure proper alignment */
 .custom-datepicker {
-  display: inline-block;
+  display: block; /* Ensure the datepicker behaves like a block element */
   margin: 10px 0;
-  width: auto;
+  width: 100%; /* Ensure the calendar has a minimum width */
 }
+
+
+.custom-datepicker.datepicker {
+  width: Auto; /* Ensure the calendar dropdown matches the input field width */
+  min-width: 200px; /* Set a minimum width for smaller containers */
+}
+
 
 
 </style>
