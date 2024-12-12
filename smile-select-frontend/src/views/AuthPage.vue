@@ -12,7 +12,7 @@
       <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" />
       <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" />
       <!-- Toggle button -->
-      <button @click="toggleForm" class="toggle-btn">
+      <button @click="toggleForm" class="button-primary">
         {{
           showLogin
             ? 'Not registered yet? Sign up here'
@@ -35,6 +35,7 @@
 import LoginComponent from '@/components/LoginComponent.vue';
 import DentistRegistrationComponent from '@/components/DentistRegistrationComponent.vue';
 import PatientRegistrationComponent from '@/components/PatientRegistrationComponent.vue';
+import '/src/CSS/global.css';
 
 export default {
   data() {
@@ -77,26 +78,6 @@ export default {
 </script>
 
 <style>
-.back-arrow {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  border:none;
-  padding: 5px 15px 5px 15px;
-  font-size: 25px;
-  color: White;
-  cursor: pointer;
-  background-color: #206050;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.back-arrow:hover {
-  background-color: #003020;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-  transform: scale(1.1);
-}
-
 .login-div {
   display: flex;
   justify-content: center;
@@ -119,20 +100,10 @@ export default {
   background-color: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(20px);
 }
-
 body {
   margin: 0;
 }
-.toggle-btn {
+.button-primary {
   margin-top: 20px;
-  background-color: #206050;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.toggle-btn:hover {
-  background-color: #003020;
 }
 </style>
