@@ -8,6 +8,7 @@
           <input
             type="text"
             id="first_name_patient"
+            placeholder="eg. John"
             v-model="formData.firstName"
             required
           /><br /><br />
@@ -17,6 +18,7 @@
           <input
             type="text"
             id="last_name_patient"
+            placeholder="eg. Johnsson"
             v-model="formData.lastName"
             required
           /><br /><br />
@@ -27,6 +29,7 @@
           <input
             type="email"
             id="email_patient"
+            placeholder="john.johnsson@example.com"
             v-model="formData.email"
             required
           /><br /><br />
@@ -37,6 +40,7 @@
           <input
             type="password"
             id="password_patient"
+            placeholder="S3ctr€T!96"
             v-model="formData.password"
             required
           /><br /><br />
