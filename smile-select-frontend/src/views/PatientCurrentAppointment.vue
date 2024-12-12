@@ -175,6 +175,8 @@ export default {
   margin-top: 0px;
 }
 .glass-card{
+  margin-right: 10px;
+  margin-left: 10px;
   margin-top: 10px;
   max-height: 250px;
   display: flex;
