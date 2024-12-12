@@ -1,35 +1,47 @@
 <template>
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-          <h3>{{ appointmentText }}</h3>
-          <button @click="toggleView" class="btn btn-primary mb-3">
-            {{ showPastAppointments ? "Show Upcoming Appointments" : "Show Past Appointments" }}
-          </button>
-          <div v-for="appointment in filteredAppointments" :key="appointment.id" class="card mb-3">
-            <div class="card-body">
-              <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
-              <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
-              <p><strong>Dentist:</strong> {{ appointment.dentistName }}</p>
-              <p><strong>Clinic:</strong> {{ appointment.clinicName }}</p>
-              <p><strong>Address:</strong> {{ appointment.address }}</p>
-              <button
-                @click="cancelAppointment(appointment.id)"
-                class="btn btn-danger"
-                :disabled="isPast(appointment.startTime)"
-              >
-                Cancel
-              </button>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div>
+        <h3>{{ appointmentText }}</h3>
+        <button @click="toggleView" class="btn btn-primary mb-3">
+          {{ showPastAppointments ? "Show Upcoming Appointments" : "Show Past Appointments" }}
+        </button>
+        <!-- Scrollable container -->
+        <div class="scroll-wrapper">
+          <div class="appointments-scroll-container">
+            <div
+              v-for="appointment in filteredAppointments"
+              :key="appointment.id"
+              class="glass-card mb-3"
+            >
+              <div class="card-body">
+                <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
+                <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
+                <p><strong>Dentist:</strong> {{ appointment.dentistName }}</p>
+                <p><strong>Clinic:</strong> {{ appointment.clinicName }}</p>
+                <p><strong>Address:</strong> {{ appointment.address }}</p>
+              </div>
+              <div>
+                <button
+                  @click="cancelAppointment(appointment.id)"
+                  class="btn btn-danger"
+                  :disabled="isPast(appointment.startTime)"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import { useAuthStore } from '@/stores/auth';
 import { format, differenceInMinutes, parseISO, isBefore } from 'date-fns';
+import '/src/CSS/global.css';
 
 export default {
   name: 'PatientCurrentAppointment',
@@ -118,12 +130,71 @@ export default {
 </script>
 
 <style scoped>
-.container {
-    max-width: 100%;
+.scroll-wrapper {
+  position: relative;
+  max-height: 510px; /* Set the maximum height of the wrapper */
+  overflow: hidden; /* Hide the scrollable content that exceeds the container */
+}
+.appointments-scroll-container {
+  max-height: 510px;
+  overflow-y: auto;
+  padding-right: 10px;
+  -webkit-mask-image: -webkit-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 90%, /* Fully opaque for 90% of the container */
+    rgba(0, 0, 0, 0) 100% /* Fade only in the last 10% */
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 90%, /* Fully opaque for 90% of the container */
+    rgba(0, 0, 0, 0) 100% /* Fade only in the last 10% */
+  );
+  mask-size: 10% 10%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+/*
+.scroll-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px; /* Height of the top fade
+  pointer-events: none; /* Allow interaction with the scrollable area
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.8), /* Adjust this opacity to match your semi-transparent background
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 1; /* Ensure it stays above the scrolling content
 }
 
-.card {
-    border-radius: 10px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+/* Bottom fade overlay using opacity
+.scroll-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px; /* Height of the bottom fade
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.8), /* Adjust this opacity to match your semi-transparent background
+    rgba(255, 255, 255, 0) 100%
+  );
+  z-index: 1;
+}
+*/
+.container {
+  max-width: 100%;
+  overflow: hidden;
+}
+.glass-card{
+  max-height: 250px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

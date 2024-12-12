@@ -28,6 +28,7 @@
 import PatientCurrentAppointment from '@/views/PatientCurrentAppointment.vue';
 import PreferredDatePicker  from './PreferredDatePicker.vue';
 import AvailabilityPage from '@/views/AvailabilityPage.vue';
+import '/src/CSS/global.css';
 
 export default {
   name: 'PatientDashboard',
