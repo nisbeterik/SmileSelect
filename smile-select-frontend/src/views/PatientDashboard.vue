@@ -3,7 +3,7 @@
     <div class="background-layer"></div>
       <header class="dashboard-header">
         <div class="header-content">
-          <h1>Welcome to the Dashboard</h1>
+          <h1>Welcome {{role}} {{patientId}}</h1>
         </div>
       </header>
         <!-- Top row with PreferredDatePicker and PatientCurrentAppointment -->
@@ -25,6 +25,7 @@
     </template>
 
 <script>
+import { useAuthStore } from '@/stores/auth';
 import PatientCurrentAppointment from '@/views/PatientCurrentAppointment.vue';
 import PreferredDatePicker  from './PreferredDatePicker.vue';
 import AvailabilityPage from '@/views/AvailabilityPage.vue';
@@ -38,6 +39,15 @@ export default {
     PreferredDatePicker,
     AvailabilityPage
   },
+  data(){
+    const authStore = useAuthStore();
+    return {
+      patientId: authStore.id,
+      role: authStore.role
+    };
+  },
+
+
 };
 </script>
 
