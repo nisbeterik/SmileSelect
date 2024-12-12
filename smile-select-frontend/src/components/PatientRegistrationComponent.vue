@@ -3,47 +3,56 @@
     <div v-if="!isRegistered">
       <h1>Patient Registration</h1>
       <form @submit.prevent="submitPatient">
-        <label for="first_name_patient">First Name:</label>
-        <input
-          type="text"
-          id="first_name_patient"
-          v-model="formData.firstName"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="first_name_patient">First Name:</label>
+          <input
+            type="text"
+            id="first_name_patient"
+            v-model="formData.firstName"
+            required
+          /><br /><br />
+        </div>
+        <div class="form-group">
+          <label for="last_name_patient">Last Name:</label>
+          <input
+            type="text"
+            id="last_name_patient"
+            v-model="formData.lastName"
+            required
+          /><br /><br />
+        </div>
 
-        <label for="last_name_patient">Last Name:</label>
-        <input
-          type="text"
-          id="last_name_patient"
-          v-model="formData.lastName"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="email_patient">Email:</label>
+          <input
+            type="email"
+            id="email_patient"
+            v-model="formData.email"
+            required
+          /><br /><br />
+        </div>
 
-        <label for="email_patient">Email:</label>
-        <input
-          type="email"
-          id="email_patient"
-          v-model="formData.email"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="password_patient">Password:</label>
+          <input
+            type="password"
+            id="password_patient"
+            v-model="formData.password"
+            required
+          /><br /><br />
+        </div>
 
-        <label for="password_patient">Password:</label>
-        <input
-          type="password"
-          id="password_patient"
-          v-model="formData.password"
-          required
-        /><br /><br />
+        <div class="form-group">
+          <label for="dob_patient">Date of Birth:</label>
+          <input
+            type="date"
+            id="dob_patient"
+            v-model="formData.dateOfBirth"
+            required
+          /><br /><br />
+        </div>
 
-        <label for="dob_patient">Date of Birth:</label>
-        <input
-          type="date"
-          id="dob_patient"
-          v-model="formData.dateOfBirth"
-          required
-        /><br /><br />
-
-        <button type="submit">Register as Patient</button>
+        <button type="submit" class="button-primary">Register as Patient</button>
       </form>
     </div>
     <div v-else>
@@ -55,6 +64,7 @@
 
 <script>
 import axios from '@/axios';
+import '/src/CSS/global.css';
 
 export default {
   data() {
