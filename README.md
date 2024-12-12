@@ -74,6 +74,12 @@ Each microservice (except Auth-Service) has a dedicated database to store its da
 
 </details>
 
+<details><summary>Deployment Diagram</summary>
+
+![Deployment Diagram](assets/diagrams/deployment-diagram-milestone3.png)
+
+</details>
+
 ## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
 
 * **Erik Nisbet** (@eriknis)
