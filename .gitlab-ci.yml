@@ -104,15 +104,15 @@ compile_patient_service:
 
 
 
-# test_appointment_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Appointment Service..."
-#     - mvn -B test --file backend/services/appointment-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_appointment_service
+test_appointment_service:
+   stage: test
+   script:
+     - echo "Running tests for Appointment Service..."
+     - mvn -B test --file backend/services/appointment-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_appointment_service
 
 # test_auth_service:
 #   stage: test
