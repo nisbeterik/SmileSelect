@@ -24,7 +24,7 @@
         />
       </div>
 
-      <button type="submit">Login</button>
+      <button type="submit" class="button-primary">Login</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>
@@ -32,6 +32,7 @@
 
 <script>
 import { useAuthStore } from '@/stores/auth';
+import '/src/CSS/global.css';
 
 export default {
   name: 'LoginComponent',
@@ -91,31 +92,6 @@ export default {
   padding: 20px;
   border-radius: 8px;
   color: #003020;
-}
-.form-group {
-  margin-bottom: 15px;
-}
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #206050;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #003020;
 }
 .error {
   color: red;
