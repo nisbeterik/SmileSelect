@@ -1,36 +1,31 @@
 <template>
   <LMap
-      :zoom="12"
-      :center="[57.7089, 11.9746]"
+      :zoom="14"
+      :center="[57.7069, 11.9746]"
       :options="mapOptions"
       style="height: 1080px; width: 100%;"
+      @zoomend="onZoomEnd"
   >
-    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'"/>
+    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" />
 
     <LMarker
         v-for="clinic in clinics"
         :key="clinic.id"
         :lat-lng="[clinic.latitude, clinic.longitude]"
         :visible="true"
-    />
+    >
+      <LTooltip :offset="[0, -30]" :opacity="tooltipOpacity">
+        <div class="tooltip-box">{{ clinic.name }} <br> {{ clinic.street }}, {{ clinic.houseNumber}} </div>
+      </LTooltip>
+    </LMarker>
 
-    <LMarker
-        :lat-lng="[57.7075, 11.97]"
-        :visible="true"
-    />
-
-    <LMarker
-        :lat-lng="[57.683, 11.959]"
-        :visible="true"
-    />
-
-    <l-control-scale position="topright"/>
+    <l-control-scale position="topright" />
   </LMap>
 </template>
 
 <script>
 import "leaflet/dist/leaflet.css";
-import {LControlScale, LMap, LTileLayer, LMarker} from "@vue-leaflet/vue-leaflet";
+import { LControlScale, LMap, LTileLayer, LMarker, LTooltip } from "@vue-leaflet/vue-leaflet";
 import axios from "@/axios";
 
 export default {
@@ -39,6 +34,7 @@ export default {
     LTileLayer,
     LControlScale,
     LMarker,
+    LTooltip,
   },
   data() {
     return {
@@ -51,6 +47,8 @@ export default {
         minZoom: 12,
       },
       clinics: [],
+      currentZoom: 14,
+      tooltipOpacity: 0,  // Default opacity to hide the tooltips
     };
   },
   created() {
@@ -68,3 +66,13 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.tooltip-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+</style>
