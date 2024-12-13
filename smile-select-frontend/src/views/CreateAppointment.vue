@@ -159,7 +159,7 @@ export default {
       patientId: null,
       searchResults: null,
       selectedEvent: null,
-      HARDCODED_DENTIST_ID: 6, // REMOVE ME LATER
+      HARDCODED_DENTIST_ID: 1, // REMOVE ME LATER
       intervalId: null,
     };
   },
