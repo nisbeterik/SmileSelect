@@ -4,7 +4,6 @@
       :center="[57.7069, 11.9746]"
       :options="mapOptions"
       style="height: 500px; width: 100%;"
-      @zoomend="onZoomEnd"
   >
     <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" />
 
@@ -16,7 +15,7 @@
         @click="handleMarkerClick(clinic)"
     >
       <LTooltip :offset="[0, -30]" :opacity="tooltipOpacity">
-        <div class="tooltip-box">{{ clinic.name }} <br> {{ clinic.street }}, {{ clinic.houseNumber }}</div>
+        <div class="tooltip-box">{{ clinic.name }} <br />{{ clinic.street }}, {{ clinic.houseNumber }}</div>
       </LTooltip>
     </LMarker>
 
@@ -42,14 +41,14 @@ export default {
       mapOptions: {
         maxBounds: [
           [57.65, 11.85],
-          [57.76, 12.1]
+          [57.76, 12.1],
         ],
         maxBoundsViscosity: 1.0,
         minZoom: 12,
       },
       clinics: [],
       currentZoom: 14,
-      tooltipOpacity: 0,  // Default opacity to hide the tooltips
+      tooltipOpacity: 0,
     };
   },
   created() {
@@ -58,25 +57,15 @@ export default {
   methods: {
     async fetchClinics() {
       try {
-        const response = await axios.get('/dentists/clinics');
+        const response = await axios.get("/dentists/clinics");
         this.clinics = response.data;
       } catch (error) {
         console.error("Error fetching clinics:", error);
       }
     },
     handleMarkerClick(clinic) {
-      this.$router.push({ name: 'AvailabilityPage', params: { clinicId: clinic.id } });
-    }
+      this.$emit('clinic-selected', clinic);
+    },
   },
 };
 </script>
-
-<style scoped>
-.tooltip-box {
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 5px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  font-weight: bold;
-}
-</style>
