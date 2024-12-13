@@ -135,25 +135,35 @@ test_dentist_service:
   dependencies:
     - compile_dentist_service
 
-# test_gateway_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Gateway Service..."
-#     - mvn -B test --file backend/services/gateway-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_gateway_service
+test_gateway_service:
+   stage: test
+   script:
+     - echo "Running tests for Gateway Service..."
+     - mvn -B test --file backend/services/gateway-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_gateway_service
 
-# test_notification_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Notification Service..."
-#     - mvn -B test --file backend/services/notification-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_notification_service
+test_logging_service:
+  stage: test
+  script:
+    - echo "Running tests for Gateway Service..."
+    - mvn -B test --file backend/services/logging-service/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_logging_service
+
+test_notification_service:
+   stage: test
+   script:
+     - echo "Running tests for Notification Service..."
+     - mvn -B test --file backend/services/notification-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_notification_service
 
 test_patient_service:
    stage: test
