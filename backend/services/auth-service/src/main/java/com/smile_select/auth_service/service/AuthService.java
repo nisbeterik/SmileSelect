@@ -90,7 +90,7 @@ public class AuthService {
             messageMap.put("id", userResponse.getId());
             messageMap.put("role", role);
             String messageToBePublished = objectMapper.writeValueAsString(messageMap);
-            mqttGateway.publishMessage(messageToBePublished, "/monitor/login");
+            mqttGateway.publishMessage(messageToBePublished, "/login-success");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
