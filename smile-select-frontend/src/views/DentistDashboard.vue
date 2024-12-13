@@ -1,12 +1,18 @@
 <template>
   <div class="dentist-dashboard">
-      <div class="background-layer"></div>
-      <header class="dashboard-header">
-        <div class="header-content">
-          <h1>Welcome {{ role }} {{ dentistId }}</h1>
-        </div>
-      </header>
+    <div class="background-layer"></div>
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1>Welcome {{ role }} {{ dentistId }}</h1>
+      </div>
+    </header>
+    <div v-if="role === 'DENTIST'" class="top-row">
+    </div>
 
+    <!-- Bottom row with AvailabilityPage -->
+    <div class="glass-card create-appointment">
+      <create-appointment-component />
+    </div>
 
     <!--
     <button @click="getAllDentists">GET all /dentists</button>
@@ -22,10 +28,13 @@
 //import axios from '../axios'; // Import the configured Axios instance
 import { useAuthStore } from '@/stores/auth';
 import '/src/CSS/global.css';
-
+import createAppointmentComponent from '@/components/CreateAppointmentComponent.vue';
 
 export default {
   name: 'DentistDashboard',
+  components: {
+    createAppointmentComponent,
+  },
   data() {
     const authStore = useAuthStore();
     return {
@@ -135,4 +144,14 @@ export default {
   flex-direction: column;
   gap: 20px;
 }
+.create-appointment {
+  max-width: 50%;
+  margin: 20px
+}
+.glass-card {
+  background-color: rgba(255,255,255,.9);
+}
+
+
+
 </style>

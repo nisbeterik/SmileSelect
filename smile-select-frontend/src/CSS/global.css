@@ -138,3 +138,9 @@
 .align-right {
     margin-left: auto;
 }
+.header-content {
+    display: flex;
+    padding-top: 15px;
+    justify-content: center;
+    align-items: center;
+}
