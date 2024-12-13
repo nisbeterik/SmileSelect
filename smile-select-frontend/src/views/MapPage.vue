@@ -1,6 +1,6 @@
 <template>
   <LMap
-      :zoom="14"
+      :zoom="12"
       :center="[57.7069, 11.9746]"
       :options="mapOptions"
       style="height: 500px; width: 100%;"
