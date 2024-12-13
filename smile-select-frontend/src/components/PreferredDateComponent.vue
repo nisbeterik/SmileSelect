@@ -40,7 +40,7 @@ import '/src/CSS/global.css';
 import dayjs from 'dayjs';
 
 export default {
-    name: 'PreferredDatePicker',
+    name: 'PreferredDateComponent',
     components: {
         Datepicker,
     },

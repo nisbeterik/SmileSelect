@@ -46,7 +46,7 @@ import { format, differenceInMinutes, parseISO, isBefore } from 'date-fns';
 import '/src/CSS/global.css';
 
 export default {
-  name: 'PatientCurrentAppointment',
+  name: 'PatientAppointmentsComponent',
   data() {
     const authStore = useAuthStore();
     return {
