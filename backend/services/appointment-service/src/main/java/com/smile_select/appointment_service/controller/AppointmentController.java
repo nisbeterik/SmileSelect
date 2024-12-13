@@ -152,7 +152,7 @@ public class AppointmentController {
         }
     }
 
-
+    // PATCH endpoint to book an appointment for a patient as a DENTIST
     @PatchMapping("/booked-by-dentist")
     public ResponseEntity<?> addPatientToAppointmentByDentist(@RequestBody Appointment appointmentWithPatient) {
         Optional<Appointment> optionalAppointment = appointmentService
@@ -182,6 +182,7 @@ public class AppointmentController {
         }
     }
 
+    // PATCH endpoint to book an appointment via availability slot as a PATIENT
     @PatchMapping("/booked-by-patient")
     public ResponseEntity<?> bookAppointmentAsPatient(@RequestBody Appointment appointmentWithPatient) {
         Optional<Appointment> optionalAppointment = appointmentService

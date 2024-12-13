@@ -301,7 +301,7 @@ public class NotificationService {
         }
     }
 
-    // Send Email-notification to patient when booked via availability slot
+    // Send Email-notification to patient when booked via AVAILABILITY SLOT
     public void processAppointmentWithEmailBookedByPatient(String payload) {
         System.out.println("Processing appointment with email: ");
         System.out.println(payload);
