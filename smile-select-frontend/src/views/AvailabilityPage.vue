@@ -70,12 +70,14 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from "@/axios";
+import { useAuthStore } from '@/stores/auth';
 
 export default defineComponent({
   components: {
     FullCalendar,
   },
   data() {
+    const authStore = useAuthStore();
     return {
       calendarOptions: {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -107,12 +109,8 @@ export default defineComponent({
       isBookingConfirmed: false,
       emailError: null,
       selectedEventId: null,
-      // email: '',
-      // HARDCODED DATA AS FOR NOW!! REPLACE WITH PROPER LOGIN LATER
-      patient: {
-        id: 12,
-        email: "fnilsson95@hotmail.com"
-      }
+      email: '',
+      patientId: authStore.id,
     };
   },
   computed: {
@@ -162,10 +160,12 @@ export default defineComponent({
     },
     async confirmBooking() {
       try {
+        // Access patientId from authStore
+        const patientId = this.patientId;
         // Prepare the appointment data
         const appointmentData = {
           id: this.selectedEventId,
-          patientId: this.patient.id,
+          patientId: patientId,
         };
         // Make the PATCH request to add the patient to the appointment
         await axios.patch(`/appointments/booked-by-patient`, appointmentData);
