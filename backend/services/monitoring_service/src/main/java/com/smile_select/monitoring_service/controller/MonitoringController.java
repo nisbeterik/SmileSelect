@@ -21,6 +21,7 @@ public class MonitoringController {
     @GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     public String getMetricsPlain() {
         SystemMetrics metrics = monitoringService.getCurrentMetrics();
+        double availableBookedRatioPercentage = metrics.getAppointmentBookedRatio() * 100;
         return String.format(
                 """
                         Dentist Logins (Last Minute): %d
@@ -45,6 +46,7 @@ public class MonitoringController {
 
                         Total Appointments: %d
                         Total Booked Appointments: %d
+                        Appointment Availability: %.2f%%
                         """,
                 metrics.getDentistLoginCountLastMinute(),
                 metrics.getDentistLoginCountLast10Minutes(),
@@ -67,6 +69,7 @@ public class MonitoringController {
                 metrics.getAppointmentSlotsCreatedLastHour(),
 
                 metrics.getTotalAppointments(),
-                metrics.getTotalBookedAppointments());
+                metrics.getTotalBookedAppointments(),
+                availableBookedRatioPercentage);
     }
 }

@@ -24,7 +24,6 @@ public class SystemMetrics {
 
     private int totalAppointments;
     private int totalBookedAppointments;
-    private double appointmentBookedRatio;
 
     public SystemMetrics(int dentistLoginCountLastMinute, int dentistLoginCountLast10Minutes,
             int dentistLoginCountLast30Minutes, int dentistLoginCountLastHour,
@@ -53,7 +52,6 @@ public class SystemMetrics {
         this.appointmentSlotsCreatedLastHour = appointmentSlotsCreatedLastHour;
         this.totalAppointments = totalAppointments;
         this.totalBookedAppointments = totalBookedAppointments;
-        this.appointmentBookedRatio = totalBookedAppointments / totalAppointments;
     }
 
     public int getDentistLoginCountLastMinute() {
@@ -201,11 +199,11 @@ public class SystemMetrics {
     }
 
     public double getAppointmentBookedRatio() {
-        return appointmentBookedRatio;
-    }
+        if (totalAppointments == 0) {
+            return 0;
+        }
+        double availableAppointments = totalAppointments - totalBookedAppointments;
+        return availableAppointments / totalAppointments;
 
-    public void setAppointmentBookedRatio(double appointmentBookedRatio) {
-        this.appointmentBookedRatio = appointmentBookedRatio;
     }
-
 }
