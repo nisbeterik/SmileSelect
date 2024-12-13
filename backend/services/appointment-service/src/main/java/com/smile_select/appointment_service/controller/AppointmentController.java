@@ -2,6 +2,7 @@ package com.smile_select.appointment_service.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,14 +42,14 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
 
-        if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+        if (appointmentService.checkIfDateInvalid(appointment.getStartTime())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
         }
 
         Appointment createdAppointment = appointmentService.save(appointment);
 
         String topic;
-        if (appointment.getPatientId() == null){
+        if (appointment.getPatientId() == null) {
             topic = "/appointments/created";
         } else {
             // Handle case where dentist added the slot together with a patient booking
@@ -160,7 +161,7 @@ public class AppointmentController {
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
 
-            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
             }
 
@@ -187,7 +188,8 @@ public class AppointmentController {
             Appointment toBeDeleted = appointment.get();
 
             if (toBeDeleted.getPatientId() != null) {
-                // Notify patient that their appointment has been cancelled, since the slot is deleted
+                // Notify patient that their appointment has been cancelled, since the slot is
+                // deleted
                 appointmentService.publishAppointmentMessage("/appointments/cancelled-by-dentist", toBeDeleted);
             }
             appointmentService.deleteAppointment(id);
@@ -201,39 +203,50 @@ public class AppointmentController {
     public ResponseEntity<?> cancelAppointment(
             @PathVariable("id") Long id,
             HttpServletRequest request) {
-    
+
         Optional<Appointment> optionalAppointment = appointmentService.getAppointmentById(id);
-    
+
         if (optionalAppointment.isPresent()) {
             Appointment appointment = optionalAppointment.get();
 
-            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
             }
-    
+
             // Extract the token from the Authorization header
             String authorizationHeader = request.getHeader("Authorization");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or missing token");
             }
             String token = authorizationHeader.substring(7); // Remove "Bearer "
-    
+
             // Get the role from the token
             String role = jwtUtil.getRoleFromToken(token);
-    
+
             if ("PATIENT".equals(role)) {
                 appointmentService.publishAppointmentMessage("/appointments/cancelled-by-patient", appointment);
             } else if ("DENTIST".equals(role)) {
                 appointmentService.publishAppointmentMessage("/appointments/cancelled-by-dentist", appointment);
             }
-    
+
             appointment.setPatientId(null);
             appointmentService.save(appointment);
-    
+
             return ResponseEntity.ok(appointment);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
         }
     }
 
+    @GetMapping(value = "/slot-count")
+    public ResponseEntity<Long> getAppointmentCount() {
+        long totalAppointments = appointmentService.countAppointments();
+        return ResponseEntity.ok(totalAppointments);
+    }
+
+    @GetMapping(value = "/booked-count")
+    public ResponseEntity<Long> getAppointmentBookedCount() {
+        long bookedAppointments = appointmentService.countBookedAppointments();
+        return ResponseEntity.ok(bookedAppointments);
+    }
 }
