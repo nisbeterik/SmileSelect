@@ -5,37 +5,48 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.smile_select.monitoring_service.model.SystemMetrics;
 
 @Service
 public class MonitoringService {
+
+    private final RestTemplate restTemplate;
 
     private final ConcurrentMap<String, Instant> dentistLoginEvents = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Instant> patientLoginEvents = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Instant> appointmentSlotEvents = new ConcurrentHashMap<>();
     private final ConcurrentMap<Long, Instant> appointmentBookedEvents = new ConcurrentHashMap<>();
 
+    public MonitoringService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     public void recordDentistLogin(Long dentistId) {
         // Create a unique key to deal with multiple logins from same dentist
         String uniqueKey = dentistId + "_" + System.currentTimeMillis();
         dentistLoginEvents.put(uniqueKey, Instant.now());
+        System.out.println("Recorded Dentist Login");
     }
 
     public void recordPatientLogin(Long patientId) {
         // Create a unique key to deal with multiple logins from same patient
         String uniqueKey = patientId + "_" + System.currentTimeMillis();
         patientLoginEvents.put(uniqueKey, Instant.now());
+        System.out.println("Recorded Patient Login");
     }
 
     public void recordAppointmentSlotCreation(Long appointmentId) {
         appointmentSlotEvents.put(appointmentId, Instant.now());
+        System.out.println("Recorded Appointment Slot Created");
     }
 
     public void recordAppointmentSlotBooked(Long appointmentId) {
         appointmentBookedEvents.put(appointmentId, Instant.now());
+        System.out.println("Recorded Appointment Slot Booked");
     }
 
     private int countLoginEventsInLastPeriod(Map<String, Instant> events, Duration period) {
@@ -52,12 +63,14 @@ public class MonitoringService {
                 .count();
     }
 
-    private int getTotalAppointments() {
-        return 1;
+    private long getTotalAppointments() {
+        String url = "http://localhost:8080/api/appointments/slot-count";
+        return restTemplate.getForObject(url, Long.class);
     }
 
-    private int getTotalBookedAppointments() {
-        return 1;
+    private long getTotalBookedAppointments() {
+        String url = "http://localhost:8080/api/appointments/booked-count";
+        return restTemplate.getForObject(url, Long.class);
     }
 
     public SystemMetrics getCurrentMetrics() {
@@ -83,8 +96,8 @@ public class MonitoringService {
                 countAppointmentEventsInLastPeriod(appointmentSlotEvents, Duration.ofMinutes(30)),
                 countAppointmentEventsInLastPeriod(appointmentSlotEvents, Duration.ofHours(1)),
 
-                getTotalAppointments(),
-                getTotalBookedAppointments()
+                (int)getTotalAppointments(),
+                (int)getTotalBookedAppointments()
 
         );
     }
