@@ -104,25 +104,25 @@ compile_patient_service:
 
 
 
-# test_appointment_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Appointment Service..."
-#     - mvn -B test --file backend/services/appointment-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_appointment_service
+test_appointment_service:
+   stage: test
+   script:
+     - echo "Running tests for Appointment Service..."
+     - mvn -B test --file backend/services/appointment-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_appointment_service
 
-# test_auth_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Authentication Service..."
-#     - mvn -B test --file backend/services/auth-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_auth_service
+test_auth_service:
+   stage: test
+   script:
+     - echo "Running tests for Authentication Service..."
+     - mvn -B test --file backend/services/auth-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+    - compile_auth_service
 
 test_dentist_service:
   stage: test
@@ -135,35 +135,45 @@ test_dentist_service:
   dependencies:
     - compile_dentist_service
 
-# test_gateway_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Gateway Service..."
-#     - mvn -B test --file backend/services/gateway-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_gateway_service
+test_gateway_service:
+   stage: test
+   script:
+     - echo "Running tests for Gateway Service..."
+     - mvn -B test --file backend/services/gateway-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_gateway_service
 
-# test_notification_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Notification Service..."
-#     - mvn -B test --file backend/services/notification-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_notification_service
+test_logging_service:
+  stage: test
+  script:
+    - echo "Running tests for Gateway Service..."
+    - mvn -B test --file backend/services/logging-service/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_logging_service
 
-# test_patient_service:
-#   stage: test
-#   script:
-#     - echo "Running tests for Patient Service..."
-#     - mvn -B test --file backend/services/patient-service/pom.xml
-#   tags:
-#     - docker
-#   dependencies:
-#     - compile_patient_service
+test_notification_service:
+   stage: test
+   script:
+     - echo "Running tests for Notification Service..."
+     - mvn -B test --file backend/services/notification-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_notification_service
+
+test_patient_service:
+   stage: test
+   script:
+     - echo "Running tests for Patient Service..."
+     - mvn -B test --file backend/services/patient-service/pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_patient_service
 
 # Job for frontend
 build_vue_frontend:

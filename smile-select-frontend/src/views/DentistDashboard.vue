@@ -69,7 +69,6 @@ export default {
     }
     /*
     async getAllDentists() {
-
       try {
         const response = await axios.get('/dentists');
         console.log(response.data);

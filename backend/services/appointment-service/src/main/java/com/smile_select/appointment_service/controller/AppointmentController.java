@@ -152,8 +152,9 @@ public class AppointmentController {
         }
     }
 
-    @PatchMapping("/add-patient")
-    public ResponseEntity<?> addPatientToAppointment(@RequestBody Appointment appointmentWithPatient) {
+    // PATCH endpoint to book an appointment for a patient as a DENTIST
+    @PatchMapping("/booked-by-dentist")
+    public ResponseEntity<?> addPatientToAppointmentByDentist(@RequestBody Appointment appointmentWithPatient) {
         Optional<Appointment> optionalAppointment = appointmentService
                 .getAppointmentById(appointmentWithPatient.getId());
 
@@ -168,8 +169,39 @@ public class AppointmentController {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
                 appointmentService.save(appointment);
 
-                // Publish event for email notification when patient is added
-                appointmentService.publishAppointmentCreatedEvent(appointment);
+                // Publish event for email notification
+                // when booking made via a dentist
+                appointmentService.publishAppointmentBookedByDentist(appointment);
+
+                return ResponseEntity.ok(appointment);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient ID is required to add a patient");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
+    // PATCH endpoint to book an appointment via availability slot as a PATIENT
+    @PatchMapping("/booked-by-patient")
+    public ResponseEntity<?> bookAppointmentAsPatient(@RequestBody Appointment appointmentWithPatient) {
+        Optional<Appointment> optionalAppointment = appointmentService
+                .getAppointmentById(appointmentWithPatient.getId());
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+
+            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
+            }
+
+            if (appointmentWithPatient.getPatientId() != null) {
+                appointment.setPatientId(appointmentWithPatient.getPatientId());
+                appointmentService.save(appointment);
+
+                // Publish event for email notification
+                // when patient booked via availability page
+                appointmentService.publishAppointmentBookedByPatient(appointment);
 
                 return ResponseEntity.ok(appointment);
             } else {

@@ -32,10 +32,10 @@
         <p v-else>No dentists available.</p>
       </div>
     </div>
-    <div v-if="isBookingConfirmed" class="modal-overlay">
-      <div class="modal">
+    <div v-if="isBookingConfirmed" class="availability-modal-overlay">
+      <div class="availability-modal">
         <h2>Booking Confirmed</h2>
-        <p>Your appointment has been successfully booked!</p>
+        <p>You will receive an email with confirmation details shortly!</p>
         <button @click="closeBookingConfirmation" class="btn-confirm">Close</button>
       </div>
     </div>
@@ -50,16 +50,14 @@
         </template>
       </FullCalendar>
     </div>
-    <div v-if="isModalVisible" class="modal-overlay">
-      <div class="modal">
+    <div v-if="isModalVisible" class="availability-modal-overlay">
+      <div class="availability-modal">
         <h2>Confirm Booking</h2>
         <p>Are you sure you want to book this appointment?</p>
-        <input v-model="email" type="email" placeholder="Enter your email" class="modal-email-input" />
         <div class="modal-actions">
           <button @click="confirmBooking" class="btn-confirm">Confirm</button>
           <button @click="closeModal" class="btn-cancel">Cancel</button>
         </div>
-        <p v-if="emailError" class="error-message">{{ emailError }}</p>
       </div>
     </div>
   </div>
@@ -72,12 +70,14 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from "@/axios";
+import { useAuthStore } from '@/stores/auth';
 
 export default defineComponent({
   components: {
     FullCalendar,
   },
   data() {
+    const authStore = useAuthStore();
     return {
       calendarOptions: {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -110,6 +110,7 @@ export default defineComponent({
       emailError: null,
       selectedEventId: null,
       email: '',
+      patientId: authStore.id,
     };
   },
   computed: {
@@ -158,35 +159,33 @@ export default defineComponent({
       this.isModalVisible = true;
     },
     async confirmBooking() {
-      if (!this.email) {
-        this.emailError = "Please enter a valid email.";
-        return;
-      }
-
       try {
-        const patientResponse = await axios.get(`/patients/email/${this.email}`);
-        const patient = patientResponse.data;
-
+        // Access patientId from authStore
+        const patientId = this.patientId;
+        // Prepare the appointment data
         const appointmentData = {
           id: this.selectedEventId,
-          patientId: patient.id,
+          patientId: patientId,
         };
+        // Make the PATCH request to add the patient to the appointment
+        await axios.patch(`/appointments/booked-by-patient`, appointmentData);
 
-        const updateResponse = await axios.patch(`/appointments/add-patient`, appointmentData);
-
-        console.log("Appointment updated successfully:", updateResponse.data);
+        // Hide the confirmation modal
         this.isModalVisible = false;
+
+        // Show the booking confirmation modal
         this.isBookingConfirmed = true;
 
-        setTimeout(() => {
-          this.isBookingConfirmed = false; 
-        }, 3000); 
+        // Log that the booking was successful
+        console.log("Booking confirmed successfully!");
       } catch (error) {
-        if (error.response && error.response.status === 404) {
-          this.emailError = "Patient not found. Please check the email.";
-        } else {
-          console.error("Error confirming booking:", error);
-          this.emailError = "An error occurred while confirming your booking. Please try again.";
+        // Log the error object for debugging
+        console.error("Error confirming booking:", error);
+
+        // Log additional information if the error has a response (e.g., status, data)
+        if (error.response) {
+          console.error("Error Response Status:", error.response.status);
+          console.error("Error Response Data:", error.response.data);
         }
       }
     },
@@ -196,7 +195,6 @@ export default defineComponent({
     closeBookingConfirmation() {
       this.isBookingConfirmed = false;
     },
-
   },
 });
 </script>
@@ -249,7 +247,7 @@ b {
   margin: 0 auto;
 }
 
-.modal-overlay {
+.availability-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -262,7 +260,7 @@ b {
   z-index: 1000;
 }
 
-.modal {
+.availability-modal {
   background: white;
   padding: 2em;
   border-radius: 5px;

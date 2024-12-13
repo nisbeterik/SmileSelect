@@ -595,7 +595,7 @@ export default {
       try{
         await this.findPatientByEmail();
         if (this.patientId) {
-        const response = await this.$axios.patch(`/appointments/add-patient`,
+        const response = await this.$axios.patch(`/appointments/booked-by-dentist`,
           {
             "id": this.selectedEvent.id,
             "patientId": this.patientId
