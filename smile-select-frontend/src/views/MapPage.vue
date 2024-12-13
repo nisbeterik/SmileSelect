@@ -1,27 +1,40 @@
 <template>
-  <LMap :zoom="13" :center="[57.7089, 11.9746]" style="height: 1080px; width: 100%;">
-    <LTileLayer :url="'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'" />
-    <LMarker :lat-lng="[47.413220, -1.219482]" />
+  <LMap
+      :zoom="13"
+      :center="[57.7089, 11.9746]"
+      :options="mapOptions"
+      style="height: 1080px; width: 100%;"
+  >
+    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" />
+    <LMarker :lat-lng="[57.7089, 11.9746]" />
     <l-control-scale position="topright" />
   </LMap>
 </template>
 
 <script>
 import "leaflet/dist/leaflet.css";
-import { LControlScale, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import { LControlScale, LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 
 export default {
   components: {
     LMap,
     LTileLayer,
-    LControlScale
+    LControlScale,
+    LMarker,
   },
   data() {
-    return {};
+    return {
+      mapOptions: {
+        maxBounds: [
+          [57.65, 11.85],
+          [57.75, 12.05],
+        ],
+        maxBoundsViscosity: 1.0,
+      },
+    };
   },
 };
 </script>
-
 
 <style>
 body, html, #app {
