@@ -1,27 +1,43 @@
 <template>
-  <div class="dashboard">
-    <h1>Welcome to the Dentist Dashboard!</h1>
+  <div class="dentist-dashboard">
+      <div class="background-layer"></div>
+      <header class="dashboard-header">
+        <div class="header-content">
+          <h1>Welcome {{ role }} {{ dentistId }}</h1>
+        </div>
+      </header>
+
+
+    <!--
     <button @click="getAllDentists">GET all /dentists</button>
     <button @click="getDentistById">GET dentist by ID</button>
     <button @click="updateDentistById">PUT/Update dentist by ID</button>
     <button @click="deleteDentistById">DELETE dentist by ID</button>
-
+    -->
     <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
 <script>
-import axios from '../axios'; // Import the configured Axios instance
+//import axios from '../axios'; // Import the configured Axios instance
+import { useAuthStore } from '@/stores/auth';
+import '/src/CSS/global.css';
+
 
 export default {
   name: 'DentistDashboard',
   data() {
+    const authStore = useAuthStore();
     return {
+      dentistId: authStore.id,
+      role: authStore.role,
       message: '',
     };
   },
   methods: {
+    /*
     async getAllDentists() {
+
       try {
         const response = await axios.get('/dentists');
         console.log(response.data);
@@ -108,11 +124,15 @@ export default {
           this.message = `Failed to delete dentist with ID ${id}.`;
         }
       }
-    },
+    },*/
   },
 };
 </script>
 
 <style scoped>
-/* Add your styles here */
+.dentist-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 </style>
