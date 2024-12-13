@@ -5,8 +5,13 @@
       :options="mapOptions"
       style="height: 1080px; width: 100%;"
   >
-    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'"   />
-    <LMarker :lat-lng="[57.7089, 11.9746]" />
+    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" />
+    <LMarker
+        v-for="clinic in clinics"
+        :key="clinic.id"
+        :lat-lng="[clinic.latitude, clinic.longitude]"
+    />
+
     <l-control-scale position="topright" />
   </LMap>
 </template>
@@ -14,6 +19,7 @@
 <script>
 import "leaflet/dist/leaflet.css";
 import { LControlScale, LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
+import axios from "@/axios";
 
 export default {
   components: {
@@ -32,8 +38,23 @@ export default {
         maxBoundsViscosity: 1.0,
         minZoom: 12,
       },
+      clinics: []
     };
   },
+  created() {
+    this.fetchClinics();
+  },
+  methods: {
+    async fetchClinics() {
+      try {
+
+        const response = await axios.get('/dentists/clinics');
+        this.clinics = response.data;
+      } catch (error) {
+        console.error("Error fetching clinics:", error);
+      }
+    }
+  }
 };
 </script>
 
@@ -48,6 +69,7 @@ body, html, #app {
   height: 100vh;
   width: 100vw;
 }
+
 
 .leaflet-control-attribution {
   display: none !important;
