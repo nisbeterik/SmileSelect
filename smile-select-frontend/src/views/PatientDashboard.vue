@@ -4,10 +4,11 @@
     <header class="dashboard-header">
       <div class="header-content">
         <h1>Welcome {{ role }} {{ patientId }}</h1>
+        <button class="button-secondary" @click="logOutUser">Log Out</button>
       </div>
     </header>
     <!-- Top row with PreferredDatePicker and PatientCurrentAppointment -->
-    <div v-if="role === 'PATIENT'" class="top-row">
+    <div v-if="validUser" class="top-row">
       <div class="preferred-date-picker">
         <PreferredDateComponent />
       </div>
@@ -17,11 +18,15 @@
     </div>
 
     <!-- Bottom row with AvailabilityPage -->
-    <div v-if="role === 'PATIENT'" class="glass-card availability-page">
+    <div v-if="validUser" class="glass-card availability-page">
       <AvailabilityPage />
     </div>
-    <div v-if="role === 'PATIENT'" class="glass-card map-page">
+    <div v-if="validUser" class="glass-card map-page">
       <MapPage />
+    </div>
+    <div v-if ="!validUser" class="glass-card not-auth">
+      <h1 style="text-align: center">NOT LOGGED IN</h1>
+      <button class="button-primary" @click="logOutUser">Home</button>
     </div>
   </div>
 </template>
@@ -42,19 +47,48 @@ export default {
     AvailabilityPage,
     MapPage,
   },
+  created() {
+    this.checkUser();
+  },
   data() {
     const authStore = useAuthStore();
     return {
+      validUser: false,
       patientId: authStore.id,
       role: authStore.role,
     };
   },
+  methods: {
+    async checkUser(){
+      this.validUser = this.role === 'PATIENT' && this.dentistId !== null;
+    },
+    async logOutUser(){
+      const authStore = useAuthStore();
+
+      try{
+        authStore.clearAuth();
+        this.$router.push({ path: '/'});
+
+      } catch(error){
+        console.error('LogOut Error:', error.response?.data || error.message);
+      }
+
+    }
+  }
 };
 </script>
 
 <style scoped>
 .header-title {
   padding: 20px;
+}
+.header-content {
+  justify-content: space-between;
+  padding-top: 15px;
+}
+.button-secondary {
+  max-width: 100px;
+  margin-top: 0px;
 }
 .patient-dashboard {
   display: flex;
@@ -85,5 +119,8 @@ export default {
   overflow: hidden;
   margin: 20px;
   margin-bottom: 50px;
+}
+.not-auth{
+  margin: auto;
 }
 </style>

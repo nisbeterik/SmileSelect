@@ -4,14 +4,18 @@
     <header class="dashboard-header">
       <div class="header-content">
         <h1>Welcome {{ role }} {{ dentistId }}</h1>
+        <button class="button-secondary" @click="logOutUser">Log Out</button>
       </div>
     </header>
-    <div v-if="role === 'DENTIST'" class="top-row">
-    </div>
+    <div v-if="validUser" class="top-row"></div>
 
     <!-- Bottom row with AvailabilityPage -->
-    <div class="glass-card create-appointment">
+    <div v-if="validUser" class="glass-card create-appointment">
       <create-appointment-component />
+    </div>
+    <div v-if ="!validUser" class="glass-card not-auth">
+      <h1 style="text-align: center">NOT LOGGED IN</h1>
+      <button class="button-primary" @click="logOutUser">Home</button>
     </div>
 
     <!--
@@ -35,15 +39,34 @@ export default {
   components: {
     createAppointmentComponent,
   },
+  created() {
+    this.checkUser()
+  },
   data() {
     const authStore = useAuthStore();
     return {
+      validUser: false,
       dentistId: authStore.id,
       role: authStore.role,
       message: '',
     };
   },
   methods: {
+    async checkUser(){
+      this.validUser = this.role === 'DENTIST' && this.dentistId !== null;
+    },
+    async logOutUser(){
+      const authStore = useAuthStore();
+
+      try{
+        authStore.clearAuth();
+        this.$router.push({ path: '/'});
+
+      } catch(error){
+        console.error('LogOut Error:', error.response?.data || error.message);
+      }
+
+    }
     /*
     async getAllDentists() {
 
@@ -144,14 +167,23 @@ export default {
   flex-direction: column;
   gap: 20px;
 }
+.header-content {
+  justify-content: space-between;
+  padding-top: 15px;
+}
+.button-secondary {
+  max-width: 100px;
+  margin-top: 0px;
+}
 .create-appointment {
   max-width: 50%;
-  margin: 20px
+  margin: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 .glass-card {
-  background-color: rgba(255,255,255,.9);
+
 }
-
-
-
+.not-auth {
+  margin: auto;
+}
 </style>
