@@ -19,7 +19,7 @@
 
     <!-- Bottom row with AvailabilityPage -->
     <div v-if="validUser" class="glass-card availability-page">
-      <AvailabilityPage />
+      <AvailableAppointmentsComponent />
     </div>
     <div v-if="validUser" class="glass-card map-page">
       <MapPage />
@@ -35,7 +35,7 @@
 import { useAuthStore } from '@/stores/auth';
 import PatientAppointmentsComponent from '@/components/PatientAppointmentsComponent.vue';
 import PreferredDateComponent from '../components/PreferredDateComponent.vue';
-import AvailabilityPage from '@/views/AvailabilityPage.vue';
+import AvailableAppointmentsComponent from '@/components/AvailableAppointmentsComponent.vue';
 import MapPage from '@/views/MapPage.vue';
 import '/src/CSS/global.css';
 
@@ -44,7 +44,7 @@ export default {
   components: {
     PatientAppointmentsComponent,
     PreferredDateComponent,
-    AvailabilityPage,
+    AvailableAppointmentsComponent,
     MapPage,
   },
   created() {

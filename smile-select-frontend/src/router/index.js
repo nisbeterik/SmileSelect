@@ -9,7 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import PatientDashboard from '@/views/PatientDashboard.vue';
 import DentistDashboard from '@/views/DentistDashboard.vue';
 import AuthPage from "@/views/AuthPage.vue";
-//import AvailabilityPage from "@/views/AvailabilityPage.vue";
+//import AvailabilityPage from "@/views/AvailableAppointmentsComponent.vue";
 import Home from "@/views/Home.vue";
 
 const routes = [
