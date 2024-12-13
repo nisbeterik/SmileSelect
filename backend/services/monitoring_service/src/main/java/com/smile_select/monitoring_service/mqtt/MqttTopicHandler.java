@@ -24,7 +24,7 @@ public class MqttTopicHandler {
             Message<String> message,
             @Header(MqttHeaders.RECEIVED_TOPIC) String topic) {
         switch (topic) {
-            case "/monitor/login":
+            case "/login-success":
                 handleLoginEvent(message.getPayload());
                 break;
 
