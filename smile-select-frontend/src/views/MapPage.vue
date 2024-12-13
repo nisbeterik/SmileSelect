@@ -3,7 +3,7 @@
       :zoom="14"
       :center="[57.7069, 11.9746]"
       :options="mapOptions"
-      style="height: 1080px; width: 100%;"
+      style="height: 500px; width: 100%;"
       @zoomend="onZoomEnd"
   >
     <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" />

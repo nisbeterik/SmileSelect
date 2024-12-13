@@ -1,20 +1,34 @@
 <template>
-    <div>
-        <h5>Select preferred appointment dates</h5>
+    <div class="glass-card glass-container">
+        <h3>Select preferred appointment dates</h3>
         <p>You will be notified if an open appointment slot is published</p>
         <p>{{ infoText }}</p>
 
-        <Datepicker v-model="selectedDates" :multi-dates="{ limit: 5 }" :enable-time-picker="false"
-            :disabled-dates="disableDatesBeforeToday" @update:modelValue="handleDateSelection" class="custom-datepicker" />
+        <Datepicker
+          v-model="selectedDates"
+          :multi-dates="{ limit: 5 }"
+          :enable-time-picker="false"
+          :disabled-dates="disableDatesBeforeToday"
+          @update:modelValue="handleDateSelection"
+          class="custom-datepicker"
+        />
 
-        <button @click="handleSelect" :disabled="selectedDates.length === 0">
+        <button class="button-primary" @click="handleSelect" :disabled="selectedDates.length === 0">
             Save Dates
         </button>
 
         <p>Your current preferred dates (capped at 5)</p>
-        <li v-for="date in existingDates" :key="date.id">
-            {{ dayjs(date.preferredDate).format('dddd') }} - {{ dayjs(date.preferredDate).format('YYYY-MM-DD') }} <button class="btn btn-danger btn-sm ms-2" @click="this.deleteDate(date.id)">Delete</button>
-        </li>
+            <div class="glass-card" v-for="date in existingDates" :key="date.id">
+              <div class="pref-date-flex">
+                {{ dayjs(date.preferredDate).format('dddd') }} - {{ dayjs(date.preferredDate).format('YYYY-MM-DD') }}
+                <button
+                  class="align-right btn btn-danger btn-sm ms-2"
+                  @click="this.deleteDate(date.id)"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
     </div>
 </template>
 
@@ -22,10 +36,11 @@
 import { useAuthStore } from '@/stores/auth';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import '/src/CSS/global.css';
 import dayjs from 'dayjs';
 
 export default {
-    name: 'PreferredDatePicker',
+    name: 'PreferredDateComponent',
     components: {
         Datepicker,
     },
@@ -120,25 +135,42 @@ export default {
 .mt-2 {
   margin-top: 0.5rem;
 }
+.align-right {
+  margin-left: auto;
+}
+.glass-container{
+  min-height: 750px;
+}
+.glass-card {
+  max-width: 500px;
+  margin: 20px;
+}
+.pref-date-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+}
 
-/* Style the date picker input field */
+
 .custom-datepicker input {
-  width: 200px; /* Adjust the width of the input field */
-  max-width: 100%; /* Ensure it doesn't stretch beyond its container */
+  width: 100%; /* Ensure the input field spans the entire width */
+  box-sizing: border-box;
 }
 
-/* Style the date picker dropdown calendar */
-.custom-datepicker .datepicker {
-  width: auto; /* Let the dropdown resize to fit the calendar content */
-  max-width: 300px; /* Restrict the width of the calendar */
-  min-width: 200px; /* Ensure the calendar has a minimum width */
-}
 
-/* Optional: Style the container to ensure proper alignment */
 .custom-datepicker {
-  display: inline-block;
+  display: block; /* Ensure the datepicker behaves like a block element */
   margin: 10px 0;
-  width: auto;
+  width: 100%; /* Ensure the calendar has a minimum width */
 }
+
+
+.custom-datepicker.datepicker {
+  width: Auto; /* Ensure the calendar dropdown matches the input field width */
+  min-width: 200px; /* Set a minimum width for smaller containers */
+}
+
+
 
 </style>

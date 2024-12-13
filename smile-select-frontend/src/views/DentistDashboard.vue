@@ -1,26 +1,73 @@
 <template>
-  <div class="dashboard">
-    <h1>Welcome to the Dentist Dashboard!</h1>
+  <div class="dentist-dashboard">
+    <div class="background-layer"></div>
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1>Welcome {{ role }} {{ dentistId }}</h1>
+        <button class="button-secondary" @click="logOutUser">Log Out</button>
+      </div>
+    </header>
+    <div v-if="validUser" class="top-row"></div>
+
+    <!-- Bottom row with AvailabilityPage -->
+    <div v-if="validUser" class="glass-card create-appointment">
+      <create-appointment-component />
+    </div>
+    <div v-if ="!validUser" class="glass-card not-auth">
+      <h1 style="text-align: center">NOT LOGGED IN</h1>
+      <button class="button-primary" @click="logOutUser">Home</button>
+    </div>
+
+    <!--
     <button @click="getAllDentists">GET all /dentists</button>
     <button @click="getDentistById">GET dentist by ID</button>
     <button @click="updateDentistById">PUT/Update dentist by ID</button>
     <button @click="deleteDentistById">DELETE dentist by ID</button>
-
+    -->
     <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
 <script>
-import axios from '../axios'; // Import the configured Axios instance
+//import axios from '../axios'; // Import the configured Axios instance
+import { useAuthStore } from '@/stores/auth';
+import '/src/CSS/global.css';
+import createAppointmentComponent from '@/components/CreateAppointmentComponent.vue';
 
 export default {
   name: 'DentistDashboard',
+  components: {
+    createAppointmentComponent,
+  },
+  created() {
+    this.checkUser()
+  },
   data() {
+    const authStore = useAuthStore();
     return {
+      validUser: false,
+      dentistId: authStore.id,
+      role: authStore.role,
       message: '',
     };
   },
   methods: {
+    async checkUser(){
+      this.validUser = this.role === 'DENTIST' && this.dentistId !== null;
+    },
+    async logOutUser(){
+      const authStore = useAuthStore();
+
+      try{
+        authStore.clearAuth();
+        this.$router.push({ path: '/'});
+
+      } catch(error){
+        console.error('LogOut Error:', error.response?.data || error.message);
+      }
+
+    }
+    /*
     async getAllDentists() {
       try {
         const response = await axios.get('/dentists');
@@ -108,11 +155,34 @@ export default {
           this.message = `Failed to delete dentist with ID ${id}.`;
         }
       }
-    },
+    },*/
   },
 };
 </script>
 
 <style scoped>
-/* Add your styles here */
+.dentist-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.header-content {
+  justify-content: space-between;
+  padding-top: 15px;
+}
+.button-secondary {
+  max-width: 100px;
+  margin-top: 0px;
+}
+.create-appointment {
+  max-width: 50%;
+  margin: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.glass-card {
+
+}
+.not-auth {
+  margin: auto;
+}
 </style>

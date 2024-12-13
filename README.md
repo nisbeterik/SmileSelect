@@ -74,6 +74,44 @@ Each microservice (except Auth-Service) has a dedicated database to store its da
 
 </details>
 
+<details><summary>Deployment Diagram</summary>
+
+![Deployment Diagram](assets/diagrams/deployment-diagram-milestone3.png)
+
+This Deployment Diagram represents a distributed system architecture of SmileSelect, detailing the physical deployment of various components and their interactions:
+
+**API Gateway:** 
+
+Serves as the central entry point for managing all incoming HTTP requests from the WebClient, routing them to appropriate backend services.
+
+**WebClient:** 
+
+Represents the user-facing frontend, hosted on a web server and communicating with the backend via the API Gateway.
+
+**Backend Services:** Includes modular services, each deployed on Spring Boot servers:
+
+* Dental Service, Logging Service, Patient Service, and Notification Service for domain-specific operations.
+* Appointment Service deployed with primary and redundant database configurations for fault tolerance.
+
+**Databases:** 
+
+Each service has its own dedicated PostgreSQL database (I.e. DentalDB, PatientDB, NotificationDB) for managing application data and data storage.
+
+**MQTT Broker:** 
+
+Enables real-time communication using a publish/subscribe mechanism for asynchronous event handling.
+
+**Authentication Service:** 
+
+A dedicated service managing user authentication and security.
+
+**Communication:** 
+
+* Most interactions between nodes occur over HTTP
+* Publish/Subscribe messaging is used inter-service for asynchronous communication. 
+
+</details>
+
 ## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
 
 * **Erik Nisbet** (@eriknis)
