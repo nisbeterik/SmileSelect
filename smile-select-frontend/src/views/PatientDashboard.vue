@@ -7,7 +7,7 @@
       </div>
     </header>
     <!-- Top row with PreferredDatePicker and PatientCurrentAppointment -->
-    <div class="top-row">
+    <div v-if="role === 'PATIENT'" class="top-row">
       <div class="preferred-date-picker">
         <PreferredDateComponent />
       </div>
@@ -17,10 +17,10 @@
     </div>
 
     <!-- Bottom row with AvailabilityPage -->
-    <div class="glass-card availability-page">
+    <div v-if="role === 'PATIENT'" class="glass-card availability-page">
       <AvailabilityPage />
     </div>
-    <div class="glass-card map-page">
+    <div v-if="role === 'PATIENT'" class="glass-card map-page">
       <MapPage />
     </div>
   </div>
@@ -78,17 +78,6 @@ export default {
 
 .availability-page {
   margin-top: 20px;
-}
-
-.header-content {
-  display: flex;
-  padding-top: 15px;
-  justify-content: center;
-  align-items: center;
-}
-
-.availability-page {
-  margin: 20px;
 }
 .map-page {
   background-color: #206050;
