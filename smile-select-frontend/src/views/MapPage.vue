@@ -13,9 +13,10 @@
         :key="clinic.id"
         :lat-lng="[clinic.latitude, clinic.longitude]"
         :visible="true"
+        @click="handleMarkerClick(clinic)"
     >
       <LTooltip :offset="[0, -30]" :opacity="tooltipOpacity">
-        <div class="tooltip-box">{{ clinic.name }} <br> {{ clinic.street }}, {{ clinic.houseNumber}} </div>
+        <div class="tooltip-box">{{ clinic.name }} <br> {{ clinic.street }}, {{ clinic.houseNumber }}</div>
       </LTooltip>
     </LMarker>
 
@@ -62,6 +63,9 @@ export default {
       } catch (error) {
         console.error("Error fetching clinics:", error);
       }
+    },
+    handleMarkerClick(clinic) {
+      this.$router.push({ name: 'AvailabilityPage', params: { clinicId: clinic.id } });
     }
   },
 };

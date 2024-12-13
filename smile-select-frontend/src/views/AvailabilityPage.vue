@@ -41,8 +41,8 @@
     </div>
     <div class="availability-main">
       <FullCalendar
-        class="availability-calendar"
-        :options="calendarOptions"
+          class="availability-calendar"
+          :options="calendarOptions"
       >
         <template v-slot:eventContent="arg">
           <b>{{ arg.timeText }}</b>
@@ -98,8 +98,8 @@ export default defineComponent({
         allDaySlot: false,
         eventClick: this.handleEventClick,
         validRange: {
-        start: new Date().toISOString().split('T')[0],
-      }
+          start: new Date().toISOString().split('T')[0],
+        }
       },
       clinics: [],
       dentists: [],
@@ -122,6 +122,7 @@ export default defineComponent({
   },
   mounted() {
     this.fetchClinics();
+    this.handleClinicSelectionFromRoute();
   },
   methods: {
     async fetchClinics() {
@@ -179,8 +180,8 @@ export default defineComponent({
         this.isBookingConfirmed = true;
 
         setTimeout(() => {
-          this.isBookingConfirmed = false; 
-        }, 3000); 
+          this.isBookingConfirmed = false;
+        }, 3000);
       } catch (error) {
         if (error.response && error.response.status === 404) {
           this.emailError = "Patient not found. Please check the email.";
@@ -196,7 +197,13 @@ export default defineComponent({
     closeBookingConfirmation() {
       this.isBookingConfirmed = false;
     },
-
+    handleClinicSelectionFromRoute() {
+      const clinicIdFromRoute = this.$route.params.clinicId;
+      if (clinicIdFromRoute) {
+        this.selectedClinicId = clinicIdFromRoute;
+        this.fetchDentistsByClinic();
+      }
+    },
   },
 });
 </script>
