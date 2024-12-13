@@ -1,5 +1,5 @@
 <template>
-  <LMap :zoom="13" :center="[57.7089, 11.9746]" style="height: 1080px; width: 100%;">
+  <LMap :zoom="13" :center="[57.7089, 11.9746]" style="height: 500px; width: 100%;">
     <LTileLayer :url="'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'" />
     <LMarker :lat-lng="[47.413220, -1.219482]" />
     <l-control-scale position="topright" />

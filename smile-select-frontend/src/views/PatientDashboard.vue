@@ -20,6 +20,9 @@
     <div class="glass-card availability-page">
       <AvailabilityPage />
     </div>
+    <div class="glass-card map-page">
+      <MapPage />
+    </div>
   </div>
 </template>
 
@@ -28,6 +31,7 @@ import { useAuthStore } from '@/stores/auth';
 import PatientAppointmentsComponent from '@/components/PatientAppointmentsComponent.vue';
 import PreferredDateComponent from '../components/PreferredDateComponent.vue';
 import AvailabilityPage from '@/views/AvailabilityPage.vue';
+import MapPage from '@/views/MapPage.vue';
 import '/src/CSS/global.css';
 
 export default {
@@ -36,6 +40,7 @@ export default {
     PatientAppointmentsComponent,
     PreferredDateComponent,
     AvailabilityPage,
+    MapPage,
   },
   data() {
     const authStore = useAuthStore();
@@ -61,11 +66,6 @@ export default {
   justify-content: space-between;
   gap: 20px;
 }
-.dashboard-header {
-  background-color: #206050;
-  color: white;
-  padding: 10px 10px;
-}
 .preferred-date-picker {
 }
 
@@ -86,15 +86,15 @@ export default {
   justify-content: center;
   align-items: center;
 }
-.background-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('../../public/images/wavyBackground.png') no-repeat center
-    center;
-  background-size: cover;
-  z-index: -1;
+
+.availability-page {
+  margin: 20px;
+}
+.map-page {
+  background-color: #206050;
+  max-height: 600px;
+  overflow: hidden;
+  margin: 20px;
+  margin-bottom: 50px;
 }
 </style>
