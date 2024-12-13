@@ -152,8 +152,9 @@ public class AppointmentController {
         }
     }
 
-    @PatchMapping("/add-patient")
-    public ResponseEntity<?> addPatientToAppointment(@RequestBody Appointment appointmentWithPatient) {
+
+    @PatchMapping("/booked-by-dentist")
+    public ResponseEntity<?> addPatientToAppointmentByDentist(@RequestBody Appointment appointmentWithPatient) {
         Optional<Appointment> optionalAppointment = appointmentService
                 .getAppointmentById(appointmentWithPatient.getId());
 
@@ -168,8 +169,9 @@ public class AppointmentController {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
                 appointmentService.save(appointment);
 
-                // Publish event for email notification when patient is added
-                appointmentService.publishAppointmentCreatedEvent(appointment);
+                // Publish event for email notification
+                // when booking made via a dentist
+                appointmentService.publishAppointmentBookedByDentist(appointment);
 
                 return ResponseEntity.ok(appointment);
             } else {
@@ -196,7 +198,8 @@ public class AppointmentController {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
                 appointmentService.save(appointment);
 
-                // Publish event for email notification when patient is added
+                // Publish event for email notification
+                // when patient booked via availability page
                 appointmentService.publishAppointmentBookedByPatient(appointment);
 
                 return ResponseEntity.ok(appointment);

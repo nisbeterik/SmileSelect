@@ -188,6 +188,24 @@ public class AppointmentService {
         }
     }
 
+    public void publishAppointmentBookedByDentist(Appointment appointment) {
+        try {
+            // Use the class-level objectMapper
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("appointmentId", appointment.getId());
+            messageMap.put("patientId", appointment.getPatientId());
+            messageMap.put("startTime", appointment.getStartTime()); // LocalDateTime
+
+            String message = objectMapper.writeValueAsString(messageMap);
+            System.out.println("Message being published: " + message);
+            mqttGateway.publishMessage(message, "/appointments/booked-by-dentist");
+            System.out.println("Published appointment created event to topic: /appointments/booked-by-dentist");
+        } catch (Exception e) {
+            System.err.println("Failed to publish appointment created event: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public void publishAppointmentBookedByPatient(Appointment appointment) {
         try {
             // Use the class-level objectMapper

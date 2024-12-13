@@ -45,6 +45,10 @@ public class MqttTopicHandler {
             case "/appointments/booked-by-patient":
                 patientService.processAppointmentBookedByPatient(message.getPayload());
                 break;
+
+            case "/appointments/booked-by-dentist":
+                patientService.processAppointmentBookedByDentist(message.getPayload());
+                break;
         }
     }
 }
