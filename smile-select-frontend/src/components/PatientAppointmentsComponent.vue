@@ -1,38 +1,52 @@
 <template>
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div>
+        <div class="header">
           <h3>{{ appointmentText }}</h3>
-          <button @click="toggleView" class="btn btn-primary mb-3">
+          <button @click="toggleView" class="button-primary mb-3">
             {{ showPastAppointments ? "Show Upcoming Appointments" : "Show Past Appointments" }}
           </button>
-          <div v-for="appointment in filteredAppointments" :key="appointment.id" class="card mb-3">
-            <div class="card-body">
-              <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
-              <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
-              <p><strong>Dentist:</strong> {{ appointment.dentistName }}</p>
-              <p><strong>Clinic:</strong> {{ appointment.clinicName }}</p>
-              <p><strong>Address:</strong> {{ appointment.address }}</p>
-              <button
-                @click="cancelAppointment(appointment.id)"
-                class="btn btn-danger"
-                :disabled="isPast(appointment.startTime)"
-              >
-                Cancel
-              </button>
+        </div>
+        <!-- Scrollable container -->
+        <div class="scroll-wrapper">
+          <div class="appointments-scroll-container">
+            <div
+              v-for="appointment in filteredAppointments"
+              :key="appointment.id"
+              class="glass-card mb-3"
+            >
+              <div class="card-body">
+                <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
+                <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
+                <p><strong>Dentist:</strong> {{ appointment.dentistName }}</p>
+                <p><strong>Clinic:</strong> {{ appointment.clinicName }}</p>
+                <p><strong>Address:</strong> {{ appointment.address }}</p>
+              </div>
+              <div>
+                <button
+                  @click="cancelAppointment(appointment.id)"
+                  class="btn btn-danger"
+                  :disabled="isPast(appointment.startTime)"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import { useAuthStore } from '@/stores/auth';
 import { format, differenceInMinutes, parseISO, isBefore } from 'date-fns';
+import '/src/CSS/global.css';
 
 export default {
-  name: 'PatientCurrentAppointment',
+  name: 'PatientAppointmentsComponent',
   data() {
     const authStore = useAuthStore();
     return {
@@ -118,12 +132,54 @@ export default {
 </script>
 
 <style scoped>
-.container {
-    max-width: 100%;
+.header{
+  display: flex;
+  justify-content: space-between;
 }
-
-.card {
-    border-radius: 10px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+.scroll-wrapper {
+  position: relative;
+  max-height: 620px; /* Set the maximum height of the wrapper */
+  overflow: hidden; /* Hide the scrollable content that exceeds the container */
+}
+.appointments-scroll-container {
+  max-height: 620px;
+  overflow-y: auto;
+  padding-right: 10px;
+  -webkit-mask-image: -webkit-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,   /* Fade at the top */
+    rgba(0, 0, 0, 1) 2%, /* Fully opaque from 10% to 90% */
+    rgba(0, 0, 0, 1) 90%, /* Fully opaque */
+    rgba(0, 0, 0, 0) 100% /* Fade at the bottom */
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,   /* Fade at the top */
+    rgba(0, 0, 0, 1) 2%, /* Fully opaque from 10% to 90% */
+    rgba(0, 0, 0, 1) 90%, /* Fully opaque */
+    rgba(0, 0, 0, 0) 100% /* Fade at the bottom */
+  );
+  mask-size: 10% 10%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+.button-primary{
+  max-width: 50%;
+}
+.container {
+  max-width: 100%;
+  overflow: hidden;
+}
+.row{
+  margin-top: 0px;
+}
+.glass-card{
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+  max-height: 250px;
+  display: flex;
+  justify-content: space-between;
 }
 </style>

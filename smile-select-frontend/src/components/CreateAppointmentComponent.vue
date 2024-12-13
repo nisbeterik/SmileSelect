@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div class="calender-container">
     <FullCalendar ref="calendar" :options="calendarOptions" @select="handleSelect" />
+  </div>
     <div v-if="showCreateAppointmentModal" class="modal" @click.self="closeCurrentModal()">
       <div class="modal-content">
         <h3>Create Appointment</h3>
@@ -80,7 +81,6 @@
         <button @click="deleteAppointment">Delete</button>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -96,6 +96,7 @@ const availableColor = '#28A745';
 const selectedColor = '#C6B700';
 
 export default {
+  name: 'CreateAppointmentComponent',
   components: {
     FullCalendar,
   },
@@ -110,6 +111,7 @@ export default {
     const authStore = useAuthStore();
     return {
       token: authStore.token,
+      dentistId: authStore.id,
       multiSlotMode: false, // Tracks if multi-slot mode is active
       selectedSlots: [],
       selectedEventId: null,
@@ -159,7 +161,6 @@ export default {
       patientId: null,
       searchResults: null,
       selectedEvent: null,
-      HARDCODED_DENTIST_ID: 6, // REMOVE ME LATER
       intervalId: null,
     };
   },
@@ -456,7 +457,7 @@ export default {
 
 
         var newAppointment = {
-          dentistId: `${this.HARDCODED_DENTIST_ID}`,
+          dentistId: `${this.dentistId}`,
           startTime: `${startDateTime}`,
           endTime: `${endDateTime}`,
           patientId: `${this.patientId}`
@@ -488,7 +489,7 @@ export default {
     async loadAppointments() {
       try {
         this.calendarOptions.events = [];
-        var response = await this.$axios.get(`/appointments/dentist/${this.HARDCODED_DENTIST_ID}`); // PLACEHOLDER ID
+        var response = await this.$axios.get(`/appointments/dentist/${this.dentistId}`);
         var existingAppointments = response.data;
 
         if (this.selectedSlots) { this.createMultiSlotModeTempSlot() }
@@ -624,7 +625,11 @@ export default {
   color: white;
   border-color: #0056b3;
 }
-
+.calender-container {
+  display: flex;
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
+}
 .modal {
   position: fixed;
   top: 0;
