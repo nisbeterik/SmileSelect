@@ -111,6 +111,7 @@ export default {
     const authStore = useAuthStore();
     return {
       token: authStore.token,
+      dentistId: authStore.id,
       multiSlotMode: false, // Tracks if multi-slot mode is active
       selectedSlots: [],
       selectedEventId: null,
@@ -160,7 +161,6 @@ export default {
       patientId: null,
       searchResults: null,
       selectedEvent: null,
-      HARDCODED_DENTIST_ID: 1, // REMOVE ME LATER
       intervalId: null,
     };
   },
@@ -457,7 +457,7 @@ export default {
 
 
         var newAppointment = {
-          dentistId: `${this.HARDCODED_DENTIST_ID}`,
+          dentistId: `${this.dentistId}`,
           startTime: `${startDateTime}`,
           endTime: `${endDateTime}`,
           patientId: `${this.patientId}`
@@ -489,7 +489,7 @@ export default {
     async loadAppointments() {
       try {
         this.calendarOptions.events = [];
-        var response = await this.$axios.get(`/appointments/dentist/${this.HARDCODED_DENTIST_ID}`); // PLACEHOLDER ID
+        var response = await this.$axios.get(`/appointments/dentist/${this.dentistId}`);
         var existingAppointments = response.data;
 
         if (this.selectedSlots) { this.createMultiSlotModeTempSlot() }
