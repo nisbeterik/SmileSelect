@@ -180,6 +180,34 @@ public class AppointmentController {
         }
     }
 
+    @PatchMapping("/booked-by-patient")
+    public ResponseEntity<?> bookAppointmentAsPatient(@RequestBody Appointment appointmentWithPatient) {
+        Optional<Appointment> optionalAppointment = appointmentService
+                .getAppointmentById(appointmentWithPatient.getId());
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+
+            if (appointmentService.checkIfDateInvalid(appointment.getStartTime())){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
+            }
+
+            if (appointmentWithPatient.getPatientId() != null) {
+                appointment.setPatientId(appointmentWithPatient.getPatientId());
+                appointmentService.save(appointment);
+
+                // Publish event for email notification when patient is added
+                appointmentService.publishAppointmentBookedByPatient(appointment);
+
+                return ResponseEntity.ok(appointment);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient ID is required to add a patient");
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Appointment not found");
+        }
+    }
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable("id") Long id) {
         Optional<Appointment> appointment = appointmentService.getAppointmentById(id);

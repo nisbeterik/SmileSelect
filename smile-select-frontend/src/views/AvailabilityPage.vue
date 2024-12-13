@@ -168,7 +168,7 @@ export default defineComponent({
           patientId: this.patient.id,
         };
         // Make the PATCH request to add the patient to the appointment
-        await axios.patch(`/appointments/add-patient`, appointmentData);
+        await axios.patch(`/appointments/booked-by-patient`, appointmentData);
 
         // Hide the confirmation modal
         this.isModalVisible = false;
