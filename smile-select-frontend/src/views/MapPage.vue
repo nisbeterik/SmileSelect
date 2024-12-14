@@ -51,12 +51,12 @@ export default {
           [57.76, 12.1],
         ],
         maxBoundsViscosity: 1.0,
-        minZoom: 12,
+        minZoom: 14,
       },
       clinics: [],
       tooltipOpacity: 0,
       mapCenter: [57.7069, 11.9746],
-      currentZoom: 1,
+      currentZoom: 14,
     };
   },
   created() {
