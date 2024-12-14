@@ -16,6 +16,13 @@
             </option>
           </select>
           <p v-if="selectedClinic">Selected Clinic: {{ selectedClinic.name }}</p>
+          <button
+              v-if="selectedClinic"
+              @click="emitClinicName"
+              class="btn-emit-clinic"
+          >
+            Get location: {{ selectedClinic.name }}
+          </button>
         </div>
         <p v-else>No clinics available.</p>
       </div>
@@ -158,31 +165,30 @@ export default defineComponent({
       this.selectedEventId = clickInfo.event.id;
       this.isModalVisible = true;
     },
+    emitClinicName() {
+      if (this.selectedClinic) {
+        this.$emit('clinicLocation', this.selectedClinic.name);
+      }
+    },
     async confirmBooking() {
       try {
-        // Access patientId from authStore
+
         const patientId = this.patientId;
-        // Prepare the appointment data
         const appointmentData = {
           id: this.selectedEventId,
           patientId: patientId,
         };
-        // Make the PATCH request to add the patient to the appointment
         await axios.patch(`/appointments/booked-by-patient`, appointmentData);
-
-        // Hide the confirmation modal
         this.isModalVisible = false;
-
-        // Show the booking confirmation modal
         this.isBookingConfirmed = true;
 
-        // Log that the booking was successful
+
         console.log("Booking confirmed successfully!");
       } catch (error) {
-        // Log the error object for debugging
+
         console.error("Error confirming booking:", error);
 
-        // Log additional information if the error has a response (e.g., status, data)
+
         if (error.response) {
           console.error("Error Response Status:", error.response.status);
           console.error("Error Response Data:", error.response.data);

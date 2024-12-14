@@ -20,15 +20,21 @@
     <!-- Bottom row with AvailabilityPage -->
     <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
       <AvailableAppointmentsComponent
-          :selectedClinic="selectedClinic"
           :clinics="clinics"
           @updateClinics="updateClinics"
+          @clinicLocation="handleClinicLocation"
       />
     </div>
 
     <!-- Map Page (with clinic selection) -->
-    <div v-if="validUser" class="glass-card map-page">
-      <MapPage @clinic-selected="handleClinicSelection" />
+    <div
+        class="glass-card map-page"
+        ref="mapPageSection"
+    >
+      <MapPage
+          @clinic-selected="handleClinicSelection"
+          v-bind:selected-clinic-name="selectedClinicName"
+      />
     </div>
 
     <div v-if="!validUser" class="glass-card not-auth">
@@ -60,7 +66,7 @@ export default {
       validUser: false,
       patientId: authStore.id,
       role: authStore.role,
-      selectedClinic: null,  // The clinic selected by the user from the map
+      selectedClinicName: null, // Clinic selected in booking component
       clinics: [],
     };
   },
@@ -68,9 +74,12 @@ export default {
     async checkUser() {
       this.validUser = this.role === "PATIENT" && this.patientId !== null;
     },
-    handleClinicSelection(clinic) {
-      this.selectedClinic = clinic;  // Set the selected clinic from map click
-      this.$refs.availabilitySection.scrollIntoView({ behavior: "smooth" });  // Scroll to availability section
+    handleClinicSelection() {
+      this.$refs.availabilitySection.scrollIntoView({ behavior: "smooth" });
+    },
+    handleClinicLocation(clinicName) {
+      this.selectedClinicName = clinicName;
+      this.$refs.mapPageSection.scrollIntoView({ behavior: "smooth" });
     },
     updateClinics(newClinics) {
       this.clinics = newClinics;

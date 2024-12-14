@@ -1,7 +1,8 @@
 <template>
   <LMap
-      :zoom="12"
-      :center="[57.7069, 11.9746]"
+      ref="map"
+      :zoom="currentZoom"
+      :center="mapCenter"
       :options="mapOptions"
       style="height: 500px; width: 100%;"
   >
@@ -36,6 +37,12 @@ export default {
     LMarker,
     LTooltip,
   },
+  props: {
+    selectedClinicName: {
+      type: String,
+      default: null,
+    },
+  },
   data() {
     return {
       mapOptions: {
@@ -47,12 +54,20 @@ export default {
         minZoom: 12,
       },
       clinics: [],
-      currentZoom: 14,
       tooltipOpacity: 0,
+      mapCenter: [57.7069, 11.9746],
+      currentZoom: 1,
     };
   },
   created() {
     this.fetchClinics();
+  },
+  watch: {
+    selectedClinicName(newClinicName) {
+      if (newClinicName) {
+        this.updateMapCenter(newClinicName);
+      }
+    },
   },
   methods: {
     async fetchClinics() {
@@ -64,8 +79,21 @@ export default {
       }
     },
     handleMarkerClick(clinic) {
-      this.$emit('clinic-selected', clinic);
+      this.$emit("clinic-selected", clinic);
+    },
+    updateMapCenter(clinicName) {
+      const clinic = this.clinics.find((c) => c.name === clinicName);
+      if (clinic) {
+        this.mapCenter = [clinic.latitude, clinic.longitude];
+      }
     },
   },
 };
 </script>
+
+<style>
+
+.leaflet-control-attribution {
+  display: none;
+}
+</style>
