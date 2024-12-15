@@ -10,8 +10,11 @@
             id="first_name_dentist"
             placeholder="John"
             v-model="formData.firstName"
+            :class="{ 'input-error': inputErrors.firstName }"
             required
-          /><br /><br />
+          />
+          <small v-if="inputErrors.firstName" class="error">{{ inputErrors.firstName }}</small>
+          <br /><br />
         </div>
 
         <div class="form-group">
@@ -21,8 +24,11 @@
             id="last_name_dentist"
             placeholder="Johnsson"
             v-model="formData.lastName"
+            :class="{ 'input-error': inputErrors.lastName }"
             required
-          /><br /><br />
+          />
+          <small v-if="inputErrors.lastName" class="error">{{ inputErrors.lastName }}</small>
+          <br /><br />
         </div>
 
         <div class="form-group">
@@ -32,8 +38,11 @@
             id="email_dentist"
             placeholder="john.johnsson@example.com"
             v-model="formData.email"
+            :class="{ 'input-error': inputErrors.email }"
             required
-          /><br /><br />
+          />
+          <small v-if="inputErrors.email" class="error">{{ inputErrors.email }}</small>
+          <br /><br />
         </div>
         <div class="form-group">
           <label for="password_dentist">Password:</label>
@@ -42,8 +51,11 @@
             id="password_dentist"
             placeholder="S3ctr€T!96"
             v-model="formData.password"
+            :class="{ 'input-error': inputErrors.password }"
             required
-          /><br /><br />
+          />
+          <small v-if="inputErrors.password" class="error">{{ inputErrors.password }}</small>
+          <br /><br />
         </div>
         <div class="form-group">
           <label for="clinic_dentist">Select Clinic:</label>
@@ -52,14 +64,17 @@
             :options="formattedClinics"
             id="clinic_dentist"
             v-model="formData.clinicId"
+            :class="{ 'input-error': inputErrors.clinicId }"
             required
             searchable
           >
           </Multiselect>
+          <small v-if="inputErrors.clinicId" class="error">{{ inputErrors.clinicId }}</small>
           <br /><br />
         </div>
 
         <button type="submit" class="button-primary">Register as Dentist</button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
     </div>
     <div v-else>
@@ -90,6 +105,8 @@ export default {
       },
       clinics: [], // List of clinics fetched from the backend
       isRegistered: false,
+      errorMessage: '',
+      inputErrors: {}
     };
   },
   computed: {
@@ -113,6 +130,10 @@ export default {
       }
     },
     async submitDentist() {
+      this.errorMessage = '';
+      if (!this.validateForm()) {
+        return;
+      }
       try {
         const response = await axios.post('/dentists/register', this.formData);
         console.log('Registration Successful:', response.data);
@@ -122,7 +143,44 @@ export default {
         this.$emit('registrationSuccess');
       } catch (error) {
         console.error('Registration Error:', error);
+        if (error.response && error.response.data && error.response.data.message) {
+          this.errorMessage = error.response.data.message;
+        } else {
+          this.errorMessage = 'An error occurred during registration. Please try again.';
+        }
       }
+    },
+    validateForm() {
+      this.inputErrors = {};
+      let isValid = true;
+
+      if (!this.formData.firstName.trim()) {
+        this.inputErrors.firstName = 'First name is required.';
+        isValid = false;
+      }
+
+      if (!this.formData.lastName.trim()) {
+        this.inputErrors.lastName = 'Last name is required.';
+        isValid = false;
+      }
+
+      // Basic email pattern check
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(this.formData.email)) {
+        this.inputErrors.email = 'Please enter a valid email address.';
+        isValid = false;
+      }
+
+      // Password complexity check (basic example)
+      if (this.formData.password.length < 6) {
+        this.inputErrors.password = 'Password must be at least 6 characters long.';
+        isValid = false;
+      }
+      if (!this.formData.clinicId) {
+        this.inputErrors.clinicId = 'Please select a clinic.';
+        isValid = false;
+      }
+      return isValid;
     },
   },
 };
@@ -161,6 +219,15 @@ export default {
   width: 100%;
   box-sizing: border-box;
   flex: 1;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+.input-error {
+  border: 1px solid red;
 }
 
 </style>

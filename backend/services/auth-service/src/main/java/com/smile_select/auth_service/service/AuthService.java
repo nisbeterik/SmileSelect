@@ -73,7 +73,7 @@ public class AuthService {
         // Verify password
         if (!passwordEncoder.matches(password, userResponse.getPassword())) {
             System.err.println("Password mismatch for email: " + email);
-            throw new ResourceNotFoundException("Invalid credentials for " + role);
+            throw new ResourceNotFoundException("Invalid credentials");
         }
 
         // Generate JWT token
