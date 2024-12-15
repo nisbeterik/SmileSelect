@@ -179,14 +179,17 @@ export default {
 </script>
 
 <style scoped>
-/* Custom Styles */
+
 .dentist-dashboard {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 .dashboard-header {
+  width: 100vw;
+  position: relative;
   background-color: #2B6C5D;
+  margin-left: calc(-50vw + 50%);
   color: #FFFFFF;
 }
 .glass-card {
