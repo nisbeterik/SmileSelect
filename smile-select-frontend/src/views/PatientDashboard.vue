@@ -25,6 +25,13 @@
           @clinicLocation="handleClinicLocation"
       />
     </div>
+    <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
+      <AvailableAppointmentComponent
+        :clinics="clinics"
+        @updateClinics="updateClinics"
+        @clinicLocation="handleClinicLocation"
+      />
+    </div>
 
     <!-- Map Page (with clinic selection) -->
     <div
@@ -49,12 +56,14 @@ import { useAuthStore } from "@/stores/auth";
 import PatientAppointmentsComponent from "@/components/PatientAppointmentsComponent.vue";
 import PreferredDateComponent from "../components/PreferredDateComponent.vue";
 import AvailableAppointmentsComponent from "@/components/AvailableAppointmentsComponent.vue";
+import AvailableAppointmentComponent from '@/components/AvailableAppointmentComponent.vue';
 import MapPage from "@/views/MapPage.vue";
 import "/src/CSS/global.css";
 
 export default {
   name: "PatientDashboard",
   components: {
+    AvailableAppointmentComponent,
     PatientAppointmentsComponent,
     PreferredDateComponent,
     AvailableAppointmentsComponent,

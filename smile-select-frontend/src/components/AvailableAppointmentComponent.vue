@@ -3,10 +3,39 @@
     <div class="row justify-content-center">
       <div>
         <div class="header">
-          <h3>{{ appointmentText }}</h3>
-          <button @click="toggleView" class="button-primary mb-3">
-            {{ showPastAppointments ? "Show Upcoming Appointments" : "Show Past Appointments" }}
-          </button>
+          <div v-if="clinics.length" class="form-group">
+            <label for="clinic_select">Select Clinic:</label>
+            <Multiselect
+              class="clinic-field"
+              :options="formattedClinics"
+              @update:modelValue="handleClinicChange"
+              id="clinic_select"
+              v-model="selectedClinicId"
+              :class="{ 'input-error': inputErrors.clinicId }"
+              required
+              searchable
+            >
+            </Multiselect>
+            <small v-if="inputErrors.clinicId" class="error">{{ inputErrors.clinicId }}</small>
+            <br /><br />
+          </div>
+          <div v-if="dentists.length" class="form-group">
+            <label for="dentist_select">Select Dentist:</label>
+            <Multiselect
+              class="clinic-field"
+              :options="formattedDentists"
+              @update:modelValue="handleDentistChange"
+              id="dentist_select"
+              v-model="selectedDentistId"
+              :class="{ 'input-error': inputErrors.dentistId }"
+              required
+              searchable
+            >
+            </Multiselect>
+            <small v-if="inputErrors.dentistId" class="error">{{ inputErrors.dentistId }}</small>
+            <br /><br />
+          </div>
+          <p v-if="selectedDentist">Selected Dentist: {{ selectedDentist.firstName }} {{ selectedDentist.lastName }}</p>
         </div>
 
         <p :class="infoTextClass">{{ infoText }}</p>
@@ -40,9 +69,13 @@ import { useAuthStore } from '@/stores/auth';
 import { format, differenceInMinutes, parseISO, isBefore } from 'date-fns';
 import '/src/CSS/global.css';
 import axios from '@/axios';
+import Multiselect from '@vueform/multiselect';
 
 export default {
   name: 'AvailableAppointmentComponent',
+  components: {
+    Multiselect
+  },
   data() {
     const authStore = useAuthStore();
     return {
@@ -52,20 +85,53 @@ export default {
       appointmentText: "Your upcoming appointment(s)",
       showPastAppointments: false,
       infoText: "",
-      infoTextClass: ""
+      infoTextClass: "",
+      clinics: [],
+      dentists: [],
+      selectedClinicId: null,
+      selectedDentistId: null,
+      isModalVisible: false,
+      isBookingConfirmed: false,
+      bookingFailed: false,
+      emailError: null,
+      selectedEventId: null,
+      email: '',
+      errorMessage: '',
+      inputErrors: {}
     };
   },
   computed: {
-    filteredAppointments() {
-      const now = new Date();
-      return this.appointments.filter((appointment) =>
-        this.showPastAppointments
-          ? isBefore(parseISO(appointment.startTime), now)
-          : !isBefore(parseISO(appointment.startTime), now)
-      );
+    formattedClinics() {
+      return this.clinics.map(clinic => ({
+        value: clinic.id,
+        label: `${clinic.name}, ${clinic.street}, ${clinic.houseNumber}, ${clinic.city}`,
+      }));
+    },
+    formattedDentists() {
+      return this.dentists.map(dentist => ({
+        value: dentist.id,
+        label: `${dentist.firstName} ${dentist.lastName}`,
+      }));
+    },
+    selectedClinic() {
+      return this.clinics.find((clinic) => clinic.id === this.selectedClinicId);
+    },
+    selectedDentist() {
+      return this.dentists.find((dentist) => dentist.id === this.selectedDentistId);
     },
   },
+  mounted() {
+    this.fetchClinics();
+  },
   methods: {
+    handleClinicChange(newValue) {
+      this.selectedClinicId = newValue;
+      this.fetchDentistsByClinic();
+    },
+    handleDentistChange(newValue) {
+      this.selectedDentistId = newValue;
+      this.fetchAppointmentsByDentist();
+    },
     async fetchClinics() {
       try {
         const response = await axios.get("/dentists/clinics");
@@ -75,6 +141,7 @@ export default {
       }
     },
     async fetchDentistsByClinic() {
+      console.log(this.selectedClinicId, "clinic")
       try {
         const response = await axios.get(`/dentists?clinicId=${this.selectedClinicId}`);
         this.dentists = response.data;
@@ -84,6 +151,7 @@ export default {
     },
     async fetchAppointmentsByDentist() {
       try {
+        console.log(this.selectedDentistId, "dentist")
         const response = await axios.get(`/appointments/dentist/${this.selectedDentistId}?onlyAvailable=true`);
         const appointments = response.data;
 
@@ -105,12 +173,12 @@ export default {
         this.infoTextClass = "error-text";
       }
     },
-    async confirmBooking() {
+    async confirmBooking(appointmentId) {
       try {
 
         const patientId = this.patientId;
         const appointmentData = {
-          id: this.selectedEventId,
+          id: appointmentId,
           patientId: patientId,
         };
         await axios.patch(`/appointments/booked-by-patient`, appointmentData);
@@ -142,6 +210,11 @@ export default {
       const date = parseISO(dateString);
       return format(date, 'PPpp');
     },
+    emitClinicName() {
+      if (this.selectedClinic) {
+        this.$emit('clinicLocation', this.selectedClinic.name);
+      }
+    },
     formatDuration(startTime, endTime) {
       const start = parseISO(startTime);
       const end = parseISO(endTime);
@@ -158,6 +231,54 @@ export default {
 </script>
 
 <style scoped>
+::v-deep(.multiselect-option) {
+  background-color: rgba(255, 255, 255, 0.5) !important; /* Set a semi-transparent white background */
+  color: #333 !important;
+  padding: 5px 10px; /* Add some spacing */
+  border-radius: 4px; /* Optional: Add rounded corners */
+  cursor: pointer; /* Make it clear the options are clickable */
+  margin: 3px;
+}
+::v-deep(.multiselect-options) {
+  max-height: 600px; /* Adjust this value to increase the height */
+}
+
+/* Hover effect for options */
+::v-deep(.multiselect-option:hover) {
+  background-color: rgba(200, 200, 200, 0.8) !important; /* Slightly darker on hover */
+}
+
+/* Selected option styling */
+::v-deep(.multiselect-option-selected) {
+  background-color: #206050 !important; /* Green for selected */
+  color: white !important; /* White text for contrast */
+}
+::v-deep(.multiselect-fake-input) {
+  display: none; /* Hides the fake input */
+}
+.clinic-field {
+  border: 0px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+}
+.form-group {
+  width: 100%;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+.input-error {
+  border: 1px solid red;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
