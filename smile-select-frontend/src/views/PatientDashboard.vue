@@ -1,10 +1,10 @@
 <template>
-  <div class="patient-dashboard">
+  <div class="patient-dashboard container-fluid">
     <div class="background-layer"></div>
-    <header class="dashboard-header">
-      <div class="header-content">
+    <header class="dashboard-header p-3 mb-4 shadow-sm">
+      <div class="header-content d-flex justify-content-between align-items-center">
         <h1>Welcome {{ role }} {{ patientId }}</h1>
-        <button class="button-secondary" @click="logOutUser">Log Out</button>
+        <button class="button-primary" @click="logOutUser">Log Out</button>
       </div>
     </header>
 
@@ -101,6 +101,18 @@ export default {
 </script>
 <style scoped>
 /*Div*/
+.patient-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.dashboard-header {
+  width: 100vw;
+  position: relative;
+  background-color: #2B6C5D;
+  margin-left: calc(-50vw + 50%);
+  color: #FFFFFF;
+}
 .top-row {
   display: flex;
   flex-wrap: wrap; /* Ensure items wrap on smaller screens */
@@ -112,6 +124,12 @@ export default {
 .availability-page, .map-page {
   margin: 20px;
   max-width: 100%; /* Allow full width on small screens */
+}
+.button-primary {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  width: auto;
 }
 
 </style>
