@@ -42,7 +42,7 @@
 
         <div class="scroll-wrapper">
           <div class="appointments-scroll-container">
-            <div v-for="appointment in filteredAppointments" :key="appointment.id" class="glass-card mb-3">
+            <div v-for="appointment in appointments" :key="appointment.id" class="glass-card mb-3">
               <div class="card-body">
                 <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
                 <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
@@ -51,7 +51,7 @@
                 <p><strong>Address:</strong> {{ appointment.address }}</p>
               </div>
               <div>
-                <button @click="cancelAppointment(appointment.id)" class="btn btn-danger"
+                <button @click="confirmBooking(appointment.id)" class="btn btn-danger"
                         :disabled="isPast(appointment.startTime)">
                   Cancel
                 </button>
