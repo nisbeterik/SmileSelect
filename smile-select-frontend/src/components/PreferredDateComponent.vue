@@ -181,6 +181,12 @@ export default {
 @media (max-width: 1150px) {
   .glass-container{
     width: 90vw;
+    min-height: auto;
+  }
+}
+@media (max-width: 700px) {
+  .pref-date-flex{
+    font-size: 12px;
   }
 }
 
