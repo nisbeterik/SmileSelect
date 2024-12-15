@@ -51,11 +51,21 @@
                 <p><strong>Address:</strong> {{ appointment.address }}</p>
               </div>
               <div>
-                <button @click="confirmBooking(appointment.id)" class="btn btn-danger"
+                <button @click="showBookModal(appointment.id)" class="button-primary"
                         :disabled="isPast(appointment.startTime)">
-                  Cancel
+                  Book Now
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="isModalVisible" class="availability-modal-overlay">
+          <div class="availability-modal">
+            <h2>Confirm Booking</h2>
+            <p>Are you sure you want to book this appointment?</p>
+            <div class="modal-actions">
+              <button @click="confirmBooking" class="btn-confirm">Confirm</button>
+              <button @click="closeModal" class="btn-cancel">Cancel</button>
             </div>
           </div>
         </div>
@@ -122,16 +132,22 @@ export default {
   },
   mounted() {
     this.fetchClinics();
+    this.loadSelections();
   },
   methods: {
     handleClinicChange(newValue) {
       this.selectedClinicId = newValue;
       this.fetchDentistsByClinic();
+      localStorage.setItem('selectedClinicId', newValue);
     },
     handleDentistChange(newValue) {
       this.selectedDentistId = newValue;
       this.fetchAppointmentsByDentist();
+      localStorage.setItem('selectedDentistId', newValue);
     },
+    loadSelections(){
+      const
+    }
     async fetchClinics() {
       try {
         const response = await axios.get("/dentists/clinics");
@@ -173,12 +189,12 @@ export default {
         this.infoTextClass = "error-text";
       }
     },
-    async confirmBooking(appointmentId) {
+    async confirmBooking() {
       try {
 
         const patientId = this.patientId;
         const appointmentData = {
-          id: appointmentId,
+          id: this.selectedEventId,
           patientId: patientId,
         };
         await axios.patch(`/appointments/booked-by-patient`, appointmentData);
@@ -196,6 +212,10 @@ export default {
           console.error("Error Response Data:", error.response.data);
         }
       }
+    },
+    showBookModal(appointmentId) {
+      this.selectedEventId = appointmentId;
+      this.isModalVisible = true;
     },
     closeModal() {
       this.isModalVisible = false;
@@ -268,6 +288,9 @@ export default {
 }
 .form-group {
   width: 100%;
+}
+.button-primary{
+  width: auto;
 }
 
 .error {
