@@ -233,6 +233,14 @@ public class AppointmentService {
         }
     }
 
+    public long countAppointments(){
+        return appointmentRepository.count();
+    }
+
+    public long countBookedAppointments(){
+        return appointmentRepository.countByPatientIdIsNotNull();
+    }
+
     // Save already existing methods in case of problems
     /*
     public Appointment save(Appointment appointment) {
