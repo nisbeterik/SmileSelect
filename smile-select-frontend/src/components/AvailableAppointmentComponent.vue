@@ -105,6 +105,39 @@ export default {
         this.infoTextClass = "error-text";
       }
     },
+    async confirmBooking() {
+      try {
+
+        const patientId = this.patientId;
+        const appointmentData = {
+          id: this.selectedEventId,
+          patientId: patientId,
+        };
+        await axios.patch(`/appointments/booked-by-patient`, appointmentData);
+        this.isModalVisible = false;
+        this.isBookingConfirmed = true;
+
+
+        console.log("Booking confirmed successfully!");
+      } catch (error) {
+        console.error("Error confirming booking:", error);
+        this.isModalVisible = false;
+        this.bookingFailed = true;
+        if (error.response) {
+          console.error("Error Response Status:", error.response.status);
+          console.error("Error Response Data:", error.response.data);
+        }
+      }
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
+    closeBookingConfirmation() {
+      this.isBookingConfirmed = false;
+    },
+    closeBookingFailed() {
+      this.bookingFailed = false;
+    },
     formatDate(dateString) {
       const date = parseISO(dateString);
       return format(date, 'PPpp');
