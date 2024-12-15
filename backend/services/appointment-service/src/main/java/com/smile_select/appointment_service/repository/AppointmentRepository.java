@@ -25,5 +25,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     public List<Appointment> findByDentistId(Long dentistId);
     public List<Appointment> findByPatientId(Long patientId);
+    public Long countByPatientIdIsNotNull();
 
 }

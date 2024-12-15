@@ -1,5 +1,6 @@
 package com.smile_select.auth_service.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smile_select.auth_service.dto.LoginRequest;
@@ -9,6 +10,8 @@ import com.smile_select.auth_service.mqtt.MqttGateway;
 import com.smile_select.auth_service.mqtt.MqttTopicHandler;
 import com.smile_select.auth_service.util.JwtUtil;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +73,7 @@ public class AuthService {
         // Verify password
         if (!passwordEncoder.matches(password, userResponse.getPassword())) {
             System.err.println("Password mismatch for email: " + email);
-            throw new ResourceNotFoundException("Invalid credentials for " + role);
+            throw new ResourceNotFoundException("Invalid credentials");
         }
 
         // Generate JWT token
@@ -79,6 +82,18 @@ public class AuthService {
         // Hide sensitive information
         userResponse.setToken(token);
         userResponse.setPassword(null); // Do not expose password in the response
+
+        // Publish successful login message
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> messageMap = new HashMap<>();
+            messageMap.put("id", userResponse.getId());
+            messageMap.put("role", role);
+            String messageToBePublished = objectMapper.writeValueAsString(messageMap);
+            mqttGateway.publishMessage(messageToBePublished, "/login-success");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         return userResponse;
     }
