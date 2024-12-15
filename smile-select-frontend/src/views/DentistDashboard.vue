@@ -192,4 +192,22 @@ export default {
 .glass-card {
   background-color: rgba(255, 255, 255, 0.9);
 }
+
+.dentist-dashboard button {
+  background-color: #206050;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.dentist-dashboard button:hover {
+  background-color: #1a4d43;
+}
+
+.dentist-dashboard button:focus {
+  outline: none;
+}
 </style>
