@@ -99,3 +99,19 @@ export default {
   },
 };
 </script>
+<style scoped>
+/*Div*/
+.top-row {
+  display: flex;
+  flex-wrap: wrap; /* Ensure items wrap on smaller screens */
+  gap: 20px; /* Add spacing between elements */
+  justify-content: center; /* Center content on smaller screens */
+}
+
+/* Availability and Map sections */
+.availability-page, .map-page {
+  margin: 20px;
+  max-width: 100%; /* Allow full width on small screens */
+}
+
+</style>

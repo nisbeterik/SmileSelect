@@ -172,9 +172,17 @@ export default {
   width: 100%;
 }
 
+
 .custom-datepicker.datepicker {
   width: Auto;
   min-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .glass-card {
+    width: 100%;
+    margin: 20px;
+  }
 }
 
 /* Dynamic text color classes */

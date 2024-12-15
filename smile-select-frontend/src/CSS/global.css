@@ -5,6 +5,22 @@
     --secondary-hover-color: rgba(100, 100, 100, 0.8);;
 }
 
+html {
+    font-size: 16px; /* Base font size for normal screens */
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px; /* Smaller font size for tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 12px; /* Smaller font size for phones */
+    }
+}
+
 /*Buttons*/
 .button {
     display: inline-block;
@@ -101,7 +117,11 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
     transform: scale(1.1);
 }
-/*Div*/
+.form-container, /* Responsive Rules */
+.glass-card {
+    max-width: 100%;
+    box-sizing: border-box;
+}
 .glass-card {
     padding: 20px;
     border: 1px solid #ccc;
@@ -110,11 +130,14 @@
     color: var(--primary-color);
     background-color: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(20px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform, box-shadow;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease
 }
 .glass-card:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    transform: scale(1.02);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+    border: 4px solid var(--primary-color);
+    /*box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    transform: scale(1.02);*/
 }
 .dashboard-header {
     background-color: #206050;
@@ -143,4 +166,38 @@
     padding-top: 15px;
     justify-content: center;
     align-items: center;
+}
+
+/* For tablets and smaller screens */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column; /* Stack header elements */
+        align-items: center;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        padding: 15px;
+    }
+
+    .button-secondary {
+        width: auto; /* Adjust button width */
+        margin-top: 10px;
+    }
+}
+
+/* For mobile phones */
+@media (max-width: 480px) {
+    .top-row {
+        flex-direction: column; /* Stack elements vertically */
+    }
+
+    .glass-card {
+        padding: 15px;
+        margin: 10px 0; /* Reduce margin on smaller screens */
+    }
+
+    .dashboard-header {
+        font-size: 1.2rem;
+    }
 }
