@@ -1,86 +1,88 @@
 <template>
-  <div class="calender-container">
-    <FullCalendar ref="calendar" :options="calendarOptions" @select="handleSelect" />
+  <!-- Calendar Container -->
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="calendar-container">
+          <FullCalendar ref="calendar" :options="calendarOptions" @select="handleSelect" />
+        </div>
+      </div>
+    </div>
   </div>
-    <div v-if="showCreateAppointmentModal" class="modal" @click.self="closeCurrentModal()">
-      <div class="modal-content">
-        <h3>Create Appointment</h3>
+  <div v-if="showCreateAppointmentModal" class="modal fade show d-block" tabindex="-1" @click.self="closeCurrentModal()">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content p-3">
+        <h3 class="text-center mb-4">Create Appointment</h3>
 
-        <div v-if="selectedSlot.date">
+        <div v-if="selectedSlot.date" class="mb-3">
           <strong>{{ selectedSlot.date }}</strong>
         </div>
 
-        <div class="time-input-group">
-          <label for="startTime">Start:</label>
-          <div class="time-controls">
-            <input type="time" v-model="selectedSlot.startTime" step="300" required />
-            <button class="time-btn" @click="adjustTime('start', -5)">-</button>
-            <button class="time-btn" @click="adjustTime('start', 5)">+</button>
+        <div class="mb-3">
+          <label for="startTime" class="form-label">Start Time</label>
+          <div class="input-group">
+            <input type="time" class="form-control" v-model="selectedSlot.startTime" step="300" required />
+            <button class="btn btn-outline-secondary" @click="adjustTime('start', -5)">-5</button>
+            <button class="btn btn-outline-secondary" @click="adjustTime('start', 5)">+5</button>
           </div>
         </div>
 
-        <div class="time-input-group">
-          <label for="endTime">End:</label>
-          <div class="time-controls">
-            <input type="time" v-model="selectedSlot.endTime" step="300" required />
-            <button class="time-btn" @click="adjustTime('end', -5)">-</button>
-            <button class="time-btn" @click="adjustTime('end', 5)">+</button>
+        <div class="mb-3">
+          <label for="endTime" class="form-label">End Time</label>
+          <div class="input-group">
+            <input type="time" class="form-control" v-model="selectedSlot.endTime" step="300" required />
+            <button class="btn btn-outline-secondary" @click="adjustTime('end', -5)">-5</button>
+            <button class="btn btn-outline-secondary" @click="adjustTime('end', 5)">+5</button>
           </div>
         </div>
 
-        <div class="patient-group">
-          <label for="assign-patient">Patient</label>
-          <div class="time-controls">
-            <input type="text-field" v-model="patientQuery" />
-            <button class="patient-check" @click="findPatientByEmail()"> check </button>
+        <div class="mb-3">
+          <label for="assign-patient" class="form-label">Patient Email</label>
+          <div class="input-group">
+            <input type="text" class="form-control" v-model="patientQuery" placeholder="Enter patient email" />
+            <button class="btn btn-info" @click="findPatientByEmail()">Check</button>
           </div>
         </div>
 
-        <button @click="saveAppointment()">Save Appointment</button>
-        <button @click="closeCurrentModal()">Cancel</button>
+        <div class="d-flex justify-content-end gap-2">
+          <button class="btn btn-success" @click="saveAppointment()">Save Appointment</button>
+          <button class="btn btn-danger" @click="closeCurrentModal()">Cancel</button>
+        </div>
       </div>
     </div>
+  </div>
+  <div v-if="showAppointmentDetailsModal" class="modal fade show d-block" tabindex="-1" @click.self="closeCurrentModal()">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content p-3">
+        <h3 class="text-center mb-4">Appointment Details</h3>
 
-    <div v-if="showAppointmentDetailsModal" class="modal" @click.self="closeCurrentModal">
-      <div class="modal-content">
-        <h3>Appointment Details:</h3>
-        <p>
-          <strong>Status:</strong><br />
-          {{ selectedEvent.status }}
-        </p>
-        <p>
-          <strong>Date:</strong><br />
-          {{ selectedEvent.date }}
-        </p>
-        <p>
-          <strong>Time:</strong><br />
-          {{ selectedEvent.time }}
-        </p>
-        <div v-if="selectedEvent.patientId && selectedEvent.patientId !== 'null'">
-          <p>
-            <strong>Patient Name:</strong><br />
-            {{ selectedEvent.patientName }}
-            <button @click="removePatientFromAppointment">Remove</button>
-          </p>
-          <p>
-            <strong>Patient Email:</strong><br />
-            {{ selectedEvent.patientEmail }}
-          </p>
+        <p><strong>Status:</strong> {{ selectedEvent.status }}</p>
+        <p><strong>Date:</strong> {{ selectedEvent.date }}</p>
+        <p><strong>Time:</strong> {{ selectedEvent.time }}</p>
 
+        <div v-if="selectedEvent.patientId && selectedEvent.patientId !== 'null'" class="mb-3">
+          <p>
+            <strong>Patient Name:</strong> {{ selectedEvent.patientName }}
+            <button class="btn btn-outline-danger btn-sm ms-2" @click="removePatientFromAppointment">Remove</button>
+          </p>
+          <p><strong>Patient Email:</strong> {{ selectedEvent.patientEmail }}</p>
         </div>
-        <div v-else>
-          <div class="patient-group">
-            <label for="assign-patient">Add Patient</label>
-            <div class="time-controls">
-              <input type="text-field" v-model="patientQuery" />
-              <button class="patient-check" @click="addPatientToAppointment()"> Add </button>
-            </div>
+
+        <div v-else class="mb-3">
+          <label for="assign-patient" class="form-label">Add Patient</label>
+          <div class="input-group">
+            <input type="text" class="form-control" v-model="patientQuery" placeholder="Enter patient email" />
+            <button class="btn btn-primary" @click="addPatientToAppointment()">Add</button>
           </div>
         </div>
-        <button @click="closeCurrentModal">Close</button>
-        <button @click="deleteAppointment">Delete</button>
+
+        <div class="d-flex justify-content-end gap-2">
+          <button class="btn btn-danger" @click="deleteAppointment">Delete</button>
+          <button class="btn btn-secondary" @click="closeCurrentModal()">Close</button>
+        </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -90,6 +92,9 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useAuthStore } from '@/stores/auth';
+import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 const bookedColor = '#FF5733';
 const availableColor = '#28A745';
@@ -105,18 +110,18 @@ export default {
     this.intervalId = setInterval(this.loadAppointments, 10000); // Update exisiting appointments every 10 seconds
   },
   beforeUnmount() {
-    clearInterval(this.intervalId); // Clear appointment reload interval once component is unmounted
+    clearInterval(this.intervalId);
   },
   data() {
     const authStore = useAuthStore();
     return {
       token: authStore.token,
       dentistId: authStore.id,
-      multiSlotMode: false, // Tracks if multi-slot mode is active
+      multiSlotMode: false,
       selectedSlots: [],
       selectedEventId: null,
       calendarOptions: {
-        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
+        plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin],
         initialView: 'timeGridWeek',
         firstDay: 1,
         weekends: false,
@@ -131,22 +136,26 @@ export default {
         slotDuration: '00:15:00',
         snapDuration: '00:05:00',
         headerToolbar: {
-          left: 'prev,next today,toggleWeekends multiSlotMode,createTimeSlots',
-          center: 'title',
-          right: 'prev,next,dayGridMonth,timeGridWeek,listWeek',
+          left: 'title',
+          center: 'prev,next today multiSlotMode createTimeSlots dayGridMonth timeGridWeek listWeek',
+          right: '',
         },
         customButtons: {
-          toggleWeekends: {
-            text: 'Toggle Weekends',
-            click: this.toggleWeekends,
-          },
           multiSlotMode: {
             text: 'MultiSlotMode',
             click: this.toggleMultiSlotMode,
           },
           createTimeSlots: {
-            text: 'Create Time Slots',
-            click: this.createMultipleTimeSlots
+            text: 'Create Slots',
+            click: this.createMultipleTimeSlots,
+          },
+        },
+        views: {
+          timeGridMonth: {
+            titleFormat: { year: 'numeric', month: 'long' },
+          },
+          timeGridWeek: {
+            titleFormat: '',
           },
         },
       },
@@ -165,7 +174,6 @@ export default {
     };
   },
   methods: {
-
     toggleMultiSlotMode() {
       if (this.multiSlotMode === true) {
         this.multiSlotMode = false;
@@ -175,19 +183,11 @@ export default {
         this.multiSlotMode = true;
       }
     },
-    toggleWeekends() {
-      const weekendsStatus = this.calendarOptions.weekends;
-      if (weekendsStatus === true) {
-        this.calendarOptions.weekends = false;
-      } else {
-        this.calendarOptions.weekends = true;
-      }
-    },
     adjustTime(type, minutes) {
       const timeString =
-        type === 'start'
-          ? this.selectedSlot.startTime
-          : this.selectedSlot.endTime;
+          type === 'start'
+              ? this.selectedSlot.startTime
+              : this.selectedSlot.endTime;
       const [hours, mins] = timeString.split(':').map(Number);
 
       const date = new Date();
@@ -204,9 +204,9 @@ export default {
           if (newTime >= this.selectedSlot.endTime) {
             date.setMinutes(date.getMinutes() + 30);
             this.selectedSlot.endTime = `${date
-              .getHours()
-              .toString()
-              .padStart(2, '0')}:${date
+                .getHours()
+                .toString()
+                .padStart(2, '0')}:${date
                 .getMinutes()
                 .toString()
                 .padStart(2, '0')}`;
@@ -221,10 +221,10 @@ export default {
 
     checkOverlap(selectedSlot) {
       const selectedStart = new Date(
-        `${selectedSlot.date}T${selectedSlot.startTime}:00`
+          `${selectedSlot.date}T${selectedSlot.startTime}:00`
       );
       const selectedEnd = new Date(
-        `${selectedSlot.date}T${selectedSlot.endTime}:00`
+          `${selectedSlot.date}T${selectedSlot.endTime}:00`
       );
 
       const overlaps = this.calendarOptions.events.some((event) => {
@@ -232,9 +232,9 @@ export default {
         const eventEnd = new Date(event.end);
 
         return (
-          (selectedStart >= eventStart && selectedStart < eventEnd) ||
-          (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
-          (selectedStart <= eventStart && selectedEnd >= eventEnd)
+            (selectedStart >= eventStart && selectedStart < eventEnd) ||
+            (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
+            (selectedStart <= eventStart && selectedEnd >= eventEnd)
         );
       });
 
@@ -264,10 +264,8 @@ export default {
           endTime: this.formatTime(info.end),
         };
 
-
         this.selectedSlots.push(slot);
         this.createMultiSlotModeTempSlot(slot);
-
       } else { //single slot creating
 
         const calendarApi = this.$refs.calendar.getApi();
@@ -298,7 +296,6 @@ export default {
 
         if ((index * -1) === this.selectedSlots.length) { //checks if the latest slot overlaps
           overlap = this.checkOverlap(slot);
-
         }
         if (overlap) {
           this.selectedSlots.pop();
@@ -312,7 +309,6 @@ export default {
           });
           index--;
         }
-
       });
     },
 
@@ -340,13 +336,13 @@ export default {
     async getPatientInfo(patientId) {
       try {
         const response = await this.$axios.get(
-          `/patients/booking/${patientId}`
+            `/patients/booking/${patientId}`
         );
         return response.data;
       } catch (error) {
         console.error(
-          'Error retrieving patient:',
-          error.response?.data || error.message
+            'Error retrieving patient:',
+            error.response?.data || error.message
         );
       }
     },
@@ -355,7 +351,7 @@ export default {
       const event = info.event;
 
       const eventTime =
-        this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
+          this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
       const patientId = event.extendedProps?.patientId;
 
       this.selectedEvent = {
@@ -401,7 +397,7 @@ export default {
 
         if (selectedEvent) {
           const originalColor = selectedEvent.extendedProps.originalColor
-            || (selectedEvent.extendedProps.patientId === null ? availableColor : bookedColor);
+              || (selectedEvent.extendedProps.patientId === null ? availableColor : bookedColor);
           selectedEvent.setProp('backgroundColor', originalColor);
         }
       }
@@ -412,13 +408,13 @@ export default {
       this.showAppointmentDetailsModal = false;
       document.querySelectorAll('.fc-event').forEach((el) => el.classList.remove('selected-event'));
       this.showCreateAppointmentModal = false;
-      this.selectedSlot = { startTime: '', endTime: '', date: null };
+      this.selectedSlot = {startTime: '', endTime: '', date: null};
     },
 
     async saveAppointment(slotData = null) {
       let slot;
       if (slotData === null) {
-        slot = { ...this.selectedSlot };
+        slot = {...this.selectedSlot};
       } else {
         slot = slotData;
       }
@@ -439,12 +435,12 @@ export default {
         };
 
         const startDateTime = formatToLocalDateTime(
-          slot.date,
-          slot.startTime
+            slot.date,
+            slot.startTime
         );
         const endDateTime = formatToLocalDateTime(
-          slot.date,
-          slot.endTime
+            slot.date,
+            slot.endTime
         );
 
         var appointmentColor = bookedColor;
@@ -478,8 +474,8 @@ export default {
       } catch (error) {
         alert('Error saving appointment');
         console.error(
-          'Error saving appointment:',
-          error.response?.data || error.message
+            'Error saving appointment:',
+            error.response?.data || error.message
         );
       }
       this.closeCurrentModal();
@@ -492,7 +488,9 @@ export default {
         var response = await this.$axios.get(`/appointments/dentist/${this.dentistId}`);
         var existingAppointments = response.data;
 
-        if (this.selectedSlots) { this.createMultiSlotModeTempSlot() }
+        if (this.selectedSlots) {
+          this.createMultiSlotModeTempSlot()
+        }
 
 
         Object.values(existingAppointments).forEach((appointment) => {
@@ -515,11 +513,12 @@ export default {
         });
       } catch (error) {
         console.error(
-          'Error loading appointment:',
-          error.response?.data || error.message
+            'Error loading appointment:',
+            error.response?.data || error.message
         );
       }
     },
+
     async deleteAppointment() {
       try {
         const appointmentId = this.selectedEvent.id;
@@ -535,8 +534,8 @@ export default {
       } catch (error) {
         alert('Error deleting appointment');
         console.error(
-          'Error deleteing appointment:',
-          error.response?.data || error.message
+            'Error deleteing appointment:',
+            error.response?.data || error.message
         );
       }
     },
@@ -562,127 +561,69 @@ export default {
         this.patientId = response.data.id;
 
         console.log(this.patientId, "ideeet");
-
-
       } catch (error) {
-        console.error('Error finding patient email patients:', error);
-      }
-    },
-    async removePatientFromAppointment() {
-      const appointmentId = this.selectedEvent.id;
-      if (!this.token) {
-        console.error("Authorization token is missing");
-        return;
-      }
-      const headers = {
-        Authorization: `Bearer ${this.token}`,
-      };
-      if (this.selectedEvent.patientId) {
-        try {
-          const response = await this.$axios.patch(
-            `/appointments/${appointmentId}/cancel`,
-            { headers } 
-          );
-          if (response.status === 200) {
-            this.selectedEvent.patientId = null;
-          }
-        } catch (error) {
-          console.error("Error removing patient from appointment:", error.response?.data || error.message);
-        }
-      }
-    },
-    async addPatientToAppointment() {
-      try{
-        await this.findPatientByEmail();
-        if (this.patientId) {
-        const response = await this.$axios.patch(`/appointments/booked-by-dentist`,
-          {
-            "id": this.selectedEvent.id,
-            "patientId": this.patientId
-          })
-        if (response.status === 200) {
-          this.selectedEvent.patientId = this.patientId;
-        }
-      }
-      } catch(error){
-        console.error("Error adding patient to appointment:", error.response?.data || error.message);
+        console.error('Error finding patient email:', error);
       }
     },
 
-  }
-};
+  },
+}
 </script>
 
-<style scoped>
-:root {
-  --selected-event-color: #333333;
-  /* Default color for the selected event */
+<style>
+.fc .fc-header-toolbar {
+  display: inline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.fc {
+  color: #206050;
 }
 
-.active-button {
-  background-color: #007bff;
-  /* Highlight color */
-  color: white;
-  border-color: #0056b3;
+
+.fc .fc-header-toolbar,
+.fc .fc-daygrid-day-number,
+.fc .fc-daygrid-day-top,
+.fc .fc-toolbar-title,
+.fc .fc-day {
+  color: #206050;
 }
-.calender-container {
+.fc .fc-header-toolbar .fc-left,
+.fc .fc-header-toolbar .fc-center,
+.fc .fc-header-toolbar .fc-right {
   display: flex;
-  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-  font-size: 14px;
-}
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
 }
 
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
+
+.fc .fc-header-toolbar button {
+  margin: 0 5px;
+  flex: 1 1 100%;
+  text-align: center;
+  background-color: #206050;
 }
 
-.selected-event {
-  background-color: var(--selected-event-color) !important;
-  border-color: var(--selected-event-color) !important;
-  filter: brightness(70%)
-}
 
-.time-input-group {
-  margin: 10px 0;
-}
+@media (max-width: 768px) {
+  .fc .fc-header-toolbar {
+    flex-direction: column;
+    align-items: center;
+  }
 
-.time-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+  .fc .fc-header-toolbar .fc-left,
+  .fc .fc-header-toolbar .fc-center,
+  .fc .fc-header-toolbar .fc-right {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+    background-color: #206050;
+  }
 
-.time-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-}
-
-.time-btn:hover {
-  background-color: #e0e0e0;
-}
-
-button {
-  margin-top: 10px;
+  .fc .fc-header-toolbar button {
+    width: 100%;
+    margin: 5px 0;
+  }
 }
 </style>
