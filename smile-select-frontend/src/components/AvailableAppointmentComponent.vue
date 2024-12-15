@@ -1,5 +1,6 @@
 <template>
   <div class="glass-container">
+    <h3>Available Appointments</h3>
     <div class="row justify-content-center">
       <div>
         <div class="header">
@@ -50,11 +51,12 @@
                 <p><strong>Clinic:</strong> {{ appointment.clinicName }}</p>
                 <p><strong>Address:</strong> {{ appointment.address }}</p>
               </div>
+              <button @click="showBookModal(appointment.id)" class="button-primary"
+                      :disabled="isPast(appointment.startTime)">
+                Book Now
+              </button>
               <div>
-                <button @click="showBookModal(appointment.id)" class="button-primary"
-                        :disabled="isPast(appointment.startTime)">
-                  Book Now
-                </button>
+
               </div>
             </div>
           </div>
