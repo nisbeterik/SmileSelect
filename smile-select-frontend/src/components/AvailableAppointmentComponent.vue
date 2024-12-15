@@ -138,16 +138,29 @@ export default {
     handleClinicChange(newValue) {
       this.selectedClinicId = newValue;
       this.fetchDentistsByClinic();
-      localStorage.setItem('selectedClinicId', newValue);
+      localStorage.setItem('selectedClinicId', this.selectedClinicId);
+      localStorage.setItem('selectedDentistId', null);
+
     },
     handleDentistChange(newValue) {
       this.selectedDentistId = newValue;
       this.fetchAppointmentsByDentist();
-      localStorage.setItem('selectedDentistId', newValue);
+      localStorage.setItem('selectedDentistId', this.selectedDentistId);
     },
     loadSelections(){
-      const
-    }
+      const savedClinicId = localStorage.getItem('selectedClinicId')
+      if (savedClinicId) {
+        this.selectedClinicId = savedClinicId;
+        this.fetchDentistsByClinic()
+        const savedDentistId = localStorage.getItem('selectedDentistId' )
+        if (savedDentistId) {
+          this.selectedDentistId = savedDentistId;
+          this.fetchAppointmentsByDentist()
+
+
+        }
+      }
+    },
     async fetchClinics() {
       try {
         const response = await axios.get("/dentists/clinics");
