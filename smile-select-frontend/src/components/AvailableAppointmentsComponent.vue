@@ -230,6 +230,7 @@ b {
 
 .availability-app {
   display: flex;
+  flex-wrap: wrap;
   min-height: 100%;
   font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
   font-size: 14px;
@@ -240,6 +241,7 @@ b {
   line-height: 1.5;
   background: #eaf9ff;
   border-right: 1px solid #d3e2e8;
+  flex-shrink: 0;
 }
 
 .availability-sidebar-section {
@@ -249,6 +251,7 @@ b {
 .availability-main {
   flex-grow: 1;
   padding: 3em;
+  min-width: 0;
 }
 
 .fc {
@@ -305,5 +308,52 @@ b {
   color: red;
   font-size: 14px;
   margin-top: 1em;
+}
+
+/* Responsivemess */
+@media (max-width: 900px) {
+  .availability-app {
+    flex-direction: column;
+  }
+
+  .availability-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #d3e2e8;
+  }
+
+  .availability-sidebar-section {
+    padding: 1em;
+  }
+
+  .availability-main {
+    padding: 1em;
+  }
+
+  .fc {
+    margin: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 14px;
+  }
+
+  .availability-sidebar-section {
+    padding: 0.5em;
+  }
+
+  .btn-confirm,
+  .btn-cancel {
+    padding: 0.5em;
+    font-size: 12px;
+  }
+
+  .availability-modal {
+    padding: 1em;
+    max-width: 300px;
+  }
 }
 </style>
