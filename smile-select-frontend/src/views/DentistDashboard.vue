@@ -1,30 +1,48 @@
 <template>
-  <div class="dentist-dashboard">
+  <div class="dentist-dashboard container-fluid">
+    <!-- Background Layer -->
     <div class="background-layer"></div>
-    <header class="dashboard-header">
-      <div class="header-content">
-        <h1>Welcome {{ role }} {{ dentistId }}</h1>
-        <button class="button-secondary" @click="logOutUser">Log Out</button>
+
+    <!-- Header Section -->
+    <header class="dashboard-header p-3 mb-4 shadow-sm">
+      <div class="header-content d-flex justify-content-between align-items-center">
+        <h1 class="h3">Welcome {{ role }} {{ dentistId }}</h1>
+        <button class="btn btn-secondary" @click="logOutUser">Log Out</button>
       </div>
     </header>
-    <div v-if="validUser" class="top-row"></div>
 
-    <!-- Bottom row with AvailabilityPage -->
-    <div v-if="validUser" class="glass-card create-appointment">
-      <create-appointment-component />
+    <!-- Conditional Content -->
+    <div v-if="validUser">
+      <!-- Top Row -->
+      <div class="top-row row mb-4">
+      </div>
+
+      <!-- Bottom Row with Availability Page -->
+      <div class="row justify-content-center">
+        <div class="glass-card create-appointment col-12 col-md-8 col-lg-6 p-4 shadow rounded">
+          <create-appointment-component />
+        </div>
+      </div>
     </div>
-    <div v-if ="!validUser" class="glass-card not-auth">
-      <h1 style="text-align: center">NOT LOGGED IN</h1>
-      <button class="button-primary" @click="logOutUser">Home</button>
+
+    <!-- Not Authenticated Section -->
+    <div v-else class="row justify-content-center align-items-center vh-100">
+      <div class="glass-card not-auth col-12 col-md-6 text-center p-4 shadow rounded bg-light">
+        <h1>NOT LOGGED IN</h1>
+        <button class="btn btn-primary mt-3" @click="logOutUser">Home</button>
+      </div>
     </div>
+
 
     <!--
-    <button @click="getAllDentists">GET all /dentists</button>
-    <button @click="getDentistById">GET dentist by ID</button>
-    <button @click="updateDentistById">PUT/Update dentist by ID</button>
-    <button @click="deleteDentistById">DELETE dentist by ID</button>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" @click="getAllDentists">GET all /dentists</button>
+      <button class="btn btn-primary" @click="getDentistById">GET dentist by ID</button>
+      <button class="btn btn-warning" @click="updateDentistById">PUT/Update dentist by ID</button>
+      <button class="btn btn-danger" @click="deleteDentistById">DELETE dentist by ID</button>
+    </div>
     -->
-    <p v-if="message">{{ message }}</p>
+    <p v-if="message" class="alert alert-info mt-4">{{ message }}</p>
   </div>
 </template>
 
@@ -161,28 +179,17 @@ export default {
 </script>
 
 <style scoped>
+/* Custom Styles */
 .dentist-dashboard {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-.header-content {
-  justify-content: space-between;
-  padding-top: 15px;
-}
-.button-secondary {
-  max-width: 100px;
-  margin-top: 0px;
-}
-.create-appointment {
-  max-width: 50%;
-  margin: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
+.dashboard-header {
+  background-color: #2B6C5D;
+  color: #FFFFFF;
 }
 .glass-card {
-
-}
-.not-auth {
-  margin: auto;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 </style>
