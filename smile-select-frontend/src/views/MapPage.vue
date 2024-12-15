@@ -91,7 +91,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .header-title {
   padding: 20px;
 }
@@ -112,8 +112,6 @@ export default {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-}
-.preferred-date-picker {
 }
 
 .patient-current-appointment {
