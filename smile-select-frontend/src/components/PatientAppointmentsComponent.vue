@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="glass-container">
     <div class="row justify-content-center">
       <div>
         <div class="header">
@@ -183,7 +183,7 @@ export default {
   max-width: 50%;
 }
 
-.container {
+.glass-container{
   max-width: 100%;
   overflow: hidden;
   margin: 20px;

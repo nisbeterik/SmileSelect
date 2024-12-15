@@ -47,11 +47,12 @@ html {
 }
 .button-primary:hover {
     background-color: var(--primary-hover-color);
-    transform: scale(1.02); /* Scales the card slightly */
+    transform: scale(1.02); /* Scales the button slightly */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Adds a stronger shadow */
 
 }
 .button-secondary {
+    max-width: 100%;
     width: 100%;
     display: inline-block;
     margin: 0px auto;
@@ -196,13 +197,9 @@ html {
     .form-group label {
         font-size: 0.875rem;
     }
-    .top-row {
-        flex-direction: column; /* Stack elements vertically */
-    }
 
     .glass-card {
         padding: 15px;
-        margin: 10px 0; /* Reduce margin on smaller screens */
     }
 
     .dashboard-header {
