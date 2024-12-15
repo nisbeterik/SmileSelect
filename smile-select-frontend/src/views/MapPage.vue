@@ -91,7 +91,51 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.header-title {
+  padding: 20px;
+}
+.header-content {
+  justify-content: space-between;
+  padding-top: 15px;
+}
+.button-secondary {
+  max-width: 100px;
+  margin-top: 0px;
+}
+.patient-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.preferred-date-picker {
+}
+
+.patient-current-appointment {
+  flex: 1;
+  width: 100%;
+  margin: 20px;
+  height: 750px;
+}
+
+.availability-page {
+  margin-top: 20px;
+}
+.map-page {
+  background-color: #206050;
+  max-height: 600px;
+  overflow: hidden;
+  margin: 20px;
+  margin-bottom: 50px;
+}
+.not-auth{
+  margin: auto;
+}
 
 .leaflet-control-attribution {
   display: none;
