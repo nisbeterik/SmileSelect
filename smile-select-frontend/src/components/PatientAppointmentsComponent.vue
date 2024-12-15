@@ -186,7 +186,6 @@ export default {
 .container {
   max-width: 100%;
   overflow: hidden;
-  min-width: 500px;
 }
 
 .row {
