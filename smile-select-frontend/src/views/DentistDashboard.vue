@@ -7,7 +7,7 @@
     <header class="dashboard-header p-3 mb-4 shadow-sm">
       <div class="header-content d-flex justify-content-between align-items-center">
         <h1 class="h3">Welcome {{ role }} {{ dentistId }}</h1>
-        <button class="btn btn-secondary" @click="logOutUser">Log Out</button>
+        <button class="button-primary" @click="logOutUser">Log Out</button>
       </div>
     </header>
 
@@ -196,18 +196,15 @@ export default {
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-.dentist-dashboard button {
-  background-color: #206050;
-  color: #FFFFFF;
-  border: none;
+.button-primary {
   padding: 10px 20px;
   font-size: 16px;
-  cursor: pointer;
   border-radius: 5px;
+  width: auto;
 }
 
 .dentist-dashboard button:hover {
-  background-color: #1a4d43;
+  background-color: #003020;
 }
 
 .dentist-dashboard button:focus {
