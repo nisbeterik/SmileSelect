@@ -150,11 +150,11 @@ export default {
 }
 
 .glass-card {
-  max-width: 500px;
   margin: 20px;
 }
 
 .pref-date-flex {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -174,14 +174,13 @@ export default {
 
 
 .custom-datepicker.datepicker {
-  width: Auto;
+  width: 100%;
   min-width: 200px;
 }
 
-@media (max-width: 768px) {
-  .glass-card {
-    width: 100%;
-    margin: 20px;
+@media (max-width: 1150px) {
+  .glass-container{
+    width: 90vw;
   }
 }
 

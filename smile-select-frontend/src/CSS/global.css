@@ -171,8 +171,6 @@ html {
 /* For tablets and smaller screens */
 @media (max-width: 768px) {
     .header-content {
-        flex-direction: column; /* Stack header elements */
-        align-items: center;
     }
 
     .dashboard-header {
