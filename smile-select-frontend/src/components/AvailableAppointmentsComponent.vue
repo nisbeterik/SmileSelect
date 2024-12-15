@@ -2,12 +2,6 @@
   <div class="availability-app">
     <div class="availability-sidebar">
       <div class="availability-sidebar-section">
-        <h2>Instructions</h2>
-        <ul>
-          <li>Click an available slot to book it</li>
-        </ul>
-      </div>
-      <div class="availability-sidebar-section">
         <h2>Select Clinic</h2>
         <div v-if="clinics.length">
           <select v-model="selectedClinicId" @change="fetchDentistsByClinic" class="clinic-dropdown">
@@ -44,6 +38,12 @@
         <h2>Booking Confirmed</h2>
         <p>You will receive an email with confirmation details shortly!</p>
         <button @click="closeBookingConfirmation" class="btn-confirm">Close</button>
+      </div>
+    </div>
+    <div v-if="bookingFailed" class="availability-modal-overlay">
+      <div class="availability-modal">
+        <h2>Failed to make booking, try again later</h2>
+        <button @click="closeBookingFailed" class="btn-confirm">Close</button>
       </div>
     </div>
     <div class="availability-main">
@@ -114,6 +114,7 @@ export default defineComponent({
       selectedDentistId: null,
       isModalVisible: false,
       isBookingConfirmed: false,
+      bookingFailed: false,
       emailError: null,
       selectedEventId: null,
       email: '',
@@ -185,10 +186,9 @@ export default defineComponent({
 
         console.log("Booking confirmed successfully!");
       } catch (error) {
-
         console.error("Error confirming booking:", error);
-
-
+        this.isModalVisible = false;
+        this.bookingFailed = true;
         if (error.response) {
           console.error("Error Response Status:", error.response.status);
           console.error("Error Response Data:", error.response.data);
@@ -200,6 +200,9 @@ export default defineComponent({
     },
     closeBookingConfirmation() {
       this.isBookingConfirmed = false;
+    },
+    closeBookingFailed() {
+      this.bookingFailed = false;
     },
   },
 });
