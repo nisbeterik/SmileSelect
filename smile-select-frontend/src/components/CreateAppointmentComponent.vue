@@ -566,6 +566,24 @@ export default {
       }
     },
 
+    async addPatientToAppointment() {
+      try{
+        await this.findPatientByEmail();
+        if (this.patientId) {
+          const response = await this.$axios.patch(`/appointments/booked-by-dentist`,
+            {
+              "id": this.selectedEvent.id,
+              "patientId": this.patientId
+            })
+          if (response.status === 200) {
+            this.selectedEvent.patientId = this.patientId;
+          }
+        }
+      } catch(error){
+        console.error("Error finding patient email!", error);
+      }
+    },
+
   },
 }
 </script>
