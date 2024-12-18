@@ -139,6 +139,14 @@ public class AppointmentService {
             return queryFallbackDB("SELECT * FROM appointment WHERE dentist_id = ?", dentistId);
         }
     }
+    public List<Appointment> getAppointmentsByClinicId(Long clinicId) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findByClinicId(clinicId);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            return queryFallbackDB("SELECT * FROM appointment WHERE clinic_Id = ?", clinicId);
+        }
+    }
 
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
         if (isPrimaryHealthy()) {
