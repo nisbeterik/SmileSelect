@@ -149,6 +149,15 @@ public class AppointmentService {
         }
     }
 
+    public List<Appointment> getAvailableAppointmentsByClinicId(Long clinicId) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findAvailableAppointmentsByClinicId(clinicId);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            return queryFallbackDB("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id IS NULL", clinicId);
+        }
+    }
+
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
         if (isPrimaryHealthy()) {
             return appointmentRepository.findAvailableAppointmentsByDentistId(dentistId);

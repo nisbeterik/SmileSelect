@@ -23,6 +23,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE a.dentistId = :dentistId AND a.patientId IS NULL")
     public List<Appointment> findAvailableAppointmentsByDentistId(@Param("dentistId") Long dentistId);
 
+    @Query("SELECT a FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId IS NULL")
+    public List<Appointment> findAvailableAppointmentsByClinicId(@Param("clinicId") Long clinicId);
+
     public List<Appointment> findByDentistId(Long dentistId);
     public List<Appointment> findByPatientId(Long patientId);
     public Long countByPatientIdIsNotNull();

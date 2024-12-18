@@ -30,6 +30,9 @@ public class Appointment {
     @Column(name = "dentist_id", nullable = false)
     private Long dentistId;
 
+    @Column(name = "clinic_id", nullable = false)
+    private Long clinicId;
+
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 

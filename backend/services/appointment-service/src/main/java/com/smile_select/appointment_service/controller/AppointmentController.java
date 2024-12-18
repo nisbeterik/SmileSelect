@@ -112,6 +112,23 @@ public class AppointmentController {
         return ResponseEntity.status(HttpStatus.OK).body(appointments);
 
     }
+    @GetMapping(value = "/clinic/{clinicId}")
+    public ResponseEntity<?> getAppointmentsByClinicId(
+            @PathVariable("clinicId") Long clinicId,
+            @RequestParam(value = "onlyAvailable", required = false, defaultValue = "false") boolean onlyAvailable) {
+        List<Appointment> appointments;
+
+        if (onlyAvailable) {
+
+            appointments = appointmentService.getAvailableAppointmentsByClinicId(clinicId);
+        } else {
+
+            appointments = appointmentService.getAppointmentsByClinicId(clinicId);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(appointments);
+
+    }
 
     @GetMapping(value = "/patient/{patientId}")
     public ResponseEntity<?> getAppointmentsByPatientId(@PathVariable("patientId") Long patientId) {
