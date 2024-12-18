@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', {
     id: localStorage.getItem('userId') || '',
     firstName: localStorage.getItem('firstName') || '',
     lastName: localStorage.getItem('lastName') || '',
+    clinicId: localStorage.getItem('clinicId') || '',
   }),
   actions: {
     setToken(token) {
@@ -29,6 +30,10 @@ export const useAuthStore = defineStore('auth', {
       this.lastName = lastName;
       localStorage.setItem('lastName', lastName);
     },
+    setClinicId(clinicId) {
+      this.clinicId = clinicId;
+      localStorage.setItem('clinicId', clinicId);
+    },
 
     clearAuth() {
       this.token = '';
@@ -36,11 +41,13 @@ export const useAuthStore = defineStore('auth', {
       this.id = '';
       this.firstName = '';
       this.lastName = '';
+      this.clinicId = '';
       localStorage.removeItem('jwtToken');
       localStorage.removeItem('userRole');
       localStorage.removeItem('userId');
       localStorage.removeItem('firstName');
       localStorage.removeItem('lastName')
+      localStorage.removeItem('clinicId')
     },
   },
   getters: {

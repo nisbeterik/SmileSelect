@@ -65,7 +65,8 @@ export default {
           role: this.role,
         });
 
-        const { token, role, id, firstName, lastName } = response.data;
+        const { token, role, id, firstName, lastName, clinic } = response.data;
+        console.log(response.data)
 
         if (token) {
           authStore.setFirstName(firstName)
@@ -73,6 +74,7 @@ export default {
           authStore.setToken(token);
           authStore.setRole(role);
           authStore.setId(id);
+          authStore.setClinicId(clinic);
           // Save the ID
           this.$emit('loginSuccess', this.role);
         } else {
