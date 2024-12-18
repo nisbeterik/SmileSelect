@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS appointment (
    id SERIAL PRIMARY KEY,
    patient_id BIGINT,
    dentist_id BIGINT NOT NULL,
+    clinic_id BIGINT NOT NULL,
    start_time TIMESTAMP NOT NULL,
    end_time TIMESTAMP NOT NULL
 );

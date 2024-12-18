@@ -117,6 +117,7 @@ export default {
     return {
       token: authStore.token,
       dentistId: authStore.id,
+      clinicId: authStore.clinicId,
       multiSlotMode: false,
       selectedSlots: [],
       selectedEventId: null,
@@ -456,7 +457,8 @@ export default {
           dentistId: `${this.dentistId}`,
           startTime: `${startDateTime}`,
           endTime: `${endDateTime}`,
-          patientId: `${this.patientId}`
+          patientId: `${this.patientId}`,
+          clinicId: `${this.clinicId}`,
         };
 
         const response = await this.$axios.post('/appointments', newAppointment);
