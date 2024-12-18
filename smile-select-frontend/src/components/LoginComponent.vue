@@ -65,12 +65,15 @@ export default {
           role: this.role,
         });
 
-        const { token, role, id } = response.data;
+        const { token, role, id, firstName, lastName } = response.data;
 
         if (token) {
+          authStore.setFirstName(firstName)
+          authStore.setLastName(lastName)
           authStore.setToken(token);
           authStore.setRole(role);
-          authStore.setId(id); // Save the ID
+          authStore.setId(id);
+          // Save the ID
           this.$emit('loginSuccess', this.role);
         } else {
           throw new Error('Token not found');
