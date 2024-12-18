@@ -48,8 +48,6 @@
                 <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
                 <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
                 <p><strong>Dentist:</strong> {{ appointment.dentistName }}</p>
-                <p><strong>Clinic:</strong> {{ appointment.clinicName }}</p>
-                <p><strong>Address:</strong> {{ appointment.address }}</p>
               </div>
               <button @click="showBookModal(appointment.id)" class="button-primary"
                       :disabled="isPast(appointment.startTime)">
@@ -363,12 +361,22 @@ export default {
 .button-primary {
   max-width: 50%;
 }
-
 .glass-container{
   max-width: 100%;
   overflow: hidden;
   margin: 20px;
 }
+.card-body{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: center;
+}
+.card-body p {
+  flex: 1 1 auto; /* Allow the elements to grow and shrink as needed */
+  margin: 0; /* Remove default margin for cleaner layout */
+}
+
 
 .row {
   margin-top: 0px;
