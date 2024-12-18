@@ -138,6 +138,7 @@ export default {
     handleClinicChange(newValue) {
       this.selectedClinicId = newValue;
       this.fetchDentistsByClinic();
+      this.fetchAppointmentsByClinic();
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
       localStorage.setItem('selectedDentistId', null);
 
@@ -178,17 +179,27 @@ export default {
         console.error("Error fetching dentists:", error);
       }
     },
+    async fetchAppointmentsByClinic(){
+      const response = await axios.get(`/appointments/clinic/${this.selectedClinicId}?onlyAvailable=true`);
+      const appointments = response.data;
+
+      for (const appointment of appointments) {
+        const dentistResponse = await this.$axios.get(`/dentists/${appointment.dentistId}`);
+        appointment.dentistName = `${dentistResponse.data.firstName} ${dentistResponse.data.lastName}`;
+      }
+      this.appointments = appointments;
+      if (this.appointments.length === 0) {
+        this.appointmentText = "No appointment(s) scheduled";
+      }
+    },
     async fetchAppointmentsByDentist() {
       try {
-        console.log(this.selectedDentistId, "dentist")
         const response = await axios.get(`/appointments/dentist/${this.selectedDentistId}?onlyAvailable=true`);
         const appointments = response.data;
 
         for (const appointment of appointments) {
           const dentistResponse = await this.$axios.get(`/dentists/${appointment.dentistId}`);
           appointment.dentistName = `${dentistResponse.data.firstName} ${dentistResponse.data.lastName}`;
-          appointment.clinicName = dentistResponse.data.clinicName;
-          appointment.address = `${dentistResponse.data.street} ${dentistResponse.data.houseNumber}, ${dentistResponse.data.zip} ${dentistResponse.data.city}`;
         }
         this.appointments = appointments;
         if (this.appointments.length === 0) {
