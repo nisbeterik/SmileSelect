@@ -8,6 +8,8 @@ import lombok.Setter;
 public class UserResponseDTO {
     private String email;
     private String role;
+    private String firstName;
+    private String lastName;
     private String token; // JWT token
     private String password; // Used internally, hidden in responses
     private Long id;
