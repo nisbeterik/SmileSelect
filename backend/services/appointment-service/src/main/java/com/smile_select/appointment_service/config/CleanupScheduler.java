@@ -11,21 +11,39 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @EnableScheduling
 public class CleanupScheduler {
 
-    private final JdbcTemplate fallbackJdbcTemplate;
+    private final JdbcTemplate partition0FallbackJdbcTemplate;
+    private final JdbcTemplate partition1FallbackJdbcTemplate;
+    private final JdbcTemplate partition2FallbackJdbcTemplate;
 
     @Autowired
-    public CleanupScheduler(@Qualifier("fallbackJdbcTemplate") JdbcTemplate fallbackJdbcTemplate) {
-        this.fallbackJdbcTemplate = fallbackJdbcTemplate;
+    public CleanupScheduler(
+            @Qualifier("partition0FallbackJdbcTemplate") JdbcTemplate p0FallbackJdbcTemplate,
+            @Qualifier("partition1FallbackJdbcTemplate") JdbcTemplate p1FallbackJdbcTemplate,
+            @Qualifier("partition2FallbackJdbcTemplate") JdbcTemplate p2FallbackJdbcTemplate
+    ) {
+        this.partition0FallbackJdbcTemplate = p0FallbackJdbcTemplate;
+        this.partition1FallbackJdbcTemplate = p1FallbackJdbcTemplate;
+        this.partition2FallbackJdbcTemplate = p2FallbackJdbcTemplate;
     }
 
-    // Runs every hour to clean up old appointments
+    // Runs every hour to clean up old appointments from all fallback DBs
     @Scheduled(cron = "0 0 * * * *")
     public void cleanupOldAppointments() {
-        // Delete appointments older than 96 hours from now
         String sql = "DELETE FROM appointment WHERE start_time < (NOW() - INTERVAL '96 hours')";
-        int deleted = fallbackJdbcTemplate.update(sql);
-        if (deleted > 0) {
-            System.out.println("Cleaned up " + deleted + " old appointments from redundant DB");
+
+        int deleted0 = partition0FallbackJdbcTemplate.update(sql);
+        if (deleted0 > 0) {
+            System.out.println("Cleaned up " + deleted0 + " old appointments from partition_0 fallback DB");
+        }
+
+        int deleted1 = partition1FallbackJdbcTemplate.update(sql);
+        if (deleted1 > 0) {
+            System.out.println("Cleaned up " + deleted1 + " old appointments from partition_1 fallback DB");
+        }
+
+        int deleted2 = partition2FallbackJdbcTemplate.update(sql);
+        if (deleted2 > 0) {
+            System.out.println("Cleaned up " + deleted2 + " old appointments from partition_2 fallback DB");
         }
     }
 }
