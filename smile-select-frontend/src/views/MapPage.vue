@@ -127,7 +127,7 @@ export default {
 .map-page {
   background-color: #206050;
   max-height: 600px;
-  overflow: hidden;
+  overflow: visible;
   margin: 20px;
   margin-bottom: 50px;
 }

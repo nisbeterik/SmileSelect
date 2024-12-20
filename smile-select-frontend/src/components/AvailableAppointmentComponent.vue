@@ -9,6 +9,7 @@
             <Multiselect
               class="clinic-field"
               :options="formattedClinics"
+              :append-to-body="true"
               @update:modelValue="handleClinicChange"
               id="clinic_select"
               v-model="selectedClinicId"
@@ -17,7 +18,9 @@
               searchable
             >
             </Multiselect>
-            <small v-if="inputErrors.clinicId" class="error">{{ inputErrors.clinicId }}</small>
+            <small v-if="inputErrors.clinicId" class="error">{{
+              inputErrors.clinicId
+            }}</small>
             <br /><br />
           </div>
           <div v-if="dentists.length" class="form-group">
@@ -25,6 +28,7 @@
             <Multiselect
               class="clinic-field"
               :options="formattedDentists"
+              :append-to-body="true"
               @update:modelValue="handleDentistChange"
               id="dentist_select"
               v-model="selectedDentistId"
@@ -33,29 +37,59 @@
               searchable
             >
             </Multiselect>
-            <small v-if="inputErrors.dentistId" class="error">{{ inputErrors.dentistId }}</small>
+            <small v-if="inputErrors.dentistId" class="error">{{
+              inputErrors.dentistId
+            }}</small>
             <br /><br />
           </div>
-          <p v-if="selectedDentist">Selected Dentist: {{ selectedDentist.firstName }} {{ selectedDentist.lastName }}</p>
+          <p v-if="selectedDentist">
+            Selected Dentist: {{ selectedDentist.firstName }}
+            {{ selectedDentist.lastName }}
+          </p>
         </div>
+
+        <Datepicker
+          v-model="selectedDates"
+          :multi-dates="{ limit: 5 }"
+          :enable-time-picker="false"
+          :append-to-body="true"
+          :disabled-dates="disableDatesBeforeToday"
+          @update:modelValue="handleDateSelection"
+          class="custom-datepicker"
+        />
+
 
         <p :class="infoTextClass">{{ infoText }}</p>
 
+
+
         <div class="scroll-wrapper">
           <div class="appointments-scroll-container">
-            <div v-for="appointment in appointments" :key="appointment.id" class="glass-card mb-3">
+            <div
+              v-for="appointment in appointments"
+              :key="appointment.id"
+              class="glass-card mb-3"
+            >
               <div class="card-body">
-                <p><strong>Time:</strong> {{ formatDate(appointment.startTime) }}</p>
-                <p><strong>Duration:</strong> {{ formatDuration(appointment.startTime, appointment.endTime) }}</p>
+                <p>
+                  <strong>Time:</strong> {{ formatDate(appointment.startTime) }}
+                </p>
+                <p>
+                  <strong>Duration:</strong>
+                  {{
+                    formatDuration(appointment.startTime, appointment.endTime)
+                  }}
+                </p>
                 <p><strong>Dentist:</strong> {{ appointment.dentistName }}</p>
               </div>
-              <button @click="showBookModal(appointment.id)" class="button-primary"
-                      :disabled="isPast(appointment.startTime)">
+              <button
+                @click="showBookModal(appointment.id)"
+                class="button-primary"
+                :disabled="isPast(appointment.startTime)"
+              >
                 Book Now
               </button>
-              <div>
-
-              </div>
+              <div></div>
             </div>
           </div>
         </div>
@@ -64,7 +98,9 @@
             <h2>Confirm Booking</h2>
             <p>Are you sure you want to book this appointment?</p>
             <div class="modal-actions">
-              <button @click="confirmBooking" class="btn-confirm">Confirm</button>
+              <button @click="confirmBooking" class="btn-confirm">
+                Confirm
+              </button>
               <button @click="closeModal" class="btn-cancel">Cancel</button>
             </div>
           </div>
@@ -80,11 +116,13 @@ import { format, differenceInMinutes, parseISO, isBefore } from 'date-fns';
 import '/src/CSS/global.css';
 import axios from '@/axios';
 import Multiselect from '@vueform/multiselect';
+import Datepicker from '@vuepic/vue-datepicker';
 
 export default {
   name: 'AvailableAppointmentComponent',
   components: {
-    Multiselect
+    Datepicker,
+    Multiselect,
   },
   data() {
     const authStore = useAuthStore();
@@ -92,10 +130,10 @@ export default {
       token: authStore.token,
       patientId: authStore.id,
       appointments: [],
-      appointmentText: "Your upcoming appointment(s)",
+      appointmentText: 'Your upcoming appointment(s)',
       showPastAppointments: false,
-      infoText: "",
-      infoTextClass: "",
+      infoText: '',
+      infoTextClass: '',
       clinics: [],
       dentists: [],
       selectedClinicId: null,
@@ -107,18 +145,18 @@ export default {
       selectedEventId: null,
       email: '',
       errorMessage: '',
-      inputErrors: {}
+      inputErrors: {},
     };
   },
   computed: {
     formattedClinics() {
-      return this.clinics.map(clinic => ({
+      return this.clinics.map((clinic) => ({
         value: clinic.id,
         label: `${clinic.name}, ${clinic.street}, ${clinic.houseNumber}, ${clinic.city}`,
       }));
     },
     formattedDentists() {
-      return this.dentists.map(dentist => ({
+      return this.dentists.map((dentist) => ({
         value: dentist.id,
         label: `${dentist.firstName} ${dentist.lastName}`,
       }));
@@ -127,7 +165,9 @@ export default {
       return this.clinics.find((clinic) => clinic.id === this.selectedClinicId);
     },
     selectedDentist() {
-      return this.dentists.find((dentist) => dentist.id === this.selectedDentistId);
+      return this.dentists.find(
+        (dentist) => dentist.id === this.selectedDentistId
+      );
     },
   },
   mounted() {
@@ -141,81 +181,86 @@ export default {
       this.fetchAppointmentsByClinic();
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
       localStorage.setItem('selectedDentistId', null);
-
     },
     handleDentistChange(newValue) {
       this.selectedDentistId = newValue;
       this.fetchAppointmentsByDentist();
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
     },
-    loadSelections(){
-      const savedClinicId = localStorage.getItem('selectedClinicId')
+    loadSelections() {
+      const savedClinicId = localStorage.getItem('selectedClinicId');
       if (savedClinicId) {
         this.selectedClinicId = savedClinicId;
-        this.fetchDentistsByClinic()
-        const savedDentistId = localStorage.getItem('selectedDentistId' )
+        this.fetchDentistsByClinic();
+        const savedDentistId = localStorage.getItem('selectedDentistId');
         if (savedDentistId) {
           this.selectedDentistId = savedDentistId;
-          this.fetchAppointmentsByDentist()
-
-
+          this.fetchAppointmentsByDentist();
         }
       }
     },
     async fetchClinics() {
       try {
-        const response = await axios.get("/dentists/clinics");
+        const response = await axios.get('/dentists/clinics');
         this.clinics = response.data;
       } catch (error) {
-        console.error("Error fetching clinics:", error);
+        console.error('Error fetching clinics:', error);
       }
     },
     async fetchDentistsByClinic() {
-      console.log(this.selectedClinicId, "clinic")
+      console.log(this.selectedClinicId, 'clinic');
       try {
-        const response = await axios.get(`/dentists?clinicId=${this.selectedClinicId}`);
+        const response = await axios.get(
+          `/dentists?clinicId=${this.selectedClinicId}`
+        );
         this.dentists = response.data;
       } catch (error) {
-        console.error("Error fetching dentists:", error);
+        console.error('Error fetching dentists:', error);
       }
     },
-    async fetchAppointmentsByClinic(){
-      const response = await axios.get(`/appointments/clinic/${this.selectedClinicId}?onlyAvailable=true`);
+    async fetchAppointmentsByClinic() {
+      const response = await axios.get(
+        `/appointments/clinic/${this.selectedClinicId}?onlyAvailable=true`
+      );
       const appointments = response.data;
 
       for (const appointment of appointments) {
-        const dentistResponse = await this.$axios.get(`/dentists/${appointment.dentistId}`);
+        const dentistResponse = await this.$axios.get(
+          `/dentists/${appointment.dentistId}`
+        );
         appointment.dentistName = `${dentistResponse.data.firstName} ${dentistResponse.data.lastName}`;
       }
       this.appointments = appointments;
       if (this.appointments.length === 0) {
-        this.appointmentText = "No appointment(s) scheduled";
+        this.appointmentText = 'No appointment(s) scheduled';
       }
     },
     async fetchAppointmentsByDentist() {
       try {
-        const response = await axios.get(`/appointments/dentist/${this.selectedDentistId}?onlyAvailable=true`);
+        const response = await axios.get(
+          `/appointments/dentist/${this.selectedDentistId}?onlyAvailable=true`
+        );
         const appointments = response.data;
 
         for (const appointment of appointments) {
-          const dentistResponse = await this.$axios.get(`/dentists/${appointment.dentistId}`);
+          const dentistResponse = await this.$axios.get(
+            `/dentists/${appointment.dentistId}`
+          );
           appointment.dentistName = `${dentistResponse.data.firstName} ${dentistResponse.data.lastName}`;
         }
         this.appointments = appointments;
         if (this.appointments.length === 0) {
-          this.appointmentText = "No appointment(s) scheduled";
+          this.appointmentText = 'No appointment(s) scheduled';
         }
-
       } catch (error) {
         console.error('Error fetching appointments:', error);
-        this.appointmentText = "No appointment(s) scheduled";
-        this.infoText = "Error loading appointments.";
-        this.infoTextClass = "error-text";
+        this.appointmentText = 'No appointment(s) scheduled';
+        this.infoText = 'Error loading appointments.';
+        this.infoTextClass = 'error-text';
       }
     },
     async confirmBooking() {
       try {
-
         const patientId = this.patientId;
         const appointmentData = {
           id: this.selectedEventId,
@@ -225,15 +270,14 @@ export default {
         this.isModalVisible = false;
         this.isBookingConfirmed = true;
 
-
-        console.log("Booking confirmed successfully!");
+        console.log('Booking confirmed successfully!');
       } catch (error) {
-        console.error("Error confirming booking:", error);
+        console.error('Error confirming booking:', error);
         this.isModalVisible = false;
         this.bookingFailed = true;
         if (error.response) {
-          console.error("Error Response Status:", error.response.status);
-          console.error("Error Response Data:", error.response.data);
+          console.error('Error Response Status:', error.response.status);
+          console.error('Error Response Data:', error.response.data);
         }
       }
     },
@@ -270,36 +314,11 @@ export default {
     isPast(dateString) {
       return isBefore(parseISO(dateString), new Date());
     },
-  }
+  },
 };
 </script>
 
 <style scoped>
-::v-deep(.multiselect-option) {
-  background-color: rgba(255, 255, 255, 0.5) !important; /* Set a semi-transparent white background */
-  color: #333 !important;
-  padding: 5px 10px; /* Add some spacing */
-  border-radius: 4px; /* Optional: Add rounded corners */
-  cursor: pointer; /* Make it clear the options are clickable */
-  margin: 3px;
-}
-::v-deep(.multiselect-options) {
-  max-height: 600px; /* Adjust this value to increase the height */
-}
-
-/* Hover effect for options */
-::v-deep(.multiselect-option:hover) {
-  background-color: rgba(200, 200, 200, 0.8) !important; /* Slightly darker on hover */
-}
-
-/* Selected option styling */
-::v-deep(.multiselect-option-selected) {
-  background-color: #206050 !important; /* Green for selected */
-  color: white !important; /* White text for contrast */
-}
-::v-deep(.multiselect-fake-input) {
-  display: none; /* Hides the fake input */
-}
 .clinic-field {
   border: 0px;
   border-radius: 8px;
@@ -313,7 +332,7 @@ export default {
 .form-group {
   width: 100%;
 }
-.button-primary{
+.button-primary {
   width: auto;
 }
 
@@ -343,25 +362,19 @@ export default {
   max-height: 620px;
   overflow-y: auto;
   padding-right: 10px;
-  -webkit-mask-image: -webkit-linear-gradient(to bottom,
-  rgba(0, 0, 0, 0) 0%,
-    /* Fade at the top */
-  rgba(0, 0, 0, 1) 2%,
-    /* Fully opaque from 10% to 90% */
-  rgba(0, 0, 0, 1) 90%,
-    /* Fully opaque */
-  rgba(0, 0, 0, 0) 100%
-    /* Fade at the bottom */
+  -webkit-mask-image: -webkit-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    /* Fade at the top */ rgba(0, 0, 0, 1) 2%,
+    /* Fully opaque from 10% to 90% */ rgba(0, 0, 0, 1) 90%,
+    /* Fully opaque */ rgba(0, 0, 0, 0) 100% /* Fade at the bottom */
   );
-  mask-image: linear-gradient(to bottom,
-  rgba(0, 0, 0, 0) 0%,
-    /* Fade at the top */
-  rgba(0, 0, 0, 1) 2%,
-    /* Fully opaque from 10% to 90% */
-  rgba(0, 0, 0, 1) 90%,
-    /* Fully opaque */
-  rgba(0, 0, 0, 0) 100%
-    /* Fade at the bottom */
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    /* Fade at the top */ rgba(0, 0, 0, 1) 2%,
+    /* Fully opaque from 10% to 90% */ rgba(0, 0, 0, 1) 90%,
+    /* Fully opaque */ rgba(0, 0, 0, 0) 100% /* Fade at the bottom */
   );
   mask-size: 10% 10%;
   -webkit-mask-size: 100% 100%;
@@ -372,12 +385,13 @@ export default {
 .button-primary {
   max-width: 50%;
 }
-.glass-container{
+.glass-container {
   max-width: 100%;
-  overflow: hidden;
   margin: 20px;
+  overflow: visible;
+  z-index: auto;
 }
-.card-body{
+.card-body {
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
@@ -388,9 +402,25 @@ export default {
   margin: 0; /* Remove default margin for cleaner layout */
 }
 
-
 .row {
   margin-top: 0px;
+}
+.custom-datepicker input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-datepicker {
+  display: block;
+  margin: 10px 0;
+  width: 100%;
+}
+
+
+.custom-datepicker.datepicker {
+  width: 100%;
+  min-width: 200px;
+
 }
 
 .glass-card {

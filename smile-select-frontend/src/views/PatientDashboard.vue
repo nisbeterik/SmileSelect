@@ -16,7 +16,13 @@
         <PatientAppointmentsComponent />
       </div>
     </div>
-
+    <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
+      <AvailableAppointmentComponent
+        :clinics="clinics"
+        @updateClinics="updateClinics"
+        @clinicLocation="handleClinicLocation"
+      />
+    </div>
     <!-- Bottom row with AvailabilityPage -->
     <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
       <AvailableAppointmentsComponent
@@ -25,13 +31,7 @@
           @clinicLocation="handleClinicLocation"
       />
     </div>
-    <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
-      <AvailableAppointmentComponent
-        :clinics="clinics"
-        @updateClinics="updateClinics"
-        @clinicLocation="handleClinicLocation"
-      />
-    </div>
+
 
     <!-- Map Page (with clinic selection) -->
     <div
@@ -133,6 +133,7 @@ export default {
 .availability-page, .map-page {
   margin: 20px;
   max-width: 100%; /* Allow full width on small screens */
+  z-index: 1;
 }
 .button-primary {
   padding: 10px 20px;
