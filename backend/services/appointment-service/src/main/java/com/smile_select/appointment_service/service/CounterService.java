@@ -43,4 +43,13 @@ public class CounterService {
     public int getCurrentCounter() {
         return jdbcTemplate.queryForObject("SELECT counter FROM partition_counter LIMIT 1", Integer.class);
     }
+
+    @Transactional
+    public long getNextGlobalAppointmentId() {
+
+        String sql = "SELECT nextval('global_appointment_seq')";
+        Long nextId = jdbcTemplate.queryForObject(sql, Long.class);
+        return nextId;
+    }
+
 }

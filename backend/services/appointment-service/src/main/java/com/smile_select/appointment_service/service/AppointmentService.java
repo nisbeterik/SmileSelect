@@ -116,23 +116,30 @@ public class AppointmentService {
     // 4. Sets the generated ID on the appointment
     // 5. Logs the partition and DB
     public Appointment save(Appointment appointment) {
+
+        // Get global unique id from counterDB sequence
+        long globalId = counterService.getNextGlobalAppointmentId();
+        appointment.setId(globalId);
+
         // Determine partition using counter service
         int partition = counterService.getNextPartition();
         Region region = getRegionFromPartition(partition);
         boolean primaryHealthy = isPrimaryHealthy(region);
         JdbcTemplate template = getTemplate(region, primaryHealthy);
 
-        String sql = "INSERT INTO appointment (patient_id, dentist_id, clinic_id, start_time, end_time) " +
-                "VALUES (?, ?, ?, ?, ?) RETURNING id";
-        Long id = template.queryForObject(sql, Long.class,
+        // Insert appointment with global id
+        String sql = "INSERT INTO appointment (id, patient_id, dentist_id, clinic_id, start_time, end_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+        template.update(sql,
+                appointment.getId(),
                 appointment.getPatientId(),
                 appointment.getDentistId(),
                 appointment.getClinicId(),
                 appointment.getStartTime(),
-                appointment.getEndTime());
-        appointment.setId(id);
+                appointment.getEndTime()
+        );
 
-        System.out.println("Assigned appointment ID " + id + " to partition " + partition +
+        System.out.println("Assigned appointment ID " + globalId + " to partition " + partition +
                 " (" + region + ", " + (primaryHealthy ? "primary" : "fallback") + ")");
         return appointment;
     }

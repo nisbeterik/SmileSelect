@@ -1,6 +1,6 @@
 -- Create the `appointment` table if it does not exist
 CREATE TABLE IF NOT EXISTS appointment (
-       id SERIAL PRIMARY KEY,
+       id BIGINT PRIMARY KEY,
        patient_id BIGINT,
        dentist_id BIGINT NOT NULL,
        clinic_id BIGINT NOT NULL,
