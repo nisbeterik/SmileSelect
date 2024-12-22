@@ -125,6 +125,9 @@ public class AppointmentService {
         int partition = counterService.getNextPartition();
         Region region = getRegionFromPartition(partition);
         boolean primaryHealthy = isPrimaryHealthy(region);
+        if (!primaryHealthy) {
+            System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+        }
         JdbcTemplate template = getTemplate(region, primaryHealthy);
 
         // Insert appointment with global id
@@ -153,6 +156,9 @@ public class AppointmentService {
         // Search all partitions since we only have the id
         for (Region region : Region.values()) {
             boolean primaryHealthy = isPrimaryHealthy(region);
+            if (!primaryHealthy) {
+                System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+            }
             JdbcTemplate template = getTemplate(region, primaryHealthy);
             List<Appointment> results = template.query("SELECT * FROM appointment WHERE id = ?", (rs, rowNum) -> mapRowToAppointment(rs), id);
             if (!results.isEmpty()) {
@@ -172,6 +178,9 @@ public class AppointmentService {
             // Without a known partitioning key, we just delete from the found partition
             for (Region region : Region.values()) {
                 boolean primaryHealthy = isPrimaryHealthy(region);
+                if (!primaryHealthy) {
+                    System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+                }
                 JdbcTemplate template = getTemplate(region, primaryHealthy);
                 int deleted = template.update("DELETE FROM appointment WHERE id = ?", id);
                 if (deleted > 0) {
@@ -188,6 +197,9 @@ public class AppointmentService {
         List<Appointment> all = new ArrayList<>();
         for (Region region : Region.values()) {
             boolean primaryHealthy = isPrimaryHealthy(region);
+            if (!primaryHealthy) {
+                System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+            }
             JdbcTemplate template = getTemplate(region, primaryHealthy);
             all.addAll(template.query("SELECT * FROM appointment", (rs, rowNum) -> mapRowToAppointment(rs)));
         }
@@ -201,6 +213,9 @@ public class AppointmentService {
         List<Appointment> all = new ArrayList<>();
         for (Region region : Region.values()) {
             boolean primaryHealthy = isPrimaryHealthy(region);
+            if (!primaryHealthy) {
+                System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+            }
             JdbcTemplate template = getTemplate(region, primaryHealthy);
             all.addAll(template.query(sql, (rs, rowNum) -> mapRowToAppointment(rs), params));
         }
