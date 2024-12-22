@@ -38,10 +38,11 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
+        // Validate required fields
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
-
+        // Check date validity
         if (appointmentService.checkIfDateInvalid(appointment.getStartTime())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
         }
