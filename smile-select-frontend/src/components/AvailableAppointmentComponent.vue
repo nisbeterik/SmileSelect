@@ -42,15 +42,10 @@
             }}</small>
             <br /><br />
           </div>
-          <p v-if="selectedDentist">
-            Selected Dentist: {{ selectedDentist.firstName }}
-            {{ selectedDentist.lastName }}
-          </p>
         </div>
 
         <Datepicker
-          v-model="selectedDates"
-          :multi-dates="{ limit: 5 }"
+          v-model="selectedDate"
           :enable-time-picker="false"
           :append-to-body="true"
           :disabled-dates="disableDatesBeforeToday"
@@ -149,6 +144,7 @@ export default {
       email: '',
       errorMessage: '',
       inputErrors: {},
+      selectedDate: null,
     };
   },
   computed: {
@@ -191,6 +187,14 @@ export default {
       this.selectedDentistId = newValue;
       this.fetchAppointmentsByDentist();
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
+    },
+    handleDateSelection(){
+
+    },
+    disableDatesBeforeToday(date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date < today;
     },
     loadSelections() {
       const savedClinicId = localStorage.getItem('selectedClinicId');
