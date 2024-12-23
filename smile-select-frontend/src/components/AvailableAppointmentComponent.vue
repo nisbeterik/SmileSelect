@@ -64,6 +64,9 @@
 
 
         <div class="scroll-wrapper">
+          <div v-if="!appointments.length" class="no-appointment align-content-center">
+            <h1>Please select a clinic</h1>
+          </div>
           <div class="appointments-scroll-container">
             <div
               v-for="appointment in appointments"
@@ -422,7 +425,10 @@ export default {
   min-width: 200px;
 
 }
-
+.no-appointment{
+  min-height: 300px;
+  text-align: center;
+}
 .glass-card {
   margin-right: 10px;
   margin-left: 10px;
