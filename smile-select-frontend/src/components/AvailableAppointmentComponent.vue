@@ -48,6 +48,7 @@
           v-model="selectedDate"
           :enable-time-picker="false"
           :append-to-body="true"
+          :auto-apply="true"
           :disabled-dates="disableDatesBeforeToday"
           @update:modelValue="handleDateSelection"
           class="custom-datepicker"
@@ -175,7 +176,9 @@ export default {
   },
   methods: {
     handleClinicChange(newValue) {
-      this.selectedClinicId = newValue;
+      if(newValue) {
+        this.selectedClinicId = newValue;
+      }
       this.appointments = [];
       this.selectedDentistId = null;
       this.fetchDentistsByClinic();
@@ -184,7 +187,9 @@ export default {
       localStorage.setItem('selectedDentistId', null);
     },
     handleDentistChange(newValue) {
-      this.selectedDentistId = newValue;
+      if(newValue) {
+        this.selectedDentistId = newValue;
+      }
       this.fetchAppointmentsByDentist();
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
     },
