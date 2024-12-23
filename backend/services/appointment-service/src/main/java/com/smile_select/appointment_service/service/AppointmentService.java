@@ -99,14 +99,14 @@ public class AppointmentService {
 
     // Maps a database row to an Appointment
     private Appointment mapRowToAppointment(java.sql.ResultSet rs) throws java.sql.SQLException {
-        Appointment a = new Appointment();
-        a.setId(rs.getLong("id"));
-        a.setPatientId((Long) rs.getObject("patient_id"));
-        a.setDentistId(rs.getLong("dentist_id"));
-        a.setClinicId(rs.getLong("clinic_id"));
-        a.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
-        a.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
-        return a;
+        Appointment newAppointment = new Appointment();
+        newAppointment.setId(rs.getLong("id"));
+        newAppointment.setPatientId((Long) rs.getObject("patient_id"));
+        newAppointment.setDentistId(rs.getLong("dentist_id"));
+        newAppointment.setClinicId(rs.getLong("clinic_id"));
+        newAppointment.setStartTime(rs.getTimestamp("start_time").toLocalDateTime());
+        newAppointment.setEndTime(rs.getTimestamp("end_time").toLocalDateTime());
+        return newAppointment;
     }
 
     // Saves a new appointment into the system.
@@ -250,7 +250,12 @@ public class AppointmentService {
 
     // Retrieves all available appointments by dentist ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
-        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL", dentistId);
+        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL ORDER BY start_time ASC", dentistId);
+    }
+
+    // Retrieve all available appointments by clinic ID where patient ID is null
+    public List<Appointment> getAvailableAppointmentsByClinicId(Long clinicId) {
+        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id is NULL ORDER BY start_time ASC", clinicId);
     }
 
     // Method for publishing an MQTT message containting a stringified appointment JSON-object
