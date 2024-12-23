@@ -180,6 +180,8 @@ export default {
   methods: {
     handleClinicChange(newValue) {
       this.selectedClinicId = newValue;
+      this.appointments = [];
+      this.selectedDentistId = null;
       this.fetchDentistsByClinic();
       this.fetchAppointmentsByClinic();
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
@@ -213,6 +215,7 @@ export default {
     async fetchDentistsByClinic() {
       console.log(this.selectedClinicId, 'clinic');
       try {
+        this.dentists = [];
         const response = await axios.get(
           `/dentists?clinicId=${this.selectedClinicId}`
         );
@@ -417,6 +420,9 @@ export default {
   display: block;
   margin: 10px 0;
   width: 100%;
+  --dp-primary-color: #206050;
+  z-index: 500;
+  --dp-menu-min-width: 500px;
 }
 
 
