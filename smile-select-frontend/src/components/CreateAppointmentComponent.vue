@@ -566,6 +566,48 @@ export default {
       }
     },
 
+    async addPatientToAppointment() {
+      try{
+        await this.findPatientByEmail();
+        if (this.patientId) {
+          const response = await this.$axios.patch(`/appointments/booked-by-dentist`,
+            {
+              "id": this.selectedEvent.id,
+              "patientId": this.patientId
+            })
+          if (response.status === 200) {
+            this.selectedEvent.patientId = this.patientId;
+          }
+        }
+      } catch(error){
+        console.error("Error finding patient email!", error);
+      }
+    },
+
+    async removePatientFromAppointment() {
+      const appointmentId = this.selectedEvent.id;
+      if (!this.token) {
+        console.error("Authorization token is missing");
+        return;
+      }
+      const headers = {
+        Authorization: `Bearer ${this.token}`,
+      };
+      if (this.selectedEvent.patientId) {
+        try {
+          const response = await this.$axios.patch(
+            `/appointments/${appointmentId}/cancel`,
+            { headers }
+          );
+          if (response.status === 200) {
+            this.selectedEvent.patientId = null;
+          }
+        } catch (error) {
+          console.error("Error removing patient from appointment:", error.response?.data || error.message);
+        }
+      }
+    },
+
   },
 }
 </script>
