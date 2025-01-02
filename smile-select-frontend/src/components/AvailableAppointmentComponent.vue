@@ -61,7 +61,8 @@
 
         <div class="scroll-wrapper">
           <div v-if="!appointments.length" class="no-appointment align-content-center">
-            <h1>Please select a clinic</h1>
+            <h2 v-if="selectedClinicId">No appointments are currently available. please check back at a later time!</h2>
+            <h1 v-if="!selectedClinicId">Please select a clinic</h1>
           </div>
           <div class="appointments-scroll-container">
             <div
@@ -234,20 +235,28 @@ export default {
       }
     },
     async fetchAppointmentsByClinic() {
-      const response = await axios.get(
-        `/appointments/clinic/${this.selectedClinicId}?onlyAvailable=true`
-      );
-      const appointments = response.data;
-
-      for (const appointment of appointments) {
-        const dentistResponse = await this.$axios.get(
-          `/dentists/${appointment.dentistId}`
+      try {
+        const response = await axios.get(
+          `/appointments/clinic/${this.selectedClinicId}?onlyAvailable=true`
         );
-        appointment.dentistName = `${dentistResponse.data.firstName} ${dentistResponse.data.lastName}`;
-      }
-      this.appointments = appointments;
-      if (this.appointments.length === 0) {
+        const appointments = response.data;
+
+        for (const appointment of appointments) {
+          const dentistResponse = await this.$axios.get(
+            `/dentists/${appointment.dentistId}`
+          );
+          appointment.dentistName = `${dentistResponse.data.firstName} ${dentistResponse.data.lastName}`;
+        }
+        this.appointments = appointments;
+        if (this.appointments.length === 0) {
+          this.appointmentText = 'No appointment(s) scheduled';
+        }
+        this.infoText = "";
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
         this.appointmentText = 'No appointment(s) scheduled';
+        this.infoText = 'Error loading appointments.';
+        this.infoTextClass = 'error-text';
       }
     },
     async fetchAppointmentsByDentist() {
@@ -267,6 +276,7 @@ export default {
         if (this.appointments.length === 0) {
           this.appointmentText = 'No appointment(s) scheduled';
         }
+        this.infoText = "";
       } catch (error) {
         console.error('Error fetching appointments:', error);
         this.appointmentText = 'No appointment(s) scheduled';
