@@ -112,6 +112,14 @@ A dedicated service managing user authentication and security.
 
 </details>
 
+<details><summary>Development View</summary>
+
+![Development-View](assets/diagrams/development-view-diagram.png)
+
+*This Development View Diagram outlines a high-level structure of any given microservice. It shows the general layered architecture of the system's microservices with a controller-service-repository pattern.*
+
+</details>
+
 ## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
 
 * **Erik Nisbet** (@eriknis)
