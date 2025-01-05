@@ -130,6 +130,14 @@ public class AppointmentController {
 
     }
 
+    @GetMapping("/clinic/{clinicId}/available-dates/")
+    public ResponseEntity<List<LocalDate>> getAvailableAppointmentDates(
+            @PathVariable("clinicId") Long clinicId) {
+
+        List<LocalDate> availableDates = appointmentService.getAvailableAppointmentDatesForClinic(clinicId);
+        return ResponseEntity.ok(availableDates);
+    }
+
     @GetMapping(value = "/patient/{patientId}")
     public ResponseEntity<?> getAppointmentsByPatientId(@PathVariable("patientId") Long patientId) {
         List<Appointment> appointments = appointmentService.getAppointmentsByPatientId(patientId);

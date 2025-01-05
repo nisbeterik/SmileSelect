@@ -175,6 +175,18 @@ public class AppointmentService {
         }
     }
 
+    public List<LocalDate> getAvailableAppointmentDatesForClinic(Long clinicId) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findAvailableDatesForClinic(clinicId);
+        } else {
+            System.out.println("Primary DB down. Fetching available dates from fallback DB.");
+            return fallbackJdbcTemplate.query(
+                    "SELECT DISTINCT DATE(a.startTime) FROM Appointment a WHERE a.patientId IS NULL AND  a.startTime > CURRENT_TIMESTAMP AND a.clinicId = :clinicId",
+                    (rs, rowNum) -> rs.getDate("available_date").toLocalDate()
+            );
+        }
+    }
+
     // Method for publishing an MQTT message containting a stringified appointment JSON-object
     public void publishAppointmentMessage(String topic, Appointment appointment) {
         try {
