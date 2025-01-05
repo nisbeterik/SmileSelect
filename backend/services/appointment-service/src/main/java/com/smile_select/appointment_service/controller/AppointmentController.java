@@ -169,7 +169,7 @@ public class AppointmentController {
 
             if (appointmentWithPatient.getPatientId() != null) {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
-                appointmentService.save(appointment);
+                appointmentService.updateExistingAppointment(appointment);
 
                 // Publish event for email notification
                 // when booking made via a dentist
@@ -199,7 +199,7 @@ public class AppointmentController {
 
             if (appointmentWithPatient.getPatientId() != null) {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
-                appointmentService.save(appointment);
+                appointmentService.updateExistingAppointment(appointment);
 
                 // Publish event for email notification
                 // when patient booked via availability page
