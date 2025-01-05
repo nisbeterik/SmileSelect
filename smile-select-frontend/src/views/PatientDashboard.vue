@@ -102,6 +102,11 @@ export default {
 </script>
 <style scoped>
 /*Div*/
+
+.header-image {
+  height: 100px;
+  border: none;
+}
 .patient-dashboard {
   display: flex;
   flex-direction: column;

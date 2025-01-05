@@ -183,6 +183,7 @@ export default {
 
 .header-image {
   height: 100px;
+  border: none;
 }
 
 .dentist-dashboard {
