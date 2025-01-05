@@ -263,7 +263,7 @@ public class AppointmentController {
             }
 
             appointment.setPatientId(null);
-            appointmentService.save(appointment);
+            appointmentService.cancelExistingAppointment(appointment);
 
             return ResponseEntity.ok(appointment);
         } else {

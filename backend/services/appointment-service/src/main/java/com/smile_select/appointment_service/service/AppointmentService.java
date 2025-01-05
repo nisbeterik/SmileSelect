@@ -147,6 +147,7 @@ public class AppointmentService {
         return appointment;
     }
 
+    // Update existing appointment and ADD Patient ID without creating new booking
     public Appointment updateExistingAppointment(Appointment appointment) {
 
         Long appointmentId = appointment.getId();
@@ -210,6 +211,69 @@ public class AppointmentService {
 
         return existingAppointment;
     }
+
+    // Update existing appointment and REMOVE patient ID without creating new appointment
+    public Appointment cancelExistingAppointment(Appointment appointment) {
+        // Extract the ID from the passed Appointment object
+        Long appointmentId = appointment.getId();
+        if (appointmentId == null) {
+            throw new IllegalArgumentException("Appointment ID must not be null when cancelling.");
+        }
+
+        // Locate the existing appointment across all partitions
+        Region foundRegion = null;
+        JdbcTemplate foundTemplate = null;
+        Appointment existingAppointment = null;
+
+        // Try each partition to find the row with this ID
+        for (Region region : Region.values()) {
+            boolean primaryHealthy = isPrimaryHealthy(region);
+            JdbcTemplate template = getTemplate(region, primaryHealthy);
+
+            List<Appointment> results = template.query(
+                    "SELECT * FROM appointment WHERE id = ?",
+                    (rs, rowNum) -> mapRowToAppointment(rs),
+                    appointmentId
+            );
+
+            if (!results.isEmpty()) {
+                foundRegion = region;
+                foundTemplate = template;
+                existingAppointment = results.get(0);
+                break;
+            }
+        }
+
+        // If not found in any partition, throw an error
+        if (foundRegion == null || foundTemplate == null || existingAppointment == null) {
+            throw new IllegalStateException(
+                    "No existing appointment found with ID " + appointmentId + " in any partition."
+            );
+        }
+
+        // Update that row to set patient_id = NULL
+        String updateSql = "UPDATE appointment SET patient_id = NULL WHERE id = ?";
+        int rowsUpdated = foundTemplate.update(updateSql, appointmentId);
+
+        if (rowsUpdated == 0) {
+            throw new IllegalStateException(
+                    "Failed to update appointment with ID " + appointmentId +
+                            " (it may have been removed or changed)."
+            );
+        }
+
+        existingAppointment.setPatientId(null);
+
+        System.out.println(
+                "Cancelled existing appointment ID " + appointmentId +
+                        " in partition " + foundRegion + " by setting patientId = NULL."
+        );
+
+        // Return the updated object
+        return existingAppointment;
+    }
+
+
 
 
     // Retrieves an appointment by its id
