@@ -24,12 +24,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE a.dentistId = :dentistId AND a.patientId IS NULL AND a.startTime > CURRENT_TIMESTAMP ORDER BY a.startTime ASC")
     public List<Appointment> findAvailableAppointmentsByDentistId(@Param("dentistId") Long dentistId);
 
-    @Query("SELECT a FROM Appointment a WHERE a.dentistId = :dentistId AND DATE(a.startTime) = :date")
+    @Query("SELECT a FROM Appointment a WHERE a.dentistId = :dentistId AND DATE(a.startTime) = :date ORDER BY a.startTime ASC")
     public List<Appointment> findAppointmentsByDentistIdAndDate(
             @Param("dentistId") Long dentistId,
             @Param("date") LocalDate date);
 
-    @Query("SELECT a FROM Appointment a WHERE a.patientId IS NULL AND a.dentistId = :dentistId AND DATE(a.startTime) = :date")
+    @Query("SELECT a FROM Appointment a WHERE a.patientId IS NULL AND a.dentistId = :dentistId AND DATE(a.startTime) = :date ORDER BY a.startTime ASC")
     public List<Appointment> findAvailableAppointmentsByDentistIdAndDate(
             @Param("dentistId") Long dentistId,
             @Param("date") LocalDate date);
@@ -37,12 +37,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId IS NULL AND a.startTime > CURRENT_TIMESTAMP ORDER BY a.startTime ASC")
     public List<Appointment> findAvailableAppointmentsByClinicId(@Param("clinicId") Long clinicId);
 
-    @Query("SELECT a FROM Appointment a WHERE a.clinicId = :clinicId AND DATE(a.startTime) = :date")
+    @Query("SELECT a FROM Appointment a WHERE a.clinicId = :clinicId AND DATE(a.startTime) = :date ORDER BY a.startTime ASC")
     public List<Appointment> findAppointmentsByClinicIdAndDate(
             @Param("clinicId") Long clinicId,
             @Param("date") LocalDate date);
 
-    @Query("SELECT a FROM Appointment a WHERE a.patientId IS NULL AND a.clinicId = :clinicId AND DATE(a.startTime) = :date")
+    @Query("SELECT a FROM Appointment a WHERE a.patientId IS NULL AND a.clinicId = :clinicId AND DATE(a.startTime) = :date ORDER BY a.startTime ASC")
     public List<Appointment> findAvailableAppointmentsByClinicIdAndDate(
             @Param("clinicId") Long clinicId,
             @Param("date") LocalDate date);
