@@ -117,6 +117,7 @@ export default {
     return {
       token: authStore.token,
       dentistId: authStore.id,
+      clinicId: authStore.clinicId,
       multiSlotMode: false,
       selectedSlots: [],
       selectedEventId: null,
@@ -185,9 +186,9 @@ export default {
     },
     adjustTime(type, minutes) {
       const timeString =
-          type === 'start'
-              ? this.selectedSlot.startTime
-              : this.selectedSlot.endTime;
+        type === 'start'
+          ? this.selectedSlot.startTime
+          : this.selectedSlot.endTime;
       const [hours, mins] = timeString.split(':').map(Number);
 
       const date = new Date();
@@ -204,12 +205,12 @@ export default {
           if (newTime >= this.selectedSlot.endTime) {
             date.setMinutes(date.getMinutes() + 30);
             this.selectedSlot.endTime = `${date
-                .getHours()
-                .toString()
-                .padStart(2, '0')}:${date
-                .getMinutes()
-                .toString()
-                .padStart(2, '0')}`;
+              .getHours()
+              .toString()
+              .padStart(2, '0')}:${date
+              .getMinutes()
+              .toString()
+              .padStart(2, '0')}`;
           }
         } else {
           if (newTime > this.selectedSlot.startTime) {
@@ -221,10 +222,10 @@ export default {
 
     checkOverlap(selectedSlot) {
       const selectedStart = new Date(
-          `${selectedSlot.date}T${selectedSlot.startTime}:00`
+        `${selectedSlot.date}T${selectedSlot.startTime}:00`
       );
       const selectedEnd = new Date(
-          `${selectedSlot.date}T${selectedSlot.endTime}:00`
+        `${selectedSlot.date}T${selectedSlot.endTime}:00`
       );
 
       const overlaps = this.calendarOptions.events.some((event) => {
@@ -232,9 +233,9 @@ export default {
         const eventEnd = new Date(event.end);
 
         return (
-            (selectedStart >= eventStart && selectedStart < eventEnd) ||
-            (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
-            (selectedStart <= eventStart && selectedEnd >= eventEnd)
+          (selectedStart >= eventStart && selectedStart < eventEnd) ||
+          (selectedEnd > eventStart && selectedEnd <= eventEnd) ||
+          (selectedStart <= eventStart && selectedEnd >= eventEnd)
         );
       });
 
@@ -336,13 +337,13 @@ export default {
     async getPatientInfo(patientId) {
       try {
         const response = await this.$axios.get(
-            `/patients/booking/${patientId}`
+          `/patients/booking/${patientId}`
         );
         return response.data;
       } catch (error) {
         console.error(
-            'Error retrieving patient:',
-            error.response?.data || error.message
+          'Error retrieving patient:',
+          error.response?.data || error.message
         );
       }
     },
@@ -351,7 +352,7 @@ export default {
       const event = info.event;
 
       const eventTime =
-          this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
+        this.formatTime(event.start) + ' - ' + this.formatTime(event.end);
       const patientId = event.extendedProps?.patientId;
 
       this.selectedEvent = {
@@ -397,7 +398,7 @@ export default {
 
         if (selectedEvent) {
           const originalColor = selectedEvent.extendedProps.originalColor
-              || (selectedEvent.extendedProps.patientId === null ? availableColor : bookedColor);
+            || (selectedEvent.extendedProps.patientId === null ? availableColor : bookedColor);
           selectedEvent.setProp('backgroundColor', originalColor);
         }
       }
@@ -435,12 +436,12 @@ export default {
         };
 
         const startDateTime = formatToLocalDateTime(
-            slot.date,
-            slot.startTime
+          slot.date,
+          slot.startTime
         );
         const endDateTime = formatToLocalDateTime(
-            slot.date,
-            slot.endTime
+          slot.date,
+          slot.endTime
         );
 
         var appointmentColor = bookedColor;
@@ -456,7 +457,8 @@ export default {
           dentistId: `${this.dentistId}`,
           startTime: `${startDateTime}`,
           endTime: `${endDateTime}`,
-          patientId: `${this.patientId}`
+          patientId: `${this.patientId}`,
+          clinicId: `${this.clinicId}`,
         };
 
         const response = await this.$axios.post('/appointments', newAppointment);
@@ -474,8 +476,8 @@ export default {
       } catch (error) {
         alert('Error saving appointment');
         console.error(
-            'Error saving appointment:',
-            error.response?.data || error.message
+          'Error saving appointment:',
+          error.response?.data || error.message
         );
       }
       this.closeCurrentModal();
@@ -513,8 +515,8 @@ export default {
         });
       } catch (error) {
         console.error(
-            'Error loading appointment:',
-            error.response?.data || error.message
+          'Error loading appointment:',
+          error.response?.data || error.message
         );
       }
     },
@@ -534,8 +536,8 @@ export default {
       } catch (error) {
         alert('Error deleting appointment');
         console.error(
-            'Error deleteing appointment:',
-            error.response?.data || error.message
+          'Error deleteing appointment:',
+          error.response?.data || error.message
         );
       }
     },
@@ -566,48 +568,6 @@ export default {
       }
     },
 
-    async addPatientToAppointment() {
-      try{
-        await this.findPatientByEmail();
-        if (this.patientId) {
-          const response = await this.$axios.patch(`/appointments/booked-by-dentist`,
-            {
-              "id": this.selectedEvent.id,
-              "patientId": this.patientId
-            })
-          if (response.status === 200) {
-            this.selectedEvent.patientId = this.patientId;
-          }
-        }
-      } catch(error){
-        console.error("Error finding patient email!", error);
-      }
-    },
-
-    async removePatientFromAppointment() {
-      const appointmentId = this.selectedEvent.id;
-      if (!this.token) {
-        console.error("Authorization token is missing");
-        return;
-      }
-      const headers = {
-        Authorization: `Bearer ${this.token}`,
-      };
-      if (this.selectedEvent.patientId) {
-        try {
-          const response = await this.$axios.patch(
-            `/appointments/${appointmentId}/cancel`,
-            { headers }
-          );
-          if (response.status === 200) {
-            this.selectedEvent.patientId = null;
-          }
-        } catch (error) {
-          console.error("Error removing patient from appointment:", error.response?.data || error.message);
-        }
-      }
-    },
-
   },
 }
 </script>
@@ -618,6 +578,7 @@ export default {
   justify-content: space-between;
   flex-wrap: wrap;
 }
+
 .fc {
   color: #206050;
 }
@@ -630,6 +591,7 @@ export default {
 .fc .fc-day {
   color: #206050;
 }
+
 .fc .fc-header-toolbar .fc-left,
 .fc .fc-header-toolbar .fc-center,
 .fc .fc-header-toolbar .fc-right {
