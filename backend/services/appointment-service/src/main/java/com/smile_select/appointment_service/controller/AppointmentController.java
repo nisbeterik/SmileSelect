@@ -138,6 +138,14 @@ public class AppointmentController {
         availableDates = appointmentService.getAvailableAppointmentDatesForClinic(clinicId);
         return ResponseEntity.status(HttpStatus.OK).body(availableDates);
     }
+    @GetMapping(value ="/available-dates/dentist/{dentistId}/")
+    public ResponseEntity<List<String>> getAvailableAppointmentDatesForDentist(
+            @PathVariable("dentistId") Long dentistId) {
+
+        List<String> availableDates;
+        availableDates = appointmentService.getAvailableAppointmentDatesForDentist(dentistId);
+        return ResponseEntity.status(HttpStatus.OK).body(availableDates);
+    }
 
     @GetMapping(value = "/patient/{patientId}")
     public ResponseEntity<?> getAppointmentsByPatientId(@PathVariable("patientId") Long patientId) {

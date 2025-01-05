@@ -30,6 +30,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT DISTINCT DATE (a.startTime)  FROM Appointment a WHERE a.patientId IS NULL AND  a.startTime > CURRENT_TIMESTAMP AND a.clinicId = :clinicId")
     public List<String> findAvailableDatesForClinic(@Param("clinicId") Long clinicId);
 
+    @Query("SELECT DISTINCT DATE (a.startTime)  FROM Appointment a WHERE a.patientId IS NULL AND  a.startTime > CURRENT_TIMESTAMP AND a.dentistId = :dentistId")
+    public List<String> findAvailableDatesForDentist(@Param("dentistId") Long dentistId);
+
     public List<Appointment> findByDentistId(Long dentistId);
     public List<Appointment> findByClinicId(Long clinicId);
     public List<Appointment> findByPatientId(Long patientId);
