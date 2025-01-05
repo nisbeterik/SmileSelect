@@ -177,25 +177,12 @@ public class AppointmentService {
 
     public List<String> getAvailableAppointmentDatesForClinic(Long clinicId) {
         if (isPrimaryHealthy()) {
-            System.out.println("yalla" + clinicId);
-
-            List<String> resultLOL = appointmentRepository.findAvailableDatesForClinic(clinicId);
-
-
-            System.out.println("Result type: " + resultLOL.getClass().getName());
-            resultLOL.forEach(System.out::println);
-            System.out.println(resultLOL);
-
-            return resultLOL;
-
-        } /*else {
-            System.out.println("Primary DB down. Fetching available dates from fallback DB.");
-            return fallbackJdbcTemplate.query(
-                    "SELECT DISTINCT DATE(a.startTime) FROM Appointment a WHERE a.patientId IS NULL AND  a.startTime > CURRENT_TIMESTAMP AND a.clinicId = :clinicId",
-                    (rs, rowNum) -> rs.getDate("available_date").toLocalDate()
-            );
-        }*/
-        return null;
+            return appointmentRepository.findAvailableDatesForClinic(clinicId);
+        } else {
+                System.out.println("Primary DB down. Fetching available dates from fallback DB.");
+                String query = "SELECT DISTINCT DATE(start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND clinic_id = ?";
+                return fallbackJdbcTemplate.query(query, (rs, rowNum) -> rs.getString(1), clinicId);
+            }
     }
 
     // Method for publishing an MQTT message containting a stringified appointment JSON-object
