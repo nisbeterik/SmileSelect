@@ -214,10 +214,9 @@ export default {
       if(newValue) {
         this.selectedClinicId = newValue;
       }
-      this.appointments = [];
       this.selectedDentistId = null;
       this.fetchDentistsByClinic();
-      //this.fetchAppointmentsByClinic();
+
       this.fetchAvailableDatesForClinic()
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
       localStorage.setItem('selectedDentistId', null);
@@ -226,10 +225,16 @@ export default {
       if(newValue) {
         this.selectedDentistId = newValue;
       }
-      this.fetchAppointmentsByDentist();
+
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
     },
     handleDateSelection(){
+      this.appointments = [];
+      if(this.selectedDentistId === null) {
+        this.fetchAppointmentsByClinic();
+      } else {
+        this.fetchAppointmentsByDentist();
+      }
 
     },
     disableDatesBeforeToday(date) {
@@ -245,7 +250,9 @@ export default {
         const savedDentistId = localStorage.getItem('selectedDentistId');
         if (savedDentistId) {
           this.selectedDentistId = savedDentistId;
-          this.fetchAppointmentsByDentist();
+          this.fetchAvailableDatesForDentist()
+        } else {
+          this.fetchAvailableDatesForClinic()
         }
       }
     },
