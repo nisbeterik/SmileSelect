@@ -2,7 +2,7 @@
   <div id="home">
     <header class="home-header">
       <div class="header-content">
-        <h1>Smile Select</h1>
+        <img src="/images/smileSelectLogo.png" alt="Smile Select Logo" class="logo">
         <nav>
           <ul>
             <li><a href="#home">Home</a></li>
@@ -94,7 +94,7 @@ body {
 .home-header {
   background-color: #206050;
   color: white;
-  padding: 10px 10px;
+  padding: 0px 0px;
 }
 
 .header-content {
@@ -177,5 +177,10 @@ body {
   position: fixed;
   width: 100%;
   bottom: 0;
+}
+
+.logo {
+  width: auto;
+  height: 120px;
 }
 </style>
