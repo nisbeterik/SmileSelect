@@ -1,5 +1,5 @@
 # SmileSelect
-![SmileSelect Logo](assets/images/SmileSelect.jpg)
+<img src="assets/images/SmileSelect.jpg" alt="SmileSelect Logo" width="300" height="150">
 
 <h3>Table of Content </h3>
 
