@@ -3,6 +3,7 @@
     <div class="background-layer"></div>
     <header class="dashboard-header p-3 mb-4 shadow-sm">
       <div class="header-content d-flex justify-content-between align-items-center">
+        <img src="/images/smileSelectIcon.png" alt="Smile Select Icon" class="header-image" />
         <h1>Welcome {{ role }} {{ patientId }}</h1>
         <button class="button-primary" @click="logOutUser">Log Out</button>
       </div>
@@ -27,7 +28,7 @@
     </div>
 
     <!-- Map Page (with clinic selection) -->
-    <div
+    <div v-if="validUser"
         class="glass-card map-page"
         ref="mapPageSection"
     >
