@@ -98,19 +98,25 @@ public class AppointmentController {
     @GetMapping(value = "/dentist/{dentistId}")
     public ResponseEntity<?> getAppointmentsByDentistId(
             @PathVariable("dentistId") Long dentistId,
-            @RequestParam(value = "onlyAvailable", required = false, defaultValue = "false") boolean onlyAvailable) {
+            @RequestParam(value = "onlyAvailable", required = false, defaultValue = "false") boolean onlyAvailable,
+            @RequestParam(value = "date", required = false) String date) {
         List<Appointment> appointments;
 
-        if (onlyAvailable) {
-
-            appointments = appointmentService.getAvailableAppointmentsByDentistId(dentistId);
+        if (date != null && !date.isEmpty()) {
+            LocalDate appointmentDate = LocalDate.parse(date);
+            if (onlyAvailable) {
+                appointments = appointmentService.getAvailableAppointmentsByDentistIdAndDate(dentistId, appointmentDate);
+            } else {
+                appointments = appointmentService.getAppointmentsByDentistIdAndDate(dentistId, appointmentDate);
+            }
         } else {
-
-            appointments = appointmentService.getAppointmentsByDentistId(dentistId);
+            if (onlyAvailable) {
+                appointments = appointmentService.getAvailableAppointmentsByDentistId(dentistId);
+            } else {
+                appointments = appointmentService.getAppointmentsByDentistId(dentistId);
+            }
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(appointments);
-
     }
 
     @GetMapping(value = "/clinic/{clinicId}")

@@ -131,12 +131,13 @@ public class AppointmentService {
         appointmentRepository.deleteById(id);
     }
 
-    public List<Appointment> getAppointmentsByDentistId(Long dentistId) {
+
+    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
         if (isPrimaryHealthy()) {
-            return appointmentRepository.findByDentistId(dentistId);
+            return appointmentRepository.findByPatientId(patientId);
         } else {
             System.out.println("Primary DB down. Fetching from fallback DB.");
-            return queryFallbackDB("SELECT * FROM appointment WHERE dentist_id = ?", dentistId);
+            return queryFallbackDB("SELECT * FROM appointment WHERE patient_id = ?", patientId);
         }
     }
     public List<Appointment> getAppointmentsByClinicId(Long clinicId) {
@@ -145,15 +146,6 @@ public class AppointmentService {
         } else {
             System.out.println("Primary DB down. Fetching from fallback DB.");
             return queryFallbackDB("SELECT * FROM appointment WHERE clinic_Id = ?", clinicId);
-        }
-    }
-
-    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        if (isPrimaryHealthy()) {
-            return appointmentRepository.findByPatientId(patientId);
-        } else {
-            System.out.println("Primary DB down. Fetching from fallback DB.");
-            return queryFallbackDB("SELECT * FROM appointment WHERE patient_id = ?", patientId);
         }
     }
 
@@ -186,6 +178,14 @@ public class AppointmentService {
         }
     }
 
+    public List<Appointment> getAppointmentsByDentistId(Long dentistId) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findByDentistId(dentistId);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            return queryFallbackDB("SELECT * FROM appointment WHERE dentist_id = ?", dentistId);
+        }
+    }
 
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
         if (isPrimaryHealthy()) {
@@ -193,6 +193,26 @@ public class AppointmentService {
         } else {
             System.out.println("Primary DB down. Fetching from fallback DB.");
             return queryFallbackDB("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL", dentistId);
+        }
+    }
+
+    public List<Appointment> getAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findAppointmentsByDentistIdAndDate(dentistId, date);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            String query = "SELECT * FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ?";
+            return queryFallbackDB(query, dentistId, date.toString());
+        }
+    }
+
+    public List<Appointment> getAvailableAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findAvailableAppointmentsByDentistIdAndDate(dentistId, date);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            String query = "SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ?";
+            return queryFallbackDB(query, dentistId, date.toString());
         }
     }
 
