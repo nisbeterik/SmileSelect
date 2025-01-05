@@ -38,10 +38,11 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<?> createAppointment(@RequestBody Appointment appointment) {
+        // Validate required fields
         if (appointment.getDentistId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dentist ID is required.");
         }
-
+        // Check date validity
         if (appointmentService.checkIfDateInvalid(appointment.getStartTime())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Date has expired.");
         }
@@ -168,7 +169,7 @@ public class AppointmentController {
 
             if (appointmentWithPatient.getPatientId() != null) {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
-                appointmentService.save(appointment);
+                appointmentService.updateExistingAppointment(appointment);
 
                 // Publish event for email notification
                 // when booking made via a dentist
@@ -198,7 +199,7 @@ public class AppointmentController {
 
             if (appointmentWithPatient.getPatientId() != null) {
                 appointment.setPatientId(appointmentWithPatient.getPatientId());
-                appointmentService.save(appointment);
+                appointmentService.updateExistingAppointment(appointment);
 
                 // Publish event for email notification
                 // when patient booked via availability page
@@ -262,7 +263,7 @@ public class AppointmentController {
             }
 
             appointment.setPatientId(null);
-            appointmentService.save(appointment);
+            appointmentService.cancelExistingAppointment(appointment);
 
             return ResponseEntity.ok(appointment);
         } else {

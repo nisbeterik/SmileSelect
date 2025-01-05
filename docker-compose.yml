@@ -1,45 +1,155 @@
 version: "3.9"
 services:
-  primary-db:
+  # Counter DB
+  counter-db:
     image: postgres:14
-    container_name: primary_db
+    container_name: counter_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: appointmentDB
+      POSTGRES_DB: counterDB
     ports:
-      - "5433:5432" # Maps container's 5432 to host's 5433
+      - "5450:5432"
     volumes:
-      - primary_data:/var/lib/postgresql/data
-      - ./init_primary.sql:/docker-entrypoint-initdb.d/init_primary.sql
-    command: [ "postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=10", "-c", "max_replication_slots=10" ]
+      - counter_data:/var/lib/postgresql/data
+      - ./database-scripts/init_counter.sql:/docker-entrypoint-initdb.d/init_counter.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d counterDB"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  redundant-db:
+  # Partition 0 Primary
+  partition0-primary-db:
     image: postgres:14
-    container_name: redundant_db
+    container_name: partition0_primary_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: appointmentDB_redundant
+      POSTGRES_DB: appointmentDB_partition_0
     ports:
-      - "5434:5432" # Maps container's 5432 to host's 5434
+      - "5435:5432"
     volumes:
-      - redundant_data:/var/lib/postgresql/data
-      - ./init_redundant.sql:/docker-entrypoint-initdb.d/init_redundant.sql
+      - partition0_primary_data:/var/lib/postgresql/data
+      - ./database-scripts/init_partition_0_primary.sql:/docker-entrypoint-initdb.d/init_partition_0_primary.sql
+    command: [ "postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=10", "-c", "max_replication_slots=10" ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_partition_0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Partition 0 Fallback
+  partition0-fallback-db:
+    image: postgres:14
+    container_name: partition0_fallback_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appointmentDB_partition_0_redundant
+    ports:
+      - "5436:5432"
+    volumes:
+      - partition0_fallback_data:/var/lib/postgresql/data
+      - ./database-scripts/init_partition_0_fallback.sql:/docker-entrypoint-initdb.d/init_partition_0_fallback.sql
     depends_on:
-      primary-db:
+      partition0-primary-db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_redundant"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_partition_0_redundant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Partition 1 Primary
+  partition1-primary-db:
+    image: postgres:14
+    container_name: partition1_primary_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appointmentDB_partition_1
+    ports:
+      - "5437:5432"
+    volumes:
+      - partition1_primary_data:/var/lib/postgresql/data
+      - ./database-scripts/init_partition_1_primary.sql:/docker-entrypoint-initdb.d/init_partition_1_primary.sql
+    command: [ "postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=10", "-c", "max_replication_slots=10" ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_partition_1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Partition 1 Fallback
+  partition1-fallback-db:
+    image: postgres:14
+    container_name: partition1_fallback_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appointmentDB_partition_1_redundant
+    ports:
+      - "5438:5432"
+    volumes:
+      - partition1_fallback_data:/var/lib/postgresql/data
+      - ./database-scripts/init_partition_1_fallback.sql:/docker-entrypoint-initdb.d/init_partition_1_fallback.sql
+    depends_on:
+      partition1-primary-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_partition_1_redundant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Partition 2 Primary
+  partition2-primary-db:
+    image: postgres:14
+    container_name: partition2_primary_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appointmentDB_partition_2
+    ports:
+      - "5439:5432"
+    volumes:
+      - partition2_primary_data:/var/lib/postgresql/data
+      - ./database-scripts/init_partition_2_primary.sql:/docker-entrypoint-initdb.d/init_partition_2_primary.sql
+    command: [ "postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=10", "-c", "max_replication_slots=10" ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_partition_2"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Partition 2 Fallback
+  partition2-fallback-db:
+    image: postgres:14
+    container_name: partition2_fallback_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appointmentDB_partition_2_redundant
+    ports:
+      - "5440:5432"
+    volumes:
+      - partition2_fallback_data:/var/lib/postgresql/data
+      - ./database-scripts/init_partition_2_fallback.sql:/docker-entrypoint-initdb.d/init_partition_2_fallback.sql
+    depends_on:
+      partition2-primary-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d appointmentDB_partition_2_redundant"]
       interval: 10s
       timeout: 5s
       retries: 5
 
 volumes:
-  primary_data:
-  redundant_data:
+  counter_data:
+  partition0_primary_data:
+  partition0_fallback_data:
+  partition1_primary_data:
+  partition1_fallback_data:
+  partition2_primary_data:
+  partition2_fallback_data:
