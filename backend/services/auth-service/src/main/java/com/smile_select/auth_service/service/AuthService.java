@@ -36,11 +36,6 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Value("${patient.service.url}")
-    private String patientServiceUrl;
-
-    @Value("${dentist.service.url}")
-    private String dentistServiceUrl;
 
     public AuthService(MqttTopicHandler mqttTopicHandler) {
         this.mqttTopicHandler = mqttTopicHandler;
