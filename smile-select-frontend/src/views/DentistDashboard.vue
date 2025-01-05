@@ -29,7 +29,7 @@
     <div v-else class="row justify-content-center align-items-center vh-100">
       <div class="glass-card not-auth col-12 col-md-6 text-center p-4 shadow rounded bg-light">
         <h1>NOT LOGGED IN</h1>
-        <button class="btn btn-primary mt-3" @click="logOutUser">Home</button>
+        <button class="button-primary" @click="logOutUser">Home</button>
       </div>
     </div>
 
