@@ -132,7 +132,14 @@ public class AuthService {
                 responseDTO.setId(responseJson.get("id").asLong()); // Parse ID as Long
                 responseDTO.setEmail(responseJson.get("email").asText());
                 responseDTO.setPassword(responseJson.get("password").asText());
+                responseDTO.setFirstName(responseJson.get("firstName").asText());
+                responseDTO.setLastName(responseJson.get("lastName").asText());
                 responseDTO.setRole(role);
+
+                if (responseJson.has("clinic") && !responseJson.get("clinic").isNull()) {
+                    JsonNode clinicNode = responseJson.get("clinic");
+                    responseDTO.setClinic(clinicNode.get("id").asLong());
+                }
             }
             return responseDTO;
         } catch (TimeoutException e) {
@@ -142,3 +149,4 @@ public class AuthService {
         }
     }
 }
+
