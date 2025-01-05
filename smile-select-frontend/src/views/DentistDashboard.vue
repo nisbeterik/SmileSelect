@@ -202,7 +202,9 @@ export default {
   border-radius: 5px;
   width: auto;
 }
-
+.btn {
+  background-color: #206050;
+}
 .dentist-dashboard button:hover {
   background-color: #003020;
 }
