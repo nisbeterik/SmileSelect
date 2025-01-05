@@ -200,15 +200,25 @@ export default {
         console.error("Error fetching available dates:", error);
       }
     },
+    async fetchAvailableDatesForDentist() {
+      try {
+        const response = await axios.get(
+          `/appointments/available-dates/dentist/${this.selectedDentistId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+        this.availableDates = response.data; // Update available dates
+        console.log("Fetched available dates:", this.availableDates);
+        this.refreshDatepicker(); // Refresh Datepicker to reflect new dates
+      } catch (error) {
+        console.error("Error fetching available dates:", error);
+      }
+    },
     refreshDatepicker() {
       this.datePickerKey += 1; // Increment key to force Datepicker re-render
-    },
-
-    formatDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
     },
     handleClinicChange(newValue) {
       if(newValue) {
@@ -225,11 +235,23 @@ export default {
       if(newValue) {
         this.selectedDentistId = newValue;
       }
+      this.fetchAvailableDatesForDentist();
 
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
     },
     handleDateSelection(){
+        // Ensure the date is a valid Date object
+        const selectedDate = new Date(this.selectedDate);
+
+        if (!isNaN(selectedDate)) {
+          // Format the date as YYYY-MM-DD
+          this.selectedDate = selectedDate.toISOString().split('T')[0];
+        } else {
+          console.error("Invalid date selected");
+          this.selectedDate = null;
+        }
       this.appointments = [];
+      console.log(this.selectedDate);
       if(this.selectedDentistId === null) {
         this.fetchAppointmentsByClinic();
       } else {
@@ -278,8 +300,17 @@ export default {
     },
     async fetchAppointmentsByClinic() {
       try {
+        const params = {
+          onlyAvailable: true,
+        };
+        if (this.selectedDate) {
+          params.date = this.selectedDate;
+        }
+
+        // Make the GET request with query parameters
         const response = await axios.get(
-          `/appointments/clinic/${this.selectedClinicId}?onlyAvailable=true`
+          `/appointments/clinic/${this.selectedClinicId}`,
+          { params } // Pass the params object as query parameters
         );
         const appointments = response.data;
 
@@ -303,8 +334,17 @@ export default {
     },
     async fetchAppointmentsByDentist() {
       try {
+        const params = {
+          onlyAvailable: true,
+        };
+        if (this.selectedDate) {
+          params.date = this.selectedDate;
+        }
+
+        // Make the GET request with query parameters
         const response = await axios.get(
-          `/appointments/dentist/${this.selectedDentistId}?onlyAvailable=true`
+          `/appointments/dentist/${this.selectedDentistId}`,
+          { params } // Pass the params object as query parameters
         );
         const appointments = response.data;
 
@@ -354,6 +394,10 @@ export default {
     },
     closeModal() {
       this.isModalVisible = false;
+    },
+    formatDate(dateString) {
+      const date = parseISO(dateString);
+      return format(date, 'PPpp');
     },
     closeBookingConfirmation() {
       this.isBookingConfirmed = false;
