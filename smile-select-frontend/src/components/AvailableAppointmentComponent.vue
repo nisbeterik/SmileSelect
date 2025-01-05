@@ -224,6 +224,7 @@ export default {
       if(newValue) {
         this.selectedClinicId = newValue;
       }
+      this.appointments = [];
       this.selectedDentistId = null;
       this.fetchDentistsByClinic();
 
@@ -235,6 +236,7 @@ export default {
       if(newValue) {
         this.selectedDentistId = newValue;
       }
+      this.appointments = [];
       this.fetchAvailableDatesForDentist();
 
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
@@ -397,7 +399,7 @@ export default {
     },
     formatDate(dateString) {
       const date = parseISO(dateString);
-      return format(date, 'PPpp');
+      return format(date, 'PP p');
     },
     closeBookingConfirmation() {
       this.isBookingConfirmed = false;
