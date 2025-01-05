@@ -44,12 +44,14 @@
           </div>
         </div>
 
-        <Datepicker
+        <Datepicker v-if="selectedClinicId"
           v-model="selectedDate"
+          :key="datePickerKey"
           :enable-time-picker="false"
           :append-to-body="true"
           :auto-apply="true"
           :disabled-dates="disableDatesBeforeToday"
+          :allowed-dates="allowedDates"
           @update:modelValue="handleDateSelection"
           class="custom-datepicker"
         />
@@ -147,6 +149,8 @@ export default {
       errorMessage: '',
       inputErrors: {},
       selectedDate: null,
+      availableDates: [],
+      datePickerKey: 0,
     };
   },
   computed: {
@@ -155,6 +159,9 @@ export default {
         value: clinic.id,
         label: `${clinic.name}, ${clinic.street}, ${clinic.houseNumber}, ${clinic.city}`,
       }));
+    },
+    allowedDates() {
+      return this.availableDates.map((dateString) => new Date(dateString));
     },
     formattedDentists() {
       return this.dentists.map((dentist) => ({
@@ -176,6 +183,33 @@ export default {
     this.loadSelections();
   },
   methods: {
+    async fetchAvailableDatesForClinic() {
+      try {
+        const response = await axios.get(
+          `/appointments/available-dates/clinic/${this.selectedClinicId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+        this.availableDates = response.data; // Update available dates
+        console.log("Fetched available dates:", this.availableDates);
+        this.refreshDatepicker(); // Refresh Datepicker to reflect new dates
+      } catch (error) {
+        console.error("Error fetching available dates:", error);
+      }
+    },
+    refreshDatepicker() {
+      this.datePickerKey += 1; // Increment key to force Datepicker re-render
+    },
+
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
     handleClinicChange(newValue) {
       if(newValue) {
         this.selectedClinicId = newValue;
@@ -183,7 +217,8 @@ export default {
       this.appointments = [];
       this.selectedDentistId = null;
       this.fetchDentistsByClinic();
-      this.fetchAppointmentsByClinic();
+      //this.fetchAppointmentsByClinic();
+      this.fetchAvailableDatesForClinic()
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
       localStorage.setItem('selectedDentistId', null);
     },
@@ -318,10 +353,6 @@ export default {
     },
     closeBookingFailed() {
       this.bookingFailed = false;
-    },
-    formatDate(dateString) {
-      const date = parseISO(dateString);
-      return format(date, 'PPpp');
     },
     emitClinicName() {
       if (this.selectedClinic) {
