@@ -166,6 +166,27 @@ public class AppointmentService {
         }
     }
 
+    public List<Appointment> getAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findAppointmentsByClinicIdAndDate(clinicId, date);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            String query = "SELECT * FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ?";
+            return queryFallbackDB(query, clinicId, date.toString());
+        }
+    }
+
+    public List<Appointment> getAvailableAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
+        if (isPrimaryHealthy()) {
+            return appointmentRepository.findAvailableAppointmentsByClinicIdAndDate(clinicId, date);
+        } else {
+            System.out.println("Primary DB down. Fetching from fallback DB.");
+            String query = "SELECT * FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ?";
+            return queryFallbackDB(query, clinicId, date.toString());
+        }
+    }
+
+
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
         if (isPrimaryHealthy()) {
             return appointmentRepository.findAvailableAppointmentsByDentistId(dentistId);
