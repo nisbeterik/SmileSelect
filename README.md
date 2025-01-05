@@ -1,4 +1,5 @@
 # SmileSelect
+![SmileSelect Logo](assets/images/SmileSelect.jpg)
 
 <h3>Table of Content </h3>
 
