@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Repository;
 import com.smile_select.appointment_service.model.Appointment;
 
@@ -26,8 +27,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE a.clinicId = :clinicId AND a.patientId IS NULL AND a.startTime > CURRENT_TIMESTAMP ORDER BY a.startTime ASC")
     public List<Appointment> findAvailableAppointmentsByClinicId(@Param("clinicId") Long clinicId);
 
-    @Query("SELECT DISTINCT DATE(a.startTime) FROM Appointment a WHERE a.patientId IS NULL AND  a.startTime > CURRENT_TIMESTAMP AND a.clinicId = :clinicId")
-    List<LocalDate> findAvailableDatesForClinic(@Param("clinicId") Long clinicId);
+    @Query("SELECT DISTINCT DATE (a.startTime)  FROM Appointment a WHERE a.patientId IS NULL AND  a.startTime > CURRENT_TIMESTAMP AND a.clinicId = :clinicId")
+    public List<String> findAvailableDatesForClinic(@Param("clinicId") Long clinicId);
 
     public List<Appointment> findByDentistId(Long dentistId);
     public List<Appointment> findByClinicId(Long clinicId);
