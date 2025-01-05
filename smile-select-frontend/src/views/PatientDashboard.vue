@@ -3,7 +3,7 @@
     <div class="background-layer"></div>
     <header class="dashboard-header p-3 mb-4 shadow-sm">
       <div class="header-content d-flex justify-content-between align-items-center">
-        <h1>Welcome {{ role }} {{ patientId }}</h1>
+        <h1>Welcome {{ patientName }}!</h1>
         <button class="button-primary" @click="logOutUser">Log Out</button>
       </div>
     </header>
@@ -27,10 +27,7 @@
     </div>
 
     <!-- Map Page (with clinic selection) -->
-    <div
-        class="glass-card map-page"
-        ref="mapPageSection"
-    >
+    <div class="glass-card map-page" ref="mapPageSection">
       <MapPage
           @clinic-selected="handleClinicSelection"
           v-bind:selected-clinic-name="selectedClinicName"
@@ -45,6 +42,7 @@
 </template>
 
 <script>
+import axios from '../axios';
 import { useAuthStore } from "@/stores/auth";
 import PatientAppointmentsComponent from "@/components/PatientAppointmentsComponent.vue";
 import PreferredDateComponent from "../components/PreferredDateComponent.vue";
@@ -66,6 +64,7 @@ export default {
       validUser: false,
       patientId: authStore.id,
       role: authStore.role,
+      patientName: '',
       selectedClinicName: null, // Clinic selected in booking component
       clinics: [],
     };
@@ -84,6 +83,16 @@ export default {
     updateClinics(newClinics) {
       this.clinics = newClinics;
     },
+    async fetchPatientDetails() {
+      try {
+
+        const response = await axios.get(`/patients/${this.patientId}`);
+        this.patientName = `${response.data.firstName}`;
+      } catch (error) {
+        console.error('Error fetching patient details:', error);
+        this.patientName = 'Unknown Patient';
+      }
+    },
     async logOutUser() {
       const authStore = useAuthStore();
       try {
@@ -96,11 +105,14 @@ export default {
   },
   created() {
     this.checkUser();
+    if (this.validUser) {
+      this.fetchPatientDetails();
+    }
   },
 };
 </script>
+
 <style scoped>
-/*Div*/
 .patient-dashboard {
   display: flex;
   flex-direction: column;
@@ -131,5 +143,4 @@ export default {
   border-radius: 5px;
   width: auto;
 }
-
 </style>
