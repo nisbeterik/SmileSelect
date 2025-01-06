@@ -21,6 +21,7 @@
         :clinics="clinics"
         @updateClinics="updateClinics"
         @clinicLocation="handleClinicLocation"
+        v-bind:selected-clinic-from-map="selectedClinicFromMap"
       />
     </div>
     <!-- Map Page (with clinic selection) -->
@@ -29,8 +30,8 @@
         ref="mapPageSection"
     >
       <MapPage
-          @clinic-selected="handleClinicSelection"
-          v-bind:selected-clinic-name="selectedClinicName"
+        @clinic-selected="handleClinicSelectionFromMap"
+        v-bind:selected-clinic-name="selectedClinicName"
       />
     </div>
 
@@ -45,7 +46,6 @@
 import { useAuthStore } from "@/stores/auth";
 import PatientAppointmentsComponent from "@/components/PatientAppointmentsComponent.vue";
 import PreferredDateComponent from "../components/PreferredDateComponent.vue";
-import AvailableAppointmentsComponent from "@/components/AvailableAppointmentsComponent.vue";
 import AvailableAppointmentComponent from '@/components/AvailableAppointmentComponent.vue';
 import MapPage from "@/views/MapPage.vue";
 import "/src/CSS/global.css";
@@ -56,7 +56,6 @@ export default {
     AvailableAppointmentComponent,
     PatientAppointmentsComponent,
     PreferredDateComponent,
-    AvailableAppointmentsComponent,
     MapPage,
   },
   data() {
@@ -65,7 +64,8 @@ export default {
       validUser: false,
       patientId: authStore.id,
       role: authStore.role,
-      selectedClinicName: null, // Clinic selected in booking component
+      selectedClinicName: null,
+      selectedClinicFromMap: null,
       clinics: [],
     };
   },
@@ -73,7 +73,10 @@ export default {
     async checkUser() {
       this.validUser = this.role === "PATIENT" && this.patientId !== null;
     },
-    handleClinicSelection() {
+    handleClinicSelectionFromMap(clinicId) {
+      if (clinicId) {
+        this.selectedClinicFromMap = clinicId;
+      }
       this.$refs.availabilitySection.scrollIntoView({ behavior: "smooth" });
     },
     handleClinicLocation(clinicName) {

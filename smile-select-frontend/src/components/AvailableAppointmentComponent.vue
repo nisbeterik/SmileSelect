@@ -6,19 +6,28 @@
         <div class="header">
           <div v-if="clinics.length" class="form-group select-field">
             <label for="clinic_select">Select Clinic:</label>
-            <Multiselect
-              class="clinic-field"
-              :options="formattedClinics"
-              :append-to-body="true"
-              placeholder="Select Clinic"
-              @update:modelValue="handleClinicChange"
-              id="clinic_select"
-              v-model="selectedClinicId"
-              :class="{ 'input-error': inputErrors.clinicId }"
-              required
-              searchable
-            >
-            </Multiselect>
+            <div class="field-container">
+              <Multiselect
+                class="clinic-field"
+                :options="formattedClinics"
+                :append-to-body="true"
+                placeholder="Select Clinic"
+                @update:modelValue="handleClinicChange"
+                id="clinic_select"
+                v-model="selectedClinicId"
+                :class="{ 'input-error': inputErrors.clinicId }"
+                required
+                searchable
+              >
+              </Multiselect>
+              <button
+                v-if="selectedClinicId"
+                @click="emitClinicName"
+                class="button-primary map-pin-btn"
+              >
+                <img src="/images/White-Pin.png" alt="Pin Icon" class="pin-icon" />
+              </button>
+            </div>
             <small v-if="inputErrors.clinicId" class="error">{{
               inputErrors.clinicId
             }}</small>
@@ -158,6 +167,20 @@ export default {
       datePickerKey: 0,
     };
   },
+  props: {
+    selectedClinicFromMap: {
+      default: null,
+    },
+  },
+  watch: {
+    selectedClinicFromMap(newClinicID) {
+      if (newClinicID) {
+        this.selectedClinicId = newClinicID; // Set selectedClinicId
+        this.handleClinicChange(); // Fetch appointments
+
+      }
+    },
+  },
   computed: {
     formattedClinics() {
       return this.clinics.map((clinic) => ({
@@ -188,6 +211,11 @@ export default {
     this.loadSelections();
   },
   methods: {
+    emitClinicName() {
+      if (this.selectedClinic) {
+        this.$emit('clinicLocation', this.selectedClinic.name);
+      }
+    },
     async fetchAvailableDatesForClinic() {
       try {
         const response = await axios.get(
@@ -417,11 +445,6 @@ export default {
     closeBookingFailed() {
       this.bookingFailed = false;
     },
-    emitClinicName() {
-      if (this.selectedClinic) {
-        this.$emit('clinicLocation', this.selectedClinic.name);
-      }
-    },
     formatDuration(startTime, endTime) {
       const start = parseISO(startTime);
       const end = parseISO(endTime);
@@ -454,7 +477,40 @@ export default {
 .button-primary {
   width: auto;
 }
+.field-container {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between the field and button */
+}
 
+.map-pin-btn {
+  background-color: #206050; /* Green button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.map-pin-btn:hover {
+  background-color: #18403a;
+}
+
+.map-pin-btn:focus {
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.pin-icon {
+  width: 16px;
+  display: block;
+  margin: 0 auto;
+}
 .error {
   color: red;
   margin-top: 10px;

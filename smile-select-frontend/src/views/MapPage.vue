@@ -79,7 +79,7 @@ export default {
       }
     },
     handleMarkerClick(clinic) {
-      this.$emit("clinic-selected", clinic);
+      this.$emit('clinic-selected', clinic.id);
     },
     updateMapCenter(clinicName) {
       const clinic = this.clinics.find((c) => c.name === clinicName);
