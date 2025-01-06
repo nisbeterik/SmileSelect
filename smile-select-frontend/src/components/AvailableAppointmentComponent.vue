@@ -347,10 +347,14 @@ export default {
           params.date = this.selectedDate;
         }
 
-        // Make the GET request with query parameters
         const response = await axios.get(
           `/appointments/clinic/${this.selectedClinicId}`,
-          { params } // Pass the params object as query parameters
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            params: params
+          }
         );
         const appointments = response.data;
 
@@ -381,10 +385,14 @@ export default {
           params.date = this.selectedDate;
         }
 
-        // Make the GET request with query parameters
         const response = await axios.get(
           `/appointments/dentist/${this.selectedDentistId}`,
-          { params } // Pass the params object as query parameters
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+            params: params
+          }
         );
         const appointments = response.data;
 

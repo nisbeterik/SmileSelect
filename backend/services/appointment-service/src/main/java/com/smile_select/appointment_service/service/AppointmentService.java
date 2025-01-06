@@ -395,12 +395,12 @@ public class AppointmentService {
 
     // Retrieves appointments by dentist ID and date
     public List<Appointment> getAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
-        return queryAll("SELECT a FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
+        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
     }
 
     // Retrieves available appointments by dentist ID and date where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
-        return queryAll("SELECT a FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
+        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
     }
 
     // Retrieves all appointments by clinic ID
@@ -415,12 +415,12 @@ public class AppointmentService {
 
     // Retrieves appointments by clinic ID and date
     public List<Appointment> getAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
-        return queryAll("SELECT a FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
+        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
     }
 
     // Retrieves available appointments by clinic ID and date where patient ID is null
     public List<Appointment> getAvailableAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
-        return queryAll("SELECT a FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
+        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
     }
 
     // Retrieves all available appointment dates for a clinic
