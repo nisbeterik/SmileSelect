@@ -4,12 +4,13 @@
     <div class="row justify-content-center">
       <div>
         <div class="header">
-          <div v-if="clinics.length" class="form-group">
+          <div v-if="clinics.length" class="form-group select-field">
             <label for="clinic_select">Select Clinic:</label>
             <Multiselect
               class="clinic-field"
               :options="formattedClinics"
               :append-to-body="true"
+              placeholder="Select Clinic"
               @update:modelValue="handleClinicChange"
               id="clinic_select"
               v-model="selectedClinicId"
@@ -23,11 +24,13 @@
             }}</small>
             <br /><br />
           </div>
-          <div v-if="dentists.length" class="form-group">
+          <div class="form-group select-field">
             <label for="dentist_select">Select Dentist:</label>
             <Multiselect
               class="clinic-field"
               :options="formattedDentists"
+              :disabled="!selectedClinicId"
+              placeholder="Select Dentist"
               :append-to-body="true"
               @update:modelValue="handleDentistChange"
               id="dentist_select"
@@ -37,6 +40,7 @@
               searchable
             >
             </Multiselect>
+            <p v-if="!selectedClinicId">Select clinic first</p>
             <small v-if="inputErrors.dentistId" class="error">{{
               inputErrors.dentistId
             }}</small>
@@ -50,6 +54,7 @@
           :enable-time-picker="false"
           :append-to-body="true"
           :auto-apply="true"
+          placeholder="Select a date with available appointments"
           :disabled-dates="disableDatesBeforeToday"
           :allowed-dates="allowedDates"
           @update:modelValue="handleDateSelection"
@@ -63,7 +68,7 @@
 
         <div class="scroll-wrapper">
           <div v-if="!appointments.length" class="no-appointment align-content-center">
-            <h1 v-if="selectedClinicId & !selectedDate">Please select a date to show available appointments</h1>
+            <h1 v-if="selectedClinicId">Please select a date to show available appointments</h1>
             <h1 v-if="!selectedClinicId">Please select a clinic</h1>
           </div>
           <div class="appointments-scroll-container">
@@ -560,6 +565,10 @@ export default {
   .appointments-scroll-container {
     max-height: 400px; /* Adjust height for smaller screens */
   }
+}
+.select-field{
+  max-width: 50%;
+  margin: 10px;
 }
 
 .error-text {
