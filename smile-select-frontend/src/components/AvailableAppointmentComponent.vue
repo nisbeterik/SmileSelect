@@ -63,7 +63,7 @@
 
         <div class="scroll-wrapper">
           <div v-if="!appointments.length" class="no-appointment align-content-center">
-            <h2 v-if="selectedClinicId">No appointments are currently available. please check back at a later time!</h2>
+            <h1 v-if="selectedClinicId & !selectedDate">Please select a date to show available appointments</h1>
             <h1 v-if="!selectedClinicId">Please select a clinic</h1>
           </div>
           <div class="appointments-scroll-container">
@@ -194,7 +194,6 @@ export default {
           }
         );
         this.availableDates = response.data; // Update available dates
-        console.log("Fetched available dates:", this.availableDates);
         this.refreshDatepicker(); // Refresh Datepicker to reflect new dates
       } catch (error) {
         console.error("Error fetching available dates:", error);
@@ -211,7 +210,6 @@ export default {
           }
         );
         this.availableDates = response.data; // Update available dates
-        console.log("Fetched available dates:", this.availableDates);
         this.refreshDatepicker(); // Refresh Datepicker to reflect new dates
       } catch (error) {
         console.error("Error fetching available dates:", error);
@@ -231,6 +229,7 @@ export default {
       this.fetchAvailableDatesForClinic()
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
       localStorage.setItem('selectedDentistId', null);
+      localStorage.setItem('selectedDate', null);
     },
     handleDentistChange(newValue) {
       if(newValue) {
@@ -240,9 +239,11 @@ export default {
       this.fetchAvailableDatesForDentist();
 
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
+      localStorage.setItem('selectedDate', null);
     },
     handleDateSelection(){
-        // Ensure the date is a valid Date object
+      localStorage.setItem('selectedDate', this.selectedDate);
+
         const selectedDate = new Date(this.selectedDate);
 
         if (!isNaN(selectedDate)) {
@@ -253,7 +254,6 @@ export default {
           this.selectedDate = null;
         }
       this.appointments = [];
-      console.log(this.selectedDate);
       if(this.selectedDentistId === null) {
         this.fetchAppointmentsByClinic();
       } else {
@@ -268,15 +268,21 @@ export default {
     },
     loadSelections() {
       const savedClinicId = localStorage.getItem('selectedClinicId');
+      const savedDentistId = localStorage.getItem('selectedDentistId');
+      const savedDate = localStorage.getItem('selectedDate');
       if (savedClinicId) {
         this.selectedClinicId = savedClinicId;
         this.fetchDentistsByClinic();
-        const savedDentistId = localStorage.getItem('selectedDentistId');
+
         if (savedDentistId) {
           this.selectedDentistId = savedDentistId;
           this.fetchAvailableDatesForDentist()
+          this.selectedDate = savedDate
+          this.handleDateSelection()
         } else {
           this.fetchAvailableDatesForClinic()
+          this.selectedDate = savedDate
+          this.handleDateSelection()
         }
       }
     },
@@ -289,7 +295,6 @@ export default {
       }
     },
     async fetchDentistsByClinic() {
-      console.log(this.selectedClinicId, 'clinic');
       try {
         this.dentists = [];
         const response = await axios.get(
