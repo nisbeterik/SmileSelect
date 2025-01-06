@@ -23,16 +23,6 @@
         @clinicLocation="handleClinicLocation"
       />
     </div>
-    <!-- Bottom row with AvailabilityPage -->
-    <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
-      <AvailableAppointmentsComponent
-          :clinics="clinics"
-          @updateClinics="updateClinics"
-          @clinicLocation="handleClinicLocation"
-      />
-    </div>
-
-
     <!-- Map Page (with clinic selection) -->
     <div
         class="glass-card map-page"
