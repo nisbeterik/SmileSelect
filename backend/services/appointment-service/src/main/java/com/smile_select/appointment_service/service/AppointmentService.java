@@ -350,6 +350,18 @@ public class AppointmentService {
         }
         return all;
     }
+    private List<String> queryAllForDateString(String sql, Object... params) {
+        List<String> all = new ArrayList<>();
+        for (Region region : Region.values()) {
+            boolean primaryHealthy = isPrimaryHealthy(region);
+            if (!primaryHealthy) {
+                System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+            }
+            JdbcTemplate template = getTemplate(region, primaryHealthy);
+            all.addAll(template.query(sql, (rs, rowNum) -> rs.getString(1), params));
+        }
+        return all;
+    }
 
     // Retrieves all appointments after given date
     public List<Appointment> getAppointmentsAfterDate(LocalDate startDate) {
@@ -368,7 +380,6 @@ public class AppointmentService {
 
     // Retrieves all appointments by patient ID
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        // Without hashing on patient_id, we must query all partitions anyway
         return queryAll("SELECT * FROM appointment WHERE patient_id = ? ORDER BY start_time ASC", patientId);
     }
 
@@ -376,13 +387,18 @@ public class AppointmentService {
     public List<Appointment> getAppointmentsByDentistId(Long dentistId) {
         return queryAll("SELECT * FROM appointment WHERE dentist_id = ?", dentistId);
     }
+
     // Retrieves all available appointments by dentist ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
         return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL ORDER BY start_time ASC", dentistId);
     }
+
+    // Retrieves appointments by dentist ID and date
     public List<Appointment> getAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
         return queryAll("SELECT a FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
     }
+
+    // Retrieves available appointments by dentist ID and date where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
         return queryAll("SELECT a FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
     }
@@ -391,34 +407,30 @@ public class AppointmentService {
     public List<Appointment> getAppointmentsByClinicId(Long clinicId) {
         return queryAll("SELECT * FROM appointment WHERE clinic_id = ?", clinicId);
     }
-    // Retrieve all available appointments by clinic ID where patient ID is null
+
+    // Retrieves all available appointments by clinic ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByClinicId(Long clinicId) {
         return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id is NULL ORDER BY start_time ASC", clinicId);
     }
+
+    // Retrieves appointments by clinic ID and date
     public List<Appointment> getAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
         return queryAll("SELECT a FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
     }
+
+    // Retrieves available appointments by clinic ID and date where patient ID is null
     public List<Appointment> getAvailableAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
         return queryAll("SELECT a FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
     }
+
+    // Retrieves all available appointment dates for a clinic
     public List<String> getAvailableAppointmentDatesForClinic(Long clinicId) {
-        if (isPrimaryHealthy()) {
-            return appointmentRepository.findAvailableDatesForClinic(clinicId);
-        } else {
-            System.out.println("Primary DB down. Fetching available dates from fallback DB.");
-            String query = "SELECT DISTINCT DATE(start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND clinic_id = ?";
-            return fallbackJdbcTemplate.query(query, (rs, rowNum) -> rs.getString(1), clinicId);
-        }
+        return queryAllForDateString("SELECT DISTINCT DATE (start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND clinic_id = ?", clinicId);
     }
 
+    // Retrieves all available appointment dates for a dentist
     public List<String> getAvailableAppointmentDatesForDentist(Long dentistId) {
-        if (isPrimaryHealthy()) {
-            return appointmentRepository.findAvailableDatesForDentist(dentistId);
-        } else {
-            System.out.println("Primary DB down. Fetching available dates from fallback DB.");
-            String query = "SELECT DISTINCT DATE(start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND dentist_id = ?";
-            return fallbackJdbcTemplate.query(query, (rs, rowNum) -> rs.getString(1), dentistId);
-        }
+        return queryAllForDateString("SELECT DISTINCT DATE (start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND dentist_id = ?", dentistId);
     }
 
     // Method for publishing an MQTT message containting a stringified appointment JSON-object
