@@ -1,4 +1,5 @@
 # SmileSelect
+<img src="assets/images/SmileSelect.jpg" alt="SmileSelect Logo" width="300" height="150">
 
 <h3>Table of Content </h3>
 
@@ -109,6 +110,14 @@ A dedicated service managing user authentication and security.
 
 * Most interactions between nodes occur over HTTP
 * Publish/Subscribe messaging is used inter-service for asynchronous communication. 
+
+</details>
+
+<details><summary>Development View</summary>
+
+![Development-View](assets/diagrams/development-view-diagram.png)
+
+*This Development View Diagram outlines a high-level structure of any given microservice. It shows the general layered architecture of the system's microservices with a controller-service-repository pattern.*
 
 </details>
 

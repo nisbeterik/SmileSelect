@@ -57,7 +57,7 @@ export default {
       const authStore = useAuthStore();
       try {
         authStore.clearAuth();
-        
+
         const endpoint = `/auth/login`;
         const response = await this.$axios.post(endpoint, {
           email: this.email,
