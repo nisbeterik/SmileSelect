@@ -79,10 +79,11 @@ function registerDentist(clinicId) {
 }
 
 function loginDentist(credentials) {
-    const url = `http://localhost:8080/api/dentists/login`;
+    const url = `http://localhost:8080/api/auth/login`;
     const payload = JSON.stringify({
         email: credentials.email,
         password: credentials.password,
+        role: 'DENTIST'
     });
 
     const params = {
@@ -148,10 +149,11 @@ function registerPatient() {
 }
 
 function loginPatient(credentials) {
-    const url = 'http://localhost:8080/api/patients/login';
+    const url = 'http://localhost:8080/api/auth/login';
     const payload = JSON.stringify({
         email: credentials.email,
         password: credentials.password,
+        role: 'PATIENT'
     });
 
     const params = {
@@ -164,7 +166,34 @@ function loginPatient(credentials) {
         'patient logged in': (r) => r.status === 200,
     });
 
-    return JSON.parse(response.body).token; // Return auth token for future requests
+    const responseBody = JSON.parse(response.body);
+    return {
+        token: responseBody.token,
+        id: responseBody.id,
+    };
+}
+
+
+function bookAppointment(patientId, patientToken, appointmentId) {
+    const url = `http://localhost:8080/api/appointments/booked-by-patient`;
+
+    const payload = JSON.stringify({
+        id: appointmentId, // The appointment ID to be booked
+        patientId: patientToken, // This should be the ID of the logged-in patient
+    });
+
+    const params = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${patientToken}`, // Use the patient's token for authentication
+        },
+    };
+
+    const response = http.patch(url, payload, params); // Use PATCH request as per the endpoint
+
+    check(response, {
+        'appointment booked': (r) => r.status === 200, // Check if the response status is 200 OK
+    });
 }
 
 
@@ -188,7 +217,10 @@ export default function () {
     let patientCredentials = registerPatient();
     sleep(1);
 
-    const patientToken = loginPatient(patientCredentials);
+    const { token, id } = loginPatient(patientCredentials);
+    sleep(1);
+
+    bookAppointment(id, token, appointmentId);
     sleep(1);
 
 }
