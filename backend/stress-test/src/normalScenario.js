@@ -18,6 +18,37 @@ export const options = {
     stages: __ENV.RUN_MODE === 'full' ? fullStages : lightStages,
 };
 
+let clinicCreated = false;
+let clinicId = null;
+
+function createClinic() {
+    const url = 'http://localhost:8080/api/clinics';
+    const payload = JSON.stringify({
+        name: 'Clinic-stress-test',
+        longitude: 11.9746, // Example longitude for Gothenburg
+        latitude: 57.7089,  // Example latitude for Gothenburg
+        street: 'Kungsportsavenyn', // A well-known street in Gothenburg
+        zip: '41136', // A zip code in Gothenburg
+        city: 'Gothenburg',
+        houseNumber: '5' // Example house number
+    });
+
+    const params = {
+        headers: { 'Content-Type': 'application/json' },
+    };
+
+    const response = http.post(url, payload, params);
+
+    check(response, {
+        'clinic created': (r) => r.status === 201,
+    });
+
+
+    clinicCreated = true;
+    return JSON.parse(response.body).id;
+}
 
 export default function () {
+    clinicId = createClinic();
+    sleep(1)
 }
