@@ -1,0 +1,15 @@
+{
+  "name": "stress-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "patient": "k6 run src/patient.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "k6": "^0.0.0"
+  }
+}
