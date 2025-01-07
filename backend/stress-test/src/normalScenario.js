@@ -59,7 +59,7 @@ function registerDentist(clinicId) {
         lastName: 'Ist',
         email: `dentist-${uuidv4()}@example.com`,
         password: 'StrongPassword123!',
-        clinicId,
+        clinicId: `${clinicId}`
     });
 
     const params = {
@@ -69,11 +69,31 @@ function registerDentist(clinicId) {
     const response = http.post(url, payload, params);
 
     check(response, {
-        'dentist registered': (r) => r.status === 201,
+        "Dentist registered successfully!": (r) => r.status === 201,
     });
 
     dentistCredentials = { email: payload.email, password: payload.password };
     dentistCreated = true; // Mark dentist as created
+}
+
+function loginDentist(credentials) {
+    const url = `http://localhost:8080/api/dentists/login`;
+    const payload = JSON.stringify({
+        email: credentials.email,
+        password: credentials.password,
+    });
+
+    const params = {
+        headers: { 'Content-Type': 'application/json' },
+    };
+
+    const response = http.post(url, payload, params);
+
+    check(response, {
+        'dentist logged in': (r) => r.status === 200,
+    });
+
+    return JSON.parse(response.body).token; // Return auth token for future requests
 }
 
 export default function () {
@@ -86,7 +106,7 @@ export default function () {
         sleep(1);
     }
     if(!dentistLoggedIn) {
-
+        dentistToken = loginDentist();
     }
 
 
