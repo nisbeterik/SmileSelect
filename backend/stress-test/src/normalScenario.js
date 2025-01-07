@@ -124,6 +124,31 @@ function createAppointment(dentistToken) {
     return JSON.parse(response.body).id;
 }
 
+function registerPatient() {
+    const url = 'http://localhost:8080/api/patients/register';
+    const payload = JSON.stringify({
+        firstName: 'Tooth',
+        lastName: 'Broken',
+        email: `test-${uuidv4()}@example.com`,
+        password: 'StrongPassword123!',
+        dateOfBirth: '1990-01-01',
+    });
+
+    const params = {
+        headers: { 'Content-Type': 'application/json' },
+    };
+
+    const response = http.post(url, payload, params);
+
+    check(response, {
+        'patient registered': (r) => r.status === 201,
+    });
+
+    return { email: payload.email, password: payload.password };
+}
+
+
+
 export default function () {
     if(!clinicCreated) {
         clinicId = createClinic();
@@ -141,6 +166,8 @@ export default function () {
     let appointmentId = createAppointment(dentistToken);
     sleep(1)
 
+    let patientCredentials = registerPatient();
+    sleep(1);
 
 
 
