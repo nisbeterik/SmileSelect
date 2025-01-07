@@ -147,6 +147,25 @@ function registerPatient() {
     return { email: payload.email, password: payload.password };
 }
 
+function loginPatient(credentials) {
+    const url = 'http://localhost:8080/api/patients/login';
+    const payload = JSON.stringify({
+        email: credentials.email,
+        password: credentials.password,
+    });
+
+    const params = {
+        headers: { 'Content-Type': 'application/json' },
+    };
+
+    const response = http.post(url, payload, params);
+
+    check(response, {
+        'patient logged in': (r) => r.status === 200,
+    });
+
+    return JSON.parse(response.body).token; // Return auth token for future requests
+}
 
 
 export default function () {
@@ -169,6 +188,7 @@ export default function () {
     let patientCredentials = registerPatient();
     sleep(1);
 
-
+    const patientToken = loginPatient(patientCredentials);
+    sleep(1);
 
 }
