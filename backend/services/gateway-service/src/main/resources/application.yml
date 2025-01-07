@@ -1,12 +1,11 @@
 server:
   port: 8080 # Port for the gateway service
 
+
+# Set profile using SPRING_PROFILES_ACTIVE environment variable (See stress-test README.md on how to set)
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:prod}
-
-# Set profile using SPRING_PROFILES_ACTIVE environment variable (See stress-test README.md on how to set
-# If variable isn't set, default to application-prod.yml ('prod')
+    active: ${SPRING_PROFILES_ACTIVE:prod} # If variable isn't set, default to application-prod.yml ('prod')
 
 
 # Eureka service registry configuration
