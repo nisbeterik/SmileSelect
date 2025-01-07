@@ -7,7 +7,7 @@
     "patient:light": "k6 run --env RUN_MODE=light src/patient.js",
     "patient:full": "k6 run --env RUN_MODE=full src/patient.js",
     "normal:light": "k6 run --env RUN_MODE=light src/normalScenario.js",
-    "normal:full": "k6 run --env RUN_MOD=full src/normalScenario.js"
+    "normal:full": "k6 run --env RUN_MODE=full src/normalScenario.js"
   },
   "keywords": [],
   "author": "",

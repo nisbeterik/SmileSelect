@@ -18,13 +18,13 @@ spring:
             allowedHeaders: '*'
       # route to service registry logical name service lookup for stress-test instances
       routes:
-        - id: appointment-service-test
-          uri: lb://appointment-service-test
+        - id: appointment-service
+          uri: lb://appointment-service
           predicates:
             - Path=/api/appointments/**
 
-        - id: auth-service-test
-          uri: lb://auth-service-test
+        - id: auth-service
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
 
