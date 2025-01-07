@@ -20,6 +20,10 @@ export const options = {
 
 let clinicCreated = false;
 let clinicId = null;
+let dentistCreated = false;
+let dentistCredentials = null;
+let dentistLoggedIn = false;
+let dentistToken = null;
 
 function createClinic() {
     const url = 'http://localhost:8080/api/clinics';
@@ -48,7 +52,42 @@ function createClinic() {
     return JSON.parse(response.body).id;
 }
 
+function registerDentist(clinicId) {
+    const url = `http://localhost:8080/api/dentists/register`;
+    const payload = JSON.stringify({
+        firstName: 'Dent',
+        lastName: 'Ist',
+        email: `dentist-${uuidv4()}@example.com`,
+        password: 'StrongPassword123!',
+        clinicId,
+    });
+
+    const params = {
+        headers: { 'Content-Type': 'application/json' },
+    };
+
+    const response = http.post(url, payload, params);
+
+    check(response, {
+        'dentist registered': (r) => r.status === 201,
+    });
+
+    dentistCredentials = { email: payload.email, password: payload.password };
+    dentistCreated = true; // Mark dentist as created
+}
+
 export default function () {
-    clinicId = createClinic();
-    sleep(1)
+    if(!clinicCreated) {
+        clinicId = createClinic();
+        sleep(1)
+    }
+    if(clinicCreated && !dentistCreated) {
+        registerDentist();
+        sleep(1);
+    }
+    if(!dentistLoggedIn) {
+
+    }
+
+
 }
