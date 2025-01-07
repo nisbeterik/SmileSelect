@@ -20,6 +20,7 @@ export const options = {
 
 let clinicCreated = false;
 let clinicId = null;
+let dentistId = null;
 let dentistCreated = false;
 let dentistCredentials = null;
 let dentistLoggedIn = false;
@@ -73,7 +74,8 @@ function registerDentist(clinicId) {
     });
 
     dentistCredentials = { email: payload.email, password: payload.password };
-    dentistCreated = true; // Mark dentist as created
+    dentistCreated = true;
+    dentistId = JSON.parse(response.body).id;
 }
 
 function loginDentist(credentials) {
@@ -96,6 +98,32 @@ function loginDentist(credentials) {
     return JSON.parse(response.body).token; // Return auth token for future requests
 }
 
+function createAppointment(dentistToken) {
+    const url = `http://localhost:8080/api/appointments`;
+    const payload = JSON.stringify({
+        patientId: null,
+        dentistId: `${dentistId}`,
+        clinicId: `${clinicId}`,
+        start_time: '2025-04-10T10:00:00Z',
+        end_time: '2025-04-10T11:00:00Z'
+    });
+
+    const params = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${dentistToken}`,
+        },
+    };
+
+    const response = http.post(url, payload, params);
+
+    check(response, {
+        'appointment created': (r) => r.status === 201,
+    });
+
+    return JSON.parse(response.body).id;
+}
+
 export default function () {
     if(!clinicCreated) {
         clinicId = createClinic();
@@ -107,7 +135,13 @@ export default function () {
     }
     if(!dentistLoggedIn) {
         dentistToken = loginDentist();
+        sleep(1)
     }
+
+    let appointmentId = createAppointment(dentistToken);
+    sleep(1)
+
+
 
 
 }
