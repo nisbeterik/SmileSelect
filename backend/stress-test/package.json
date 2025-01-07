@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "patient": "k6 run src/patient.js"
+    "patient:light": "k6 run --env RUN_MODE=light src/patient.js",
+    "patient:full": "k6 run --env RUN_MODE=full src/patient.js"
   },
   "keywords": [],
   "author": "",
