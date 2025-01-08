@@ -11,7 +11,7 @@
       Save Dates
     </button>
 
-    <p>Your current preferred dates (capped at 5)</p>
+    <p>Your current preferred dates (max 5)</p>
     <div class="glass-card" v-for="date in existingDates" :key="date.id">
       <div class="pref-date-flex">
         {{ dayjs(date.preferredDate).format('dddd') }} - {{ dayjs(date.preferredDate).format('YYYY-MM-DD') }}
