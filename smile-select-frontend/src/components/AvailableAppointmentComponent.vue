@@ -508,6 +508,48 @@ export default {
 .map-pin-btn:hover {
   background-color: #18403a;
 }
+.availability-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-actions {
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-around;
+}
+
+.availability-modal {
+  background: white;
+  padding: 2em;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+.btn-confirm {
+  background-color: #206050;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
 
 .map-pin-btn:focus {
   outline: none;
