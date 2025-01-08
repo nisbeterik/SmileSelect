@@ -56,7 +56,7 @@ Now, patient-service is up and running. Do not close the terminal session until 
 Open a new terminal in the project root directory and run the following commands
 
 ```bash
-cd backend/services/patient-service 
+cd backend/services/gateway-service 
 ```
 
 **SAME AS PATIENT-SERVICE**
