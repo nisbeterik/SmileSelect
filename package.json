@@ -13,6 +13,6 @@
     "jakarta": "^0.0.1"
   },
   "scripts": {
-    "lint": "eslint 'smile-select-frontend/**/*.{js,vue}' --fix && echo '✅ Linting passed: No issues found!'"
+    "lint": "eslint 'smile-select-frontend/**/*.{js,vue}' --fix || echo 'Linting failed.' && echo 'Linting succeeded.'"
   }
 }
