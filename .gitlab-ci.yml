@@ -1,4 +1,5 @@
 stages:
+  - lint
   - compile
   - test
   
@@ -13,8 +14,27 @@ cache:
 default:
   image: maven:3.9.9-eclipse-temurin-21
 
-# Compile jobs for each microservice
+# Lint job for the frontend
+lint_frontend:
+  stage: lint
+  image: node:18
+  cache:
+    paths:
+      - smile-select-frontend/node_modules
+  script:
+    - echo "Installing dependencies for linting..."
+    - cd smile-select-frontend
+    - npm install
+    - echo "Running linting on the frontend..."
+    - npm run lint
+  tags:
+    - docker
+  only:
+    - merge_requests
+    - branches
+  allow_failure: false
 
+# Compile jobs for each microservice
 compile_appointment_service:
   stage: compile
   script:
@@ -39,143 +59,7 @@ compile_auth_service:
     paths:
       - backend/services/auth-service/target
 
-compile_dentist_service:
-  stage: compile
-  script:
-    - echo "Compiling Dentist Service..."
-    - mvn -B clean compile --file backend/services/dentist-service/pom.xml
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - backend/services/dentist-service/target
-
-compile_gateway_service:
-  stage: compile
-  script:
-    - echo "Compiling Gateway Service..."
-    - mvn -B clean compile --file backend/services/gateway-service/pom.xml
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - backend/services/gateway-service/target
-
-compile_logging_service:
-  stage: compile
-  script:
-    - echo "Compiling Logging Service..."
-    - mvn -B clean compile --file backend/services/logging-service/pom.xml
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - backend/services/logging-service/target
-
-compile_notification_service:
-  stage: compile
-  script:
-    - echo "Compiling Notification Service..."
-    - mvn -B clean compile --file backend/services/notification-service/pom.xml
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - backend/services/notification-service/target
-
-compile_patient_service:
-  stage: compile
-  script:
-    - echo "Compiling Patient Service..."
-    - mvn -B clean compile --file backend/services/patient-service/pom.xml
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - backend/services/patient-service/target
-
-# Test jobs for each microservice (commented out for now)
-
-
-
-
-test_appointment_service:
-   stage: test
-   script:
-     - echo "Running tests for Appointment Service..."
-     - mvn -B test --file backend/services/appointment-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_appointment_service
-
-test_auth_service:
-   stage: test
-   script:
-     - echo "Running tests for Authentication Service..."
-     - mvn -B test --file backend/services/auth-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-    - compile_auth_service
-
-test_dentist_service:
-  stage: test
-  image: maven:3.9.9-eclipse-temurin-21
-  script:
-    - cd backend/services/dentist-service  
-    - mvn -B test --file pom.xml 
-  tags:
-    - docker
-  dependencies:
-    - compile_dentist_service
-
-test_gateway_service:
-   stage: test
-   script:
-     - echo "Running tests for Gateway Service..."
-     - mvn -B test --file backend/services/gateway-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_gateway_service
-
-test_logging_service:
-  stage: test
-  script:
-    - echo "Running tests for Gateway Service..."
-    - mvn -B test --file backend/services/logging-service/pom.xml
-  tags:
-    - docker
-  dependencies:
-    - compile_logging_service
-
-test_notification_service:
-   stage: test
-   script:
-     - echo "Running tests for Notification Service..."
-     - mvn -B test --file backend/services/notification-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_notification_service
-
-test_patient_service:
-   stage: test
-   script:
-     - echo "Running tests for Patient Service..."
-     - mvn -B test --file backend/services/patient-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_patient_service
-
-# Job for frontend
+# Job for frontend build
 build_vue_frontend:
   stage: compile
   image: node:18
