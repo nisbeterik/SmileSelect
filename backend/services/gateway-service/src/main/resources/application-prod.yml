@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: gateway-service
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
+      # route to service registry logical name service lookup
+      routes:
+        - id: appointment-service
+          uri: lb://appointment-service
+          predicates:
+            - Path=/api/appointments/**
+
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+
+        - id: dentist-service
+          uri: lb://dentist-service
+          predicates:
+            - Path=/api/dentists/**
+
+        - id: logging-service
+          uri: lb://logging-service
+          predicates:
+            - Path=/api/logs/**
+
+        - id: monitoring-service
+          uri: lb://monitoring-service
+          predicates:
+            - Path=/api/metrics/**
+
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**
+
+        - id: patient-service
+          uri: lb://patient-service
+          predicates:
+            - Path=/api/patients/**

@@ -1,0 +1,18 @@
+{
+  "name": "stress-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "patient:light": "k6 run --env RUN_MODE=light src/patient.js",
+    "patient:full": "k6 run --env RUN_MODE=full src/patient.js",
+    "normal:light": "k6 run --env RUN_MODE=light src/normalScenario.js",
+    "normal:full": "k6 run --env RUN_MODE=full src/normalScenario.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "k6": "^0.0.0"
+  }
+}
