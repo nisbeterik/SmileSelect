@@ -1,20 +1,20 @@
 package com.smile_select.appointment_service.service;
 
-import com.smile_select.appointment_service.model.Appointment;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import com.smile_select.appointment_service.mqtt.MqttGateway;
-
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
+import com.smile_select.appointment_service.model.Appointment;
+import com.smile_select.appointment_service.mqtt.MqttGateway;
+import com.smile_select.appointment_service.repository.AppointmentRepository;
 
 @Service
 public class AppointmentService {
@@ -350,6 +350,18 @@ public class AppointmentService {
         }
         return all;
     }
+    private List<String> queryAllForDateString(String sql, Object... params) {
+        List<String> all = new ArrayList<>();
+        for (Region region : Region.values()) {
+            boolean primaryHealthy = isPrimaryHealthy(region);
+            if (!primaryHealthy) {
+                System.out.println("Primary DB down for " + region + ". Fetching from Fallback DB...");
+            }
+            JdbcTemplate template = getTemplate(region, primaryHealthy);
+            all.addAll(template.query(sql, (rs, rowNum) -> rs.getString(1), params));
+        }
+        return all;
+    }
 
     // Retrieves all appointments after given date
     public List<Appointment> getAppointmentsAfterDate(LocalDate startDate) {
@@ -366,25 +378,85 @@ public class AppointmentService {
         return queryAll("SELECT * FROM appointment WHERE DATE(start_time) BETWEEN ? AND ?", startDate, endDate);
     }
 
+    // Retrieves all appointments by patient ID
+    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE patient_id = ? ORDER BY start_time ASC", patientId);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+
+    }
+
     // Retrieves all appointments by dentist ID
     public List<Appointment> getAppointmentsByDentistId(Long dentistId) {
         return queryAll("SELECT * FROM appointment WHERE dentist_id = ?", dentistId);
     }
 
-    // Retrieves all appointments by patient ID
-    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        // Without hashing on patient_id, we must query all partitions anyway
-        return queryAll("SELECT * FROM appointment WHERE patient_id = ?", patientId);
-    }
-
     // Retrieves all available appointments by dentist ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
-        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL ORDER BY start_time ASC", dentistId);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", dentistId);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
-    // Retrieve all available appointments by clinic ID where patient ID is null
+    // Retrieves appointments by dentist ID and date
+    public List<Appointment> getAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+    }
+
+    // Retrieves available appointments by dentist ID and date where patient ID is null
+    public List<Appointment> getAvailableAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ? AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", dentistId, date);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+    }
+
+    // Retrieves all appointments by clinic ID
+    public List<Appointment> getAppointmentsByClinicId(Long clinicId) {
+        return queryAll("SELECT * FROM appointment WHERE clinic_id = ?", clinicId);
+    }
+
+    // Retrieves all available appointments by clinic ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByClinicId(Long clinicId) {
-        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id is NULL ORDER BY start_time ASC", clinicId);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id is NULL AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", clinicId);
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+    }
+
+    // Retrieves appointments by clinic ID and date
+    public List<Appointment> getAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+    }
+
+    // Retrieves available appointments by clinic ID and date where patient ID is null
+    public List<Appointment> getAvailableAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ? AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", clinicId, date);
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+    }
+
+    // Retrieves all available appointment dates for a clinic
+    public List<String> getAvailableAppointmentDatesForClinic(Long clinicId) {
+        return queryAllForDateString("SELECT DISTINCT DATE (start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND clinic_id = ?", clinicId);
+    }
+
+    // Retrieves all available appointment dates for a dentist
+    public List<String> getAvailableAppointmentDatesForDentist(Long dentistId) {
+        return queryAllForDateString("SELECT DISTINCT DATE (start_time) FROM appointment WHERE patient_id IS NULL AND start_time > CURRENT_TIMESTAMP AND dentist_id = ?", dentistId);
     }
 
     // Method for publishing an MQTT message containting a stringified appointment JSON-object
