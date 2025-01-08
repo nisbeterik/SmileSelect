@@ -3,12 +3,14 @@ package com.smile_select.appointment_service.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 @EnableScheduling
+@Profile("!test")
 public class CleanupScheduler {
 
     private final JdbcTemplate partition0FallbackJdbcTemplate;

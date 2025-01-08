@@ -1,60 +1,14 @@
 server:
   port: 8080 # Port for the gateway service
 
+
+# Set profile using SPRING_PROFILES_ACTIVE environment variable (See stress-test README.md on how to set)
 spring:
-  application:
-    name: gateway-service
-  main:
-    web-application-type: reactive
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:prod} # If variable isn't set, default to application-prod.yml ('prod')
 
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: '*'
-            allowedMethods: '*'
-            allowedHeaders: '*'
-      routes:
-        - id: appointment-service
-          uri: lb://appointment-service
-          predicates:
-            - Path=/api/appointments/**
 
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/api/auth/**
-
-        - id: dentist-service
-          uri: lb://dentist-service
-          predicates:
-            - Path=/api/dentists/**
-
-        - id: logging-service
-          uri: lb://logging-service
-          predicates:
-            - Path=/api/logs/**
-
-        - id: monitoring-service
-          uri: lb://monitoring-service
-          predicates:
-            - Path=/api/metrics/**
-
-        - id: notification-service
-          uri: lb://notification-service
-          predicates:
-            - Path=/api/notifications/**
-
-        - id: patient-service
-          uri: lb://patient-service
-          predicates:
-            - Path=/api/patients/**
-
+# Eureka service registry configuration
 eureka:
   client:
     service-url:
