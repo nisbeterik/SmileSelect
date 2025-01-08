@@ -4,8 +4,12 @@
     <p>You will be notified if an open appointment slot is published</p>
     <p :class="infoTextClass">{{ infoText }}</p>
 
-    <Datepicker v-model="selectedDates" :multi-dates="{ limit: 5 }" :enable-time-picker="false"
-      :disabled-dates="disableDatesBeforeToday" @update:modelValue="handleDateSelection" class="custom-datepicker" />
+    <Datepicker v-model="selectedDates"
+                :multi-dates="{ limit: 5 }"
+                :enable-time-picker="false"
+                :disabled-dates="disableDatesBeforeToday"
+                @update:modelValue="handleDateSelection"
+                class="custom-datepicker" ></Datepicker>
 
     <button class="button-primary" @click="handleSelect" :disabled="selectedDates.length === 0">
       Save Dates

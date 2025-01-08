@@ -59,7 +59,7 @@
           <br /><br />
         </div>
 
-        <BirthdayPickerComponent @dateSelected="updateDob" />
+        <BirthdayPickerComponent @dateSelected="updateDob" ></BirthdayPickerComponent>
         <small v-if="inputErrors.dateOfBirth" class="error">{{ inputErrors.dateOfBirth }}</small>
         <br /><br />
 

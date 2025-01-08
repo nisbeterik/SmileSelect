@@ -2,7 +2,7 @@
   <div id="home">
     <header class="home-header">
       <div class="header-content">
-        <img src="/images/smileSelectLogo.png" alt="Smile Select Logo" class="logo">
+        <img src="/images/smileSelectLogo.png" alt="Smile Select Logo" class="logo"/>
         <nav>
           <ul>
             <li><a href="#home">Home</a></li>
@@ -16,7 +16,10 @@
 
     <main>
       <section id="home" class="hero-section">
-        <div class="hero-half" v-for="(image, index) in images" :key="index" :style="{ backgroundImage: `url(${image.src})` }">
+        <div class="hero-half"
+             v-for="(image, index) in images"
+             :key="index"
+             :style="{ backgroundImage: `url(${image.src})` }">
           <div class="hero-content">
             <h2>{{ image.title }}</h2>
             <p>{{ image.description }}</p>
@@ -26,7 +29,7 @@
       </section>
 
       <!-- AboutUs Component -->
-      <AboutUsComponent />
+      <AboutUsComponent ></AboutUsComponent>
 
       <section id="contact" class="contact-section">
         <h2>Contact Us</h2>

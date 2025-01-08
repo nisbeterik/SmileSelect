@@ -11,9 +11,9 @@
           </select>
           <p v-if="selectedClinic">Selected Clinic: {{ selectedClinic.name }}</p>
           <button
-              v-if="selectedClinic"
-              @click="emitClinicName"
-              class="btn-emit-clinic"
+            v-if="selectedClinic"
+            @click="emitClinicName"
+            class="btn-emit-clinic"
           >
             Get location: {{ selectedClinic.name }}
           </button>

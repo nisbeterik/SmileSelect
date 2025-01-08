@@ -73,7 +73,7 @@
             :allowed-dates="allowedDates"
             @update:modelValue="handleDateSelection"
             class="custom-datepicker"
-          />
+          ></Datepicker>
         </teleport>
 
         <p :class="infoTextClass">{{ infoText }}</p>
