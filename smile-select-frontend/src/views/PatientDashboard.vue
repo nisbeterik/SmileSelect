@@ -19,8 +19,18 @@
     </div>
 
     <!-- Bottom row with AvailabilityPage -->
-    <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
+    <div v-if="validUser & listView" class="glass-card availability-page" ref="availabilitySection">
+      <Button @click="flipView" class="button-primary">Switch to calendar view</Button>
       <AvailableAppointmentComponent
+        :clinics="clinics"
+        @updateClinics="updateClinics"
+        @clinicLocation="handleClinicLocation"
+        v-bind:selected-clinic-from-map="selectedClinicFromMap"
+      />
+    </div>
+    <div v-if="validUser & !listView" class="glass-card availability-page" ref="availabilitySection">
+      <Button @click="flipView" class="button-primary">Switch to list view</Button>
+      <AvailableAppointmentsComponent
         :clinics="clinics"
         @updateClinics="updateClinics"
         @clinicLocation="handleClinicLocation"
@@ -52,6 +62,7 @@ import { useAuthStore } from "@/stores/auth";
 import PatientAppointmentsComponent from "@/components/PatientAppointmentsComponent.vue";
 import PreferredDateComponent from "../components/PreferredDateComponent.vue";
 import AvailableAppointmentComponent from '@/components/AvailableAppointmentComponent.vue';
+import AvailableAppointmentsComponent from '@/components/AvailableAppointmentsComponent.vue';
 import MapPage from "@/views/MapPage.vue";
 import "/src/CSS/global.css";
 
@@ -59,6 +70,7 @@ export default {
   name: "PatientDashboard",
   components: {
     AvailableAppointmentComponent,
+    AvailableAppointmentsComponent,
     PatientAppointmentsComponent,
     PreferredDateComponent,
     MapPage,
@@ -72,6 +84,7 @@ export default {
       patientName: '',
       selectedClinicName: null,
       selectedClinicFromMap: null,
+      listView: true,
       clinics: [],
     };
   },
@@ -91,6 +104,9 @@ export default {
     },
     updateClinics(newClinics) {
       this.clinics = newClinics;
+    },
+    flipView(){
+      this.listView = !this.listView
     },
     async fetchPatientDetails() {
       try {
