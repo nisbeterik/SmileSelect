@@ -79,7 +79,7 @@ export default {
       }
     },
     handleMarkerClick(clinic) {
-      this.$emit("clinic-selected", clinic);
+      this.$emit('clinic-selected', clinic.id);
     },
     updateMapCenter(clinicName) {
       const clinic = this.clinics.find((c) => c.name === clinicName);
@@ -127,7 +127,7 @@ export default {
 .map-page {
   background-color: #206050;
   max-height: 600px;
-  overflow: hidden;
+  overflow: visible;
   margin: 20px;
   margin-bottom: 50px;
 }

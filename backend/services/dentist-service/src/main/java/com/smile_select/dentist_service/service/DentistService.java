@@ -77,6 +77,10 @@ public class DentistService {
                 .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with ID: " + id));
     }
 
+    public List<Dentist> findDentistsByClinicId(Long clinicId) {
+        return dentistRepository.findByClinic_Id(clinicId);
+    }
+
     public Dentist updateDentist(Long id, Dentist dentistUpdate) {
         Dentist dentist = dentistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dentist not found with ID: " + id));

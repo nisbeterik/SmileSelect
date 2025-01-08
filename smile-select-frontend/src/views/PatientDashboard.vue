@@ -19,11 +19,22 @@
     </div>
 
     <!-- Bottom row with AvailabilityPage -->
-    <div v-if="validUser" class="glass-card availability-page" ref="availabilitySection">
-      <AvailableAppointmentsComponent
-          :clinics="clinics"
-          @updateClinics="updateClinics"
-          @clinicLocation="handleClinicLocation"
+    <div v-if="validUser & listView" class="glass-card availability-page" ref="availabilitySection">
+      <Button @click="flipView" class="button-primary">Switch to calendar view</Button>
+      <AvailableAppointmentComponent
+        :clinics="clinics"
+        @updateClinics="updateClinics"
+        @clinicLocation="handleClinicLocation"
+        v-bind:selected-clinic-from-map="selectedClinicFromMap"
+      />
+    </div>
+    <div v-if="validUser & !listView" class="glass-card availability-page" ref="availabilitySection">
+      <Button @click="flipView" class="button-primary">Switch to list view</Button>
+      <AvailableAppointmentsCalendarComponent
+        :clinics="clinics"
+        @updateClinics="updateClinics"
+        @clinicLocation="handleClinicLocation"
+        v-bind:selected-clinic-from-map="selectedClinicFromMap"
       />
     </div>
 
@@ -33,8 +44,8 @@
         ref="mapPageSection"
     >
       <MapPage
-          @clinic-selected="handleClinicSelection"
-          v-bind:selected-clinic-name="selectedClinicName"
+        @clinic-selected="handleClinicSelectionFromMap"
+        v-bind:selected-clinic-name="selectedClinicName"
       />
     </div>
 
@@ -50,16 +61,18 @@ import axios from '../axios';
 import { useAuthStore } from "@/stores/auth";
 import PatientAppointmentsComponent from "@/components/PatientAppointmentsComponent.vue";
 import PreferredDateComponent from "../components/PreferredDateComponent.vue";
-import AvailableAppointmentsComponent from "@/components/AvailableAppointmentsComponent.vue";
+import AvailableAppointmentComponent from '@/components/AvailableAppointmentComponent.vue';
+import AvailableAppointmentsCalendarComponent from '@/components/AvailableAppointmentsCalendarComponent.vue';
 import MapPage from "@/views/MapPage.vue";
 import "/src/CSS/global.css";
 
 export default {
   name: "PatientDashboard",
   components: {
+    AvailableAppointmentComponent,
+    AvailableAppointmentsCalendarComponent,
     PatientAppointmentsComponent,
     PreferredDateComponent,
-    AvailableAppointmentsComponent,
     MapPage,
   },
   data() {
@@ -69,7 +82,9 @@ export default {
       patientId: authStore.id,
       role: authStore.role,
       patientName: '',
-      selectedClinicName: null, // Clinic selected in booking component
+      selectedClinicName: null,
+      selectedClinicFromMap: null,
+      listView: true,
       clinics: [],
     };
   },
@@ -77,7 +92,10 @@ export default {
     async checkUser() {
       this.validUser = this.role === "PATIENT" && this.patientId !== null;
     },
-    handleClinicSelection() {
+    handleClinicSelectionFromMap(clinicId) {
+      if (clinicId) {
+        this.selectedClinicFromMap = clinicId;
+      }
       this.$refs.availabilitySection.scrollIntoView({ behavior: "smooth" });
     },
     handleClinicLocation(clinicName) {
@@ -86,6 +104,9 @@ export default {
     },
     updateClinics(newClinics) {
       this.clinics = newClinics;
+    },
+    flipView(){
+      this.listView = !this.listView
     },
     async fetchPatientDetails() {
       try {
@@ -146,6 +167,7 @@ export default {
 .availability-page, .map-page {
   margin: 20px;
   max-width: 100%; /* Allow full width on small screens */
+  z-index: 1;
 }
 .button-primary {
   padding: 10px 20px;

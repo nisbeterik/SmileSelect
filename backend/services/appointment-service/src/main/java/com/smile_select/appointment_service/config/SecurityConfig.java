@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/appointments").permitAll()
                         .requestMatchers("/api/appointments/**").permitAll()
+                        .requestMatchers("/api/appointments/available-dates/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable());

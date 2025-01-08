@@ -70,23 +70,41 @@ public class DentistController {
      * @return ResponseEntity with the list of all dentists
      */
     @GetMapping
-    public ResponseEntity<List<DentistDTO>> getAllDentists() {
-        List<DentistDTO> dentists = dentistService.getAllDentists().stream()
-                .map(dentist -> new DentistDTO(
-                        dentist.getId(),
-                        dentist.getFirstName(),
-                        dentist.getLastName(),
-                        dentist.getEmail(),
-                        dentist.getClinic().getId(),
-                        dentist.getClinic().getName(),
-                        dentist.getClinic().getLongitude(),
-                        dentist.getClinic().getLatitude(),
-                        dentist.getClinic().getStreet(),
-                        dentist.getClinic().getZip(),
-                        dentist.getClinic().getCity(),
-                        dentist.getClinic().getHouseNumber()))
-                .collect(Collectors.toList());
-
+    public ResponseEntity<List<DentistDTO>> getDentistsByClinicId(@RequestParam(value = "clinicId", required = false) Long clinicId) {
+        List<DentistDTO> dentists;
+        if (clinicId != null) {
+            dentists = dentistService.findDentistsByClinicId(clinicId).stream()
+                    .map(dentist -> new DentistDTO(
+                            dentist.getId(),
+                            dentist.getFirstName(),
+                            dentist.getLastName(),
+                            dentist.getEmail(),
+                            dentist.getClinic().getId(),
+                            dentist.getClinic().getName(),
+                            dentist.getClinic().getLongitude(),
+                            dentist.getClinic().getLatitude(),
+                            dentist.getClinic().getStreet(),
+                            dentist.getClinic().getZip(),
+                            dentist.getClinic().getCity(),
+                            dentist.getClinic().getHouseNumber()))
+                    .collect(Collectors.toList());
+        } else {
+            dentists = dentistService.getAllDentists().stream()
+                    .map(dentist -> new DentistDTO(
+                            dentist.getId(),
+                            dentist.getFirstName(),
+                            dentist.getLastName(),
+                            dentist.getEmail(),
+                            dentist.getClinic().getId(),
+                            dentist.getClinic().getName(),
+                            dentist.getClinic().getLongitude(),
+                            dentist.getClinic().getLatitude(),
+                            dentist.getClinic().getStreet(),
+                            dentist.getClinic().getZip(),
+                            dentist.getClinic().getCity(),
+                            dentist.getClinic().getHouseNumber()))
+                    .collect(Collectors.toList());
+        }
         return ResponseEntity.ok(dentists);
     }
 
