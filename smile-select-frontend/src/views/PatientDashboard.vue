@@ -13,7 +13,7 @@
       <div class="preferred-date-picker">
         <PreferredDateComponent />
       </div>
-      <div class="glass-card patient-current-appointment">
+      <div class="glass-card patient-current-appointment" style="z-index: -1">
         <PatientAppointmentsComponent />
       </div>
     </div>
