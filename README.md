@@ -29,7 +29,7 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 
 <details><summary>Component Diagram</summary>
 
-![Component Diagram](assets/diagrams/component-diagram-milestone3.png)
+![Component Diagram](assets/diagrams/component-diagram-milestone4.png)
 
 *This component diagram represents a microservice-based architecture for a distributed dental management system. The system is made up of multiple microservices, a central API Gateway, and an MQTT broker for asynchronous communication between services. Some details of the architecture are as follows:*
 
