@@ -30,7 +30,7 @@
     </div>
     <div v-if="validUser & !listView" class="glass-card availability-page" ref="availabilitySection">
       <Button @click="flipView" class="button-primary">Switch to list view</Button>
-      <AvailableAppointmentsComponent
+      <AvailableAppointmentsCalendarComponent
         :clinics="clinics"
         @updateClinics="updateClinics"
         @clinicLocation="handleClinicLocation"
@@ -62,7 +62,7 @@ import { useAuthStore } from "@/stores/auth";
 import PatientAppointmentsComponent from "@/components/PatientAppointmentsComponent.vue";
 import PreferredDateComponent from "../components/PreferredDateComponent.vue";
 import AvailableAppointmentComponent from '@/components/AvailableAppointmentComponent.vue';
-import AvailableAppointmentsComponent from '@/components/AvailableAppointmentsComponent.vue';
+import AvailableAppointmentsCalendarComponent from '@/components/AvailableAppointmentsCalendarComponent.vue';
 import MapPage from "@/views/MapPage.vue";
 import "/src/CSS/global.css";
 
@@ -70,7 +70,7 @@ export default {
   name: "PatientDashboard",
   components: {
     AvailableAppointmentComponent,
-    AvailableAppointmentsComponent,
+    AvailableAppointmentsCalendarComponent,
     PatientAppointmentsComponent,
     PreferredDateComponent,
     MapPage,
