@@ -380,7 +380,12 @@ public class AppointmentService {
 
     // Retrieves all appointments by patient ID
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        return queryAll("SELECT * FROM appointment WHERE patient_id = ? ORDER BY start_time ASC", patientId);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE patient_id = ? ORDER BY start_time ASC", patientId);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
+
     }
 
     // Retrieves all appointments by dentist ID
@@ -390,17 +395,29 @@ public class AppointmentService {
 
     // Retrieves all available appointments by dentist ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistId(Long dentistId) {
-        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL ORDER BY start_time ASC", dentistId);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", dentistId);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
     // Retrieves appointments by dentist ID and date
     public List<Appointment> getAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
-        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
     // Retrieves available appointments by dentist ID and date where patient ID is null
     public List<Appointment> getAvailableAppointmentsByDentistIdAndDate(Long dentistId, LocalDate date) {
-        return queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", dentistId, date);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE dentist_id = ? AND patient_id IS NULL AND DATE(start_time) = ? AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", dentistId, date);
+
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
     // Retrieves all appointments by clinic ID
@@ -410,17 +427,26 @@ public class AppointmentService {
 
     // Retrieves all available appointments by clinic ID where patient ID is null
     public List<Appointment> getAvailableAppointmentsByClinicId(Long clinicId) {
-        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id is NULL ORDER BY start_time ASC", clinicId);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id is NULL AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", clinicId);
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
     // Retrieves appointments by clinic ID and date
     public List<Appointment> getAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
-        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
     // Retrieves available appointments by clinic ID and date where patient ID is null
     public List<Appointment> getAvailableAppointmentsByClinicIdAndDate(Long clinicId, LocalDate date) {
-        return queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ? ORDER BY start_time ASC", clinicId, date);
+        List<Appointment> all = queryAll("SELECT * FROM appointment WHERE clinic_id = ? AND patient_id IS NULL AND DATE(start_time) = ? AND start_time > CURRENT_TIMESTAMP ORDER BY start_time ASC", clinicId, date);
+        all.sort(Comparator.comparing(Appointment::getStartTime));
+
+        return all;
     }
 
     // Retrieves all available appointment dates for a clinic
