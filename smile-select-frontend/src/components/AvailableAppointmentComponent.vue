@@ -25,7 +25,11 @@
                 @click="emitClinicName"
                 class="button-primary map-pin-btn"
               >
-                <img src="/images/White-Pin.png" alt="Pin Icon" class="pin-icon" />
+                <img
+                  src="/images/White-Pin.png"
+                  alt="Pin Icon"
+                  class="pin-icon"
+                />
               </button>
             </div>
             <small v-if="inputErrors.clinicId" class="error">{{
@@ -56,28 +60,32 @@
             <br /><br />
           </div>
         </div>
-
-        <Datepicker v-if="selectedClinicId"
-          v-model="selectedDate"
-          :key="datePickerKey"
-          :enable-time-picker="false"
-          :append-to-body="true"
-          :auto-apply="true"
-          placeholder="Select a date with available appointments"
-          :disabled-dates="disableDatesBeforeToday"
-          :allowed-dates="allowedDates"
-          @update:modelValue="handleDateSelection"
-          class="custom-datepicker"
-        />
-
+        <teleport to="body">
+          <Datepicker
+            v-if="selectedClinicId"
+            v-model="selectedDate"
+            :key="datePickerKey"
+            :enable-time-picker="false"
+            :append-to-body="true"
+            :auto-apply="true"
+            placeholder="Select a date with available appointments"
+            :disabled-dates="disableDatesBeforeToday"
+            :allowed-dates="allowedDates"
+            @update:modelValue="handleDateSelection"
+            class="custom-datepicker"
+          />
+        </teleport>
 
         <p :class="infoTextClass">{{ infoText }}</p>
 
-
-
         <div class="scroll-wrapper">
-          <div v-if="!appointments.length" class="no-appointment align-content-center">
-            <h1 v-if="selectedClinicId">Please select a date to show available appointments</h1>
+          <div
+            v-if="!appointments.length"
+            class="no-appointment align-content-center"
+          >
+            <h1 v-if="selectedClinicId">
+              Please select a date to show available appointments
+            </h1>
             <h1 v-if="!selectedClinicId">Please select a clinic</h1>
           </div>
           <div class="appointments-scroll-container">
@@ -177,7 +185,6 @@ export default {
       if (newClinicID) {
         this.selectedClinicId = newClinicID; // Set selectedClinicId
         this.handleClinicChange(); // Fetch appointments
-
       }
     },
   },
@@ -229,7 +236,7 @@ export default {
         this.availableDates = response.data; // Update available dates
         this.refreshDatepicker(); // Refresh Datepicker to reflect new dates
       } catch (error) {
-        console.error("Error fetching available dates:", error);
+        console.error('Error fetching available dates:', error);
       }
     },
     async fetchAvailableDatesForDentist() {
@@ -245,27 +252,27 @@ export default {
         this.availableDates = response.data; // Update available dates
         this.refreshDatepicker(); // Refresh Datepicker to reflect new dates
       } catch (error) {
-        console.error("Error fetching available dates:", error);
+        console.error('Error fetching available dates:', error);
       }
     },
     refreshDatepicker() {
       this.datePickerKey += 1; // Increment key to force Datepicker re-render
     },
     handleClinicChange(newValue) {
-      if(newValue) {
+      if (newValue) {
         this.selectedClinicId = newValue;
       }
       this.appointments = [];
       this.selectedDentistId = null;
       this.fetchDentistsByClinic();
 
-      this.fetchAvailableDatesForClinic()
+      this.fetchAvailableDatesForClinic();
       localStorage.setItem('selectedClinicId', this.selectedClinicId);
       localStorage.setItem('selectedDentistId', null);
       localStorage.setItem('selectedDate', null);
     },
     handleDentistChange(newValue) {
-      if(newValue) {
+      if (newValue) {
         this.selectedDentistId = newValue;
       }
       this.appointments = [];
@@ -274,25 +281,24 @@ export default {
       localStorage.setItem('selectedDentistId', this.selectedDentistId);
       localStorage.setItem('selectedDate', null);
     },
-    handleDateSelection(){
+    handleDateSelection() {
       localStorage.setItem('selectedDate', this.selectedDate);
 
-        const selectedDate = new Date(this.selectedDate);
+      const selectedDate = new Date(this.selectedDate);
 
-        if (!isNaN(selectedDate)) {
-          // Format the date as YYYY-MM-DD
-          this.selectedDate = selectedDate.toISOString().split('T')[0];
-        } else {
-          console.error("Invalid date selected");
-          this.selectedDate = null;
-        }
+      if (!isNaN(selectedDate)) {
+        // Format the date as YYYY-MM-DD
+        this.selectedDate = selectedDate.toISOString().split('T')[0];
+      } else {
+        console.error('Invalid date selected');
+        this.selectedDate = null;
+      }
       this.appointments = [];
-      if(this.selectedDentistId === null) {
+      if (this.selectedDentistId === null) {
         this.fetchAppointmentsByClinic();
       } else {
         this.fetchAppointmentsByDentist();
       }
-
     },
     disableDatesBeforeToday(date) {
       const today = new Date();
@@ -309,13 +315,13 @@ export default {
 
         if (savedDentistId) {
           this.selectedDentistId = savedDentistId;
-          this.fetchAvailableDatesForDentist()
-          this.selectedDate = savedDate
-          this.handleDateSelection()
+          this.fetchAvailableDatesForDentist();
+          this.selectedDate = savedDate;
+          this.handleDateSelection();
         } else {
-          this.fetchAvailableDatesForClinic()
-          this.selectedDate = savedDate
-          this.handleDateSelection()
+          this.fetchAvailableDatesForClinic();
+          this.selectedDate = savedDate;
+          this.handleDateSelection();
         }
       }
     },
@@ -353,7 +359,7 @@ export default {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
-            params: params
+            params: params,
           }
         );
         const appointments = response.data;
@@ -368,7 +374,7 @@ export default {
         if (this.appointments.length === 0) {
           this.appointmentText = 'No appointment(s) scheduled';
         }
-        this.infoText = "";
+        this.infoText = '';
       } catch (error) {
         console.error('Error fetching appointments:', error);
         this.appointmentText = 'No appointment(s) scheduled';
@@ -391,7 +397,7 @@ export default {
             headers: {
               Authorization: `Bearer ${this.token}`,
             },
-            params: params
+            params: params,
           }
         );
         const appointments = response.data;
@@ -406,7 +412,7 @@ export default {
         if (this.appointments.length === 0) {
           this.appointmentText = 'No appointment(s) scheduled';
         }
-        this.infoText = "";
+        this.infoText = '';
       } catch (error) {
         console.error('Error fetching appointments:', error);
         this.appointmentText = 'No appointment(s) scheduled';
@@ -489,6 +495,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px; /* Space between the field and button */
+  position: relative;
 }
 
 .map-pin-btn {
@@ -640,17 +647,16 @@ export default {
   margin: 10px 0;
   width: 100%;
   --dp-primary-color: #206050;
-  z-index: 500;
+  z-index: 2000;
+  position: absolute;
   --dp-menu-min-width: 500px;
 }
-
 
 .custom-datepicker.datepicker {
   width: 100%;
   min-width: 200px;
-
 }
-.no-appointment{
+.no-appointment {
   min-height: 300px;
   text-align: center;
 }
@@ -670,9 +676,19 @@ export default {
 @media (max-width: 480px) {
   .appointments-scroll-container {
     max-height: 400px; /* Adjust height for smaller screens */
+    overflow: visible;
   }
 }
-.select-field{
+
+@media (max-width: 768px) {
+  .custom-datepicker {
+    width: 100%; /* Adapt to smaller screens */
+    left: 0;
+    margin: 0 auto; /* Center align */
+  }
+}
+
+.select-field {
   max-width: 50%;
   margin: 10px;
 }
