@@ -77,7 +77,7 @@ Each microservice (except Auth-Service) has a dedicated database to store its da
 
 <details><summary>Deployment Diagram</summary>
 
-![Deployment Diagram](assets/diagrams/deployment-diagram-milestone3.png)
+![Deployment Diagram](assets/diagrams/deployment-diagram-milestone4.png)
 
 This Deployment Diagram represents a distributed system architecture of SmileSelect, detailing the physical deployment of various components and their interactions:
 
