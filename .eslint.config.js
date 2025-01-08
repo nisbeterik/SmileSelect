@@ -4,9 +4,15 @@ export default [
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
-      '**/coverage/**',
-      'smile-select-frontend/dist',
-      'smile-select-frontend/node_modules',
+      '**/public/**',
+      '**/backend/services/**/target/**',
+      '**/database-scripts/**',
+      '**/*.png',
+      '**/*.jpg',
+      '**/*.ico',
+      '**/*.sql',
+      '**/docker-compose.yml',
+      '**/README.md',
     ],
     languageOptions: {
       ecmaVersion: 2021,
