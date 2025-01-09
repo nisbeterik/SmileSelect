@@ -18,8 +18,8 @@ import static org.hamcrest.Matchers.containsString;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -132,5 +132,32 @@ public class DentistControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(newDentist)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Selected clinic does not exist")));
+    }
+
+    @Test
+    public void testGetDentistByIdSuccess() throws Exception {
+
+        mockMvc.perform(get("/api/dentists/{id}", firstDentistId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(firstDentistId))
+                .andExpect(jsonPath("$.firstName").exists())
+                .andExpect(jsonPath("$.lastName").exists())
+                .andExpect(jsonPath("$.email").exists())
+                .andExpect(jsonPath("$.clinicId").exists())
+                .andExpect(jsonPath("$.clinicName").exists())
+                .andExpect(jsonPath("$.longitude").exists())
+                .andExpect(jsonPath("$.latitude").exists())
+                .andExpect(jsonPath("$.street").exists())
+                .andExpect(jsonPath("$.zip").exists())
+                .andExpect(jsonPath("$.city").exists())
+                .andExpect(jsonPath("$.houseNumber").exists());
+    }
+
+    @Test
+    public void testGetDentistByIdNotFound() throws Exception {
+        long nonExistingDentistId = 999999L;
+        mockMvc.perform(get("/api/dentists/{id}", nonExistingDentistId))
+                .andExpect(status().isNotFound());
     }
 }
