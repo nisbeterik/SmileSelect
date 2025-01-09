@@ -121,7 +121,7 @@ class ClinicControllerIntegrationTest {
     // Deletes a clinic
     @Test
     void shouldDeleteClinic() throws Exception {
-        mockMvc.perform(delete("/api/dentists/clinics/{id}", firstClinicId))
+        mockMvc.perform(delete("/api/dentists/clinics/{id}", firstClinicId + 2))
                 .andExpect(status().isNoContent());
     }
 
