@@ -184,4 +184,29 @@ public class DentistControllerIntegrationTest {
         mockMvc.perform(delete("/api/dentists/{id}", nonExistentDentistId))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void testGetDentistByEmailSuccess() throws Exception {
+        String email = "tooth.ache@example.com"; // email from test-data.sql
+
+        mockMvc.perform(get("/api/dentists/by-email")
+                        .param("email", email))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.firstName").exists())
+                .andExpect(jsonPath("$.lastName").exists())
+                .andExpect(jsonPath("$.id").exists());
+    }
+
+    @Test
+    public void testGetDentistByEmailNotFound() throws Exception {
+
+        String email = "nonexistent.email@example.com";
+
+        mockMvc.perform(get("/api/dentists/by-email")
+                        .param("email", email))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("Dentist not found with email: " + email)));
+    }
 }
