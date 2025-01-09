@@ -12,4 +12,5 @@ app.use(pinia);
 app.config.globalProperties.$axios = axios;
 app.use(router);
 app.mount('#app');
-console.log('test');
+function() // Missing function name
+console.log('Hello')
