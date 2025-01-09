@@ -102,6 +102,21 @@ public class DentistControllerIntegrationTest {
                 .andExpect(content().string(containsString("Email is already in use")));
     }
 
+    @Test
+    public void testRegisterDentistMissingClinicId() throws Exception {
+        Dentist newDentist = new Dentist();
+        newDentist.setFirstName("Charlie");
+        newDentist.setLastName("Brown");
+        newDentist.setEmail("charlie.brown@example.com");
+        newDentist.setPassword("password123");
+        newDentist.setClinicId(null);
+
+        mockMvc.perform(post("/api/dentists/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newDentist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Clinic ID is required")));
+    }
 
 
 }
