@@ -118,5 +118,19 @@ public class DentistControllerIntegrationTest {
                 .andExpect(content().string(containsString("Clinic ID is required")));
     }
 
+    @Test
+    public void testRegisterDentistInvalidClinicId() throws Exception {
+        Dentist newDentist = new Dentist();
+        newDentist.setFirstName("David");
+        newDentist.setLastName("Johnson");
+        newDentist.setEmail("david.johnson@example.com");
+        newDentist.setPassword("password123");
+        newDentist.setClinicId(9999999L); // Invalid clinicId
 
+        mockMvc.perform(post("/api/dentists/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newDentist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Selected clinic does not exist")));
+    }
 }
