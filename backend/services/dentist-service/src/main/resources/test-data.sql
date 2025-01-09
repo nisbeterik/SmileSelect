@@ -37,6 +37,6 @@ INSERT INTO dentist (first_name, last_name, email, password, clinic_id)
 VALUES
     ('Tooth', 'Ache', 'tooth.ache@example.com', 'securepassword123', (SELECT id FROM clinic WHERE name = 'Smile Select Clinic')),
     ('Brush', 'Yawrteeth', 'brush.yawrteeth@example.com', 'mypassword456', (SELECT id FROM clinic WHERE name = 'Happy Teeth Clinic')),
-    ('Emily', 'Johnson', 'emily.johnson@example.com', 'passw0rd789', (SELECT id FROM clinic WHERE name = 'Bright Smile Clinic')),
+    ('Emily', 'Johnson', 'emily.johnson@example.com', 'passw0rd789', (SELECT id FROM clinic WHERE name = 'Happy Teeth Clinic')),
     ('Michael', 'Brown', 'michael.brown@example.com', 'passwordABC', (SELECT id FROM clinic WHERE name = 'Smile Select Clinic')),
     ('Laura', 'Wilson', 'laura.wilson@example.com', 'passwordXYZ', (SELECT id FROM clinic WHERE name = 'Happy Teeth Clinic'));
