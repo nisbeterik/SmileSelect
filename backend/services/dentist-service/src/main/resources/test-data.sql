@@ -35,8 +35,8 @@ VALUES
 -- Insert sample data into the dentist table with dynamic clinic IDs
 INSERT INTO dentist (first_name, last_name, email, password, clinic_id)
 VALUES
-    ('John', 'Doe', 'john.doe@example.com', 'securepassword123', (SELECT id FROM clinic WHERE name = 'Smile Select Clinic')),
-    ('Jane', 'Smith', 'jane.smith@example.com', 'mypassword456', (SELECT id FROM clinic WHERE name = 'Happy Teeth Clinic')),
+    ('Tooth', 'Ache', 'tooth.ache@example.com', 'securepassword123', (SELECT id FROM clinic WHERE name = 'Smile Select Clinic')),
+    ('Brush', 'Yawrteeth', 'brush.yawrteeth@example.com', 'mypassword456', (SELECT id FROM clinic WHERE name = 'Happy Teeth Clinic')),
     ('Emily', 'Johnson', 'emily.johnson@example.com', 'passw0rd789', (SELECT id FROM clinic WHERE name = 'Bright Smile Clinic')),
     ('Michael', 'Brown', 'michael.brown@example.com', 'passwordABC', (SELECT id FROM clinic WHERE name = 'Smile Select Clinic')),
     ('Laura', 'Wilson', 'laura.wilson@example.com', 'passwordXYZ', (SELECT id FROM clinic WHERE name = 'Happy Teeth Clinic'));

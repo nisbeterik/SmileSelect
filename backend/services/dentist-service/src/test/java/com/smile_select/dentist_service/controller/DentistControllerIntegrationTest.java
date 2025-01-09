@@ -2,7 +2,9 @@ package com.smile_select.dentist_service.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smile_select.dentist_service.model.Dentist;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,8 +13,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import static org.hamcrest.Matchers.containsString;
+
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,18 +35,54 @@ public class DentistControllerIntegrationTest {
 
     private static long firstDentistId;
 
+    private static long clinicId;
+
+
+
+    // Gets the first available clinic ID in database
     // Gets the first available dentist ID in database
     @BeforeAll
     static void init(@Autowired MockMvc mockMvc, @Autowired ObjectMapper objectMapper) throws Exception {
 
-        MvcResult result = mockMvc.perform(get("/api/dentists/"))
+        MvcResult firstResult = mockMvc.perform(get("/api/dentists/clinics"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
-        firstDentistId = objectMapper.readTree(responseBody).get(0).get("id").longValue();
-        System.out.println("Initialized First Clinic ID: " + firstDentistId);
+        String responseBody = firstResult.getResponse().getContentAsString();
+        clinicId = objectMapper.readTree(responseBody).get(0).get("id").longValue();
+        System.out.println("Initialized First Clinic ID: " + clinicId);
+
+        // Get all dentists for the selected clinic
+        MvcResult secondResult = mockMvc.perform(get(String.format("/api/dentists?clinicId=%d", clinicId)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        String secondBody = secondResult.getResponse().getContentAsString();
+        System.out.println("Response from /api/dentists?clinicId={clinicId}: " + secondBody);
+
+        // Extract firstDentistId from the first dentist of the selected clinic
+        firstDentistId = objectMapper.readTree(secondBody).get(0).get("id").longValue();
+        System.out.println("Initialized First Dentist ID: " + firstDentistId);
+
+    }
+
+
+    @Test
+    public void testRegisterDentistSuccess() throws Exception {
+        Dentist newDentist = new Dentist();
+        newDentist.setFirstName("Alice");
+        newDentist.setLastName("Wonderland");
+        newDentist.setEmail("alice.wonderland@example.com");
+        newDentist.setPassword("securepassword123");
+        newDentist.setClinicId(clinicId);
+
+        mockMvc.perform(post("/api/dentists/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newDentist)))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("Dentist registered successfully!")));
     }
 
 
