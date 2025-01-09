@@ -21,7 +21,7 @@ import com.smile_select.dentist_service.model.Dentist;
 /**
  * RESTful controller responsible for handling dentist registration and basic
  * CRUD operations.
- * Exposes endpoints at the base path /api/accounts.
+ * Exposes endpoints at the base path /api/dentists.
  */
 @RestController
 @RequestMapping("/api/dentists")
