@@ -12,3 +12,4 @@ app.use(pinia);
 app.config.globalProperties.$axios = axios;
 app.use(router);
 app.mount('#app');
+console.log('test');

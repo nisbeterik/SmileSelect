@@ -13,7 +13,9 @@ export default [
       '**/*.sql',
       '**/docker-compose.yml',
       '**/README.md',
-    ],
+      '**/coverage/**',
+      '**/*.lock',
+    ],    
     languageOptions: {
       ecmaVersion: 2021,
       sourceType: 'module',
