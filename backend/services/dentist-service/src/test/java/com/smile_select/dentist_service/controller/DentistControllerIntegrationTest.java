@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.hamcrest.Matchers.containsString;
 
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -158,6 +157,31 @@ public class DentistControllerIntegrationTest {
     public void testGetDentistByIdNotFound() throws Exception {
         long nonExistingDentistId = 999999L;
         mockMvc.perform(get("/api/dentists/{id}", nonExistingDentistId))
+                .andExpect(status().isNotFound());
+    }
+
+
+    // Test commented out because you need some sort of authentication to delete
+    // An authentication I am not aware of how to get but this should work in theory, with authentication
+    /*
+    @Test
+    public void testDeleteDentistSuccess() throws Exception {
+        mockMvc.perform(get("/api/dentists/{id}", firstDentistId))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/api/dentists/{id}", firstDentistId))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/dentists/{id}", firstDentistId))
+                .andExpect(status().isNotFound());
+    }*/
+
+    @Test
+    public void testDeleteDentistNotFound() throws Exception {
+
+        long nonExistentDentistId = 9999L;
+
+        mockMvc.perform(delete("/api/dentists/{id}", nonExistentDentistId))
                 .andExpect(status().isNotFound());
     }
 }
