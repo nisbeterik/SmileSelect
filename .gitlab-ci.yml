@@ -4,7 +4,6 @@ stages:
   
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  POSTGRES_PORT: 5432
 
 cache:
   paths:
@@ -98,10 +97,6 @@ compile_patient_service:
     expire_in: 1 week
     paths:
       - backend/services/patient-service/target
-
-# Test jobs for each microservice (commented out for now)
-
-
 
 
 test_appointment_service:
