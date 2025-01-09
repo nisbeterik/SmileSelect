@@ -85,5 +85,23 @@ public class DentistControllerIntegrationTest {
                 .andExpect(content().string(containsString("Dentist registered successfully!")));
     }
 
+    @Test
+    public void testRegisterDentistDuplicateEmail() throws Exception {
+
+        Dentist newDentist = new Dentist();
+        newDentist.setFirstName("Tooth");
+        newDentist.setLastName("Ache");
+        newDentist.setEmail("tooth.ache@example.com"); // Existing email from test-data.sql
+        newDentist.setPassword("password123");
+        newDentist.setClinicId(clinicId);
+
+        mockMvc.perform(post("/api/dentists/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newDentist)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Email is already in use")));
+    }
+
+
 
 }
