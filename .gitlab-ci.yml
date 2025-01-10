@@ -173,7 +173,7 @@ test_notification_service:
 test_patient_service:
    stage: test
    script:
-     - echo "Running tests for Patient Service..."
+     - cd backend/services/patient-service
      # Export the Spring profile to test
      - export SPRING_PROFILES_ACTIVE="test"
      - echo "SPRING_PROFILES_ACTIVE is $SPRING_PROFILES_ACTIVE"
