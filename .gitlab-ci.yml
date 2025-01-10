@@ -174,7 +174,16 @@ test_patient_service:
    stage: test
    script:
      - echo "Running tests for Patient Service..."
-     - mvn -B test --file backend/services/patient-service/pom.xml
+     # Export the Spring profile to test
+     - export SPRING_PROFILES_ACTIVE="test"
+     - echo "SPRING_PROFILES_ACTIVE is $SPRING_PROFILES_ACTIVE"
+     # Create the env.properties file
+     - mkdir -p src/main/resources
+     - echo "jwt.secret=$JWT_TOKEN" > src/main/resources/env.properties
+     - echo "jwt.expiration=$JWT_EXPIRATION" >> src/main/resources/env.properties
+     - cat src/main/resources/env.properties
+     # Run Maven tests
+     - mvn -B test --file pom.xml
    tags:
      - docker
    dependencies:
