@@ -85,5 +85,14 @@ public class PatientControllerIntegrationTests {
                 .andExpect(content().string(containsString("Email is already in use")));
     }
 
+    @Test
+    public void testGetPatientByNonExistentEmail() throws Exception {
+        String nonExistentEmail = "non.existent@example.com";
+
+        mockMvc.perform(get("/api/patients/email/{email}", nonExistentEmail))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("Patient not found with email: " + nonExistentEmail)));
+    }
+
 
 }
