@@ -94,5 +94,26 @@ public class PatientControllerIntegrationTests {
                 .andExpect(content().string(containsString("Patient not found with email: " + nonExistentEmail)));
     }
 
+    @Test
+    public void testGetPatientByIdAsDentist_Success() throws Exception {
+
+        mockMvc.perform(get("/api/patients/booking/{id}", firstPatientId))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(firstPatientId))
+                .andExpect(jsonPath("$.firstName").value("Bad"))
+                .andExpect(jsonPath("$.lastName").value("Teeth"))
+                .andExpect(jsonPath("$.email").value("bad.teeth@example.com"));
+    }
+
+    @Test
+    public void testGetPatientByIdAsDentist_NotFound() throws Exception {
+        Long nonExistentPatientId = 9999L;
+
+        mockMvc.perform(get("/api/patients/booking/{id}", nonExistentPatientId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("Patient not found")));
+    }
+
 
 }
