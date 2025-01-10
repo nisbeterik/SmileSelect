@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import static org.hamcrest.Matchers.containsString;
 
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -113,6 +114,18 @@ public class PatientControllerIntegrationTests {
         mockMvc.perform(get("/api/patients/booking/{id}", nonExistentPatientId))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Patient not found")));
+    }
+
+    @Test
+    public void testGetAllPatients_Success() throws Exception {
+        mockMvc.perform(get("/api/patients"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(greaterThan(0)))
+                .andExpect(jsonPath("$[0].id").exists())
+                .andExpect(jsonPath("$[0].firstName").isString())
+                .andExpect(jsonPath("$[0].lastName").isString())
+                .andExpect(jsonPath("$[0].email").isString());
     }
 
 
