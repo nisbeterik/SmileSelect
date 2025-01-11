@@ -60,21 +60,21 @@
             <br /><br />
           </div>
         </div>
-        <teleport to="body">
-          <Datepicker
-            v-if="selectedClinicId"
-            v-model="selectedDate"
-            :key="datePickerKey"
-            :enable-time-picker="false"
-            :append-to-body="true"
-            :auto-apply="true"
-            placeholder="Select a date with available appointments"
-            :disabled-dates="disableDatesBeforeToday"
-            :allowed-dates="allowedDates"
-            @update:modelValue="handleDateSelection"
-            class="custom-datepicker"
-          ></Datepicker>
-        </teleport>
+
+        <Datepicker
+          v-if="selectedClinicId"
+          v-model="selectedDate"
+          :key="datePickerKey"
+          :enable-time-picker="false"
+          :append-to-body="true"
+          :auto-apply="true"
+          placeholder="Select a date with available appointments"
+          :disabled-dates="disableDatesBeforeToday"
+          :allowed-dates="allowedDates"
+          @update:modelValue="handleDateSelection"
+          class="custom-datepicker"
+        ></Datepicker>
+
 
         <p :class="infoTextClass">{{ infoText }}</p>
 
@@ -648,7 +648,6 @@ export default {
   width: 100%;
   --dp-primary-color: #206050;
   z-index: 2000;
-  position: absolute;
   --dp-menu-min-width: 500px;
 }
 
@@ -677,6 +676,9 @@ export default {
   .appointments-scroll-container {
     max-height: 400px; /* Adjust height for smaller screens */
     overflow: visible;
+  }
+  .custom-datepicker {
+    --dp-menu-min-width: 200px;
   }
 }
 
