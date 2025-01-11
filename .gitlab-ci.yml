@@ -5,7 +5,6 @@ stages:
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  POSTGRES_PORT: 5432
 
 cache:
   paths:
@@ -119,7 +118,7 @@ compile_patient_service:
     paths:
       - backend/services/patient-service/target
 
-# Test jobs for each microservice
+
 test_appointment_service:
   stage: test
   script:
@@ -145,17 +144,21 @@ test_dentist_service:
   image: maven:3.9.9-eclipse-temurin-21
   script:
     - cd backend/services/dentist-service
+    # Export the Spring profile to test
     - export SPRING_PROFILES_ACTIVE="test"
     - echo "SPRING_PROFILES_ACTIVE is $SPRING_PROFILES_ACTIVE"
+    # Create the env.properties file
     - mkdir -p src/main/resources
     - echo "jwt.secret=$JWT_TOKEN" > src/main/resources/env.properties
     - echo "jwt.expiration=$JWT_EXPIRATION" >> src/main/resources/env.properties
     - cat src/main/resources/env.properties
+    # Run Maven tests
     - mvn -B test --file pom.xml
   tags:
     - docker
   dependencies:
     - compile_dentist_service
+
 
 test_gateway_service:
   stage: test
@@ -188,14 +191,23 @@ test_notification_service:
     - compile_notification_service
 
 test_patient_service:
-  stage: test
-  script:
-    - echo "Running tests for Patient Service..."
-    - mvn -B test --file backend/services/patient-service/pom.xml
-  tags:
-    - docker
-  dependencies:
-    - compile_patient_service
+   stage: test
+   script:
+     - cd backend/services/patient-service
+     # Export the Spring profile to test
+     - export SPRING_PROFILES_ACTIVE="test"
+     - echo "SPRING_PROFILES_ACTIVE is $SPRING_PROFILES_ACTIVE"
+     # Create the env.properties file
+     - mkdir -p src/main/resources
+     - echo "jwt.secret=$JWT_TOKEN" > src/main/resources/env.properties
+     - echo "jwt.expiration=$JWT_EXPIRATION" >> src/main/resources/env.properties
+     - cat src/main/resources/env.properties
+     # Run Maven tests
+     - mvn -B test --file pom.xml
+   tags:
+     - docker
+   dependencies:
+     - compile_patient_service
 
 # Job for frontend
 build_vue_frontend:
