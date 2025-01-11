@@ -429,12 +429,14 @@ export default {
         };
         await axios.patch(`/appointments/booked-by-patient`, appointmentData);
         this.isModalVisible = false;
+        this.loadSelections();
         this.isBookingConfirmed = true;
 
         console.log('Booking confirmed successfully!');
       } catch (error) {
         console.error('Error confirming booking:', error);
         this.isModalVisible = false;
+        this.loadSelections();
         this.bookingFailed = true;
         if (error.response) {
           console.error('Error Response Status:', error.response.status);
@@ -448,6 +450,7 @@ export default {
     },
     closeModal() {
       this.isModalVisible = false;
+      this.loadSelections();
     },
     formatDate(dateString) {
       const date = parseISO(dateString);
