@@ -14,7 +14,9 @@
         <PreferredDateComponent ></PreferredDateComponent>
       </div>
       <div class="glass-card patient-current-appointment">
-        <PatientAppointmentsComponent ></PatientAppointmentsComponent>
+        <PatientAppointmentsComponent >
+
+        </PatientAppointmentsComponent>
       </div>
     </div>
 
@@ -24,6 +26,7 @@
       <AvailableAppointmentComponent
         :clinics="clinics"
         @updateClinics="updateClinics"
+        @reload="reload"
         @clinicLocation="handleClinicLocation"
         v-bind:selected-clinic-from-map="selectedClinicFromMap"
       ></AvailableAppointmentComponent>
@@ -92,6 +95,9 @@ export default {
     async checkUser() {
       this.validUser = this.role === "PATIENT" && this.patientId !== null;
     },
+    reload(){
+
+    }
     handleClinicSelectionFromMap(clinicId) {
       if (clinicId) {
         this.selectedClinicFromMap = clinicId;
