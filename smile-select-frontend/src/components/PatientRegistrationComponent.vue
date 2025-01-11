@@ -149,7 +149,12 @@ export default {
         console.log('Registration Successful:', response.data);
 
         this.isRegistered = true;
-        this.$emit('registrationSuccess');
+
+        // Automatically redirect to patient login after 3 seconds
+        setTimeout(() => {
+          this.$emit('registrationSuccess');
+        }, 3000);
+
       } catch (error) {
         console.error('Registration Error:', error);
         // Show a meaningful message from the server if available
