@@ -141,7 +141,7 @@ import '/src/CSS/global.css';
 import axios from '@/axios';
 import Multiselect from '@vueform/multiselect';
 import Datepicker from '@vuepic/vue-datepicker';
-import { EventBus } from '@/path-to/eventBus';
+import { EventBus } from '/src/bus/eventBus';
 
 export default {
   name: 'AvailableAppointmentComponent',
@@ -192,7 +192,7 @@ export default {
   created() {
     EventBus.$on('appointment-updated', this.loadSelections);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     EventBus.$off('appointment-updated', this.loadSelections);
   },
   computed: {
