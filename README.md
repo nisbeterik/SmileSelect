@@ -31,7 +31,7 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 
 ![Component Diagram](assets/diagrams/component-diagram-milestone4.png)
 
-*This component diagram represents a microservice-based architecture for a distributed dental management system. The system is made up of multiple microservices, a central API Gateway, and an MQTT broker for asynchronous communication between services. Some details of the architecture are as follows:*
+*This component diagram represents a microservice-based architecture for a distributed dental management system. The system is made up of multiple microservices, a central API Gateway access point, a Service Registry for service discovery, and an MQTT broker for asynchronous communication between services. Some details of the architecture are as follows:*
 
 **User Interfaces:**
 
@@ -39,7 +39,11 @@ The system has two frontends: Patient UI and Dentist UI, which interact with the
 
 **API Gateway:**
 
-Acts as a single entry point for external communication, forwarding user requests to the respective microservices (i.e. Appointment-Service, Dentist-Service).
+Acts as a single entry point for client requests and communication, forwarding user requests to the respective microservices (i.e. Appointment-Service, Dentist-Service).
+
+**Service Registry**
+
+The Service Registry (Eureka Server) is integrated to manage and maintain a dynamic registry of all running microservices. All microservices register themselves at the registry, enabling dynamic service discovery and removing the need for hardcoded endpoints.
 
 **Microservices:**
 
@@ -49,6 +53,7 @@ Each microservice is designed for a specific functionality:
 * Auth-Service: Handles authentication and authorization.
 * Dentist-Service: Manages dentist-related data.
 * Logging-Service: Handles logging operations for monitoring of events.
+* Monitoring-Service: Monitors all events in the system and provides real-time insight for health and performance.
 * Notification-Service: Sends notifications via MQTT.
 * Patient-Service: Manages patient-related data.
 
@@ -56,7 +61,7 @@ Each microservice is designed for a specific functionality:
 
 **Databases**:
 
-Each microservice (except Auth-Service) has a dedicated database to store its data, ensuring modularity and scalability.
+Each microservice (except Auth-Service and Monitoring-Service) has dedicated databases to store its data, ensuring modularity and scalability.
 
 **Communication**:
 
