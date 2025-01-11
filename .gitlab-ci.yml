@@ -1,7 +1,8 @@
 stages:
+  - lint
   - compile
   - test
-  - lint
+  
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
@@ -13,7 +14,7 @@ cache:
 default:
   image: maven:3.9.9-eclipse-temurin-21
 
-# Linting jobs for frontend
+# Linting job for frontend
 lint_frontend:
   stage: lint
   image: node:18
@@ -28,10 +29,26 @@ lint_frontend:
     - npm run lint
   tags:
     - docker
-  only:
-    - merge_requests
-    - branches
   allow_failure: false
+
+# Job for frontend
+build_vue_frontend:
+  stage: compile
+  image: node:18
+  script:
+    - echo "Installing dependencies for Vue.js frontend..."
+    - cd smile-select-frontend
+    - npm install
+    - echo "Building Vue.js frontend..."
+    - npm run build
+  tags:
+    - docker
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - smile-select-frontend/dist
+  dependencies:
+    lint_frontend
 
 # Compile jobs for each microservice
 compile_appointment_service:
@@ -141,7 +158,6 @@ test_auth_service:
 
 test_dentist_service:
   stage: test
-  image: maven:3.9.9-eclipse-temurin-21
   script:
     - cd backend/services/dentist-service
     # Export the Spring profile to test
@@ -209,19 +225,3 @@ test_patient_service:
    dependencies:
      - compile_patient_service
 
-# Job for frontend
-build_vue_frontend:
-  stage: compile
-  image: node:18
-  script:
-    - echo "Installing dependencies for Vue.js frontend..."
-    - cd smile-select-frontend
-    - npm install
-    - echo "Building Vue.js frontend..."
-    - npm run build
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - smile-select-frontend/dist
