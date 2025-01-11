@@ -141,6 +141,7 @@ import '/src/CSS/global.css';
 import axios from '@/axios';
 import Multiselect from '@vueform/multiselect';
 import Datepicker from '@vuepic/vue-datepicker';
+import { EventBus } from '@/path-to/eventBus';
 
 export default {
   name: 'AvailableAppointmentComponent',
@@ -187,6 +188,12 @@ export default {
         this.handleClinicChange(); // Fetch appointments
       }
     },
+  },
+  created() {
+    EventBus.$on('appointment-updated', this.loadSelections);
+  },
+  beforeDestroy() {
+    EventBus.$off('appointment-updated', this.loadSelections);
   },
   computed: {
     formattedClinics() {
@@ -431,6 +438,7 @@ export default {
         this.isModalVisible = false;
         this.loadSelections();
         this.isBookingConfirmed = true;
+        EventBus.$emit('appointment-booked');
 
         console.log('Booking confirmed successfully!');
       } catch (error) {
