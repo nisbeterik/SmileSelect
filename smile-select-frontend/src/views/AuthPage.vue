@@ -9,8 +9,8 @@
       <!-- Show Login Form -->
       <LoginComponent v-if="showLogin" @loginSuccess="handleLoginSuccess" ></LoginComponent>
 
-      <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" ></DentistRegistrationComponent>
-      <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" ></PatientRegistrationComponent>
+      <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" @registrationSuccess="handleRegistrationSuccess"></DentistRegistrationComponent>
+      <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" @registrationSuccess="handleRegistrationSuccess"></PatientRegistrationComponent>
       <!-- Toggle button -->
       <button @click="toggleForm" class="button-secondary">
         {{
@@ -47,6 +47,12 @@ export default {
     this.selectedRole = this.$route.query.role || 'PATIENT';
   },
   methods: {
+
+    handleRegistrationSuccess() {
+      // Show login form after successful registration
+      this.showLogin = true;
+    },
+
     goBack() {
       this.$router.push('/'); // Navigate to the home screen
     },

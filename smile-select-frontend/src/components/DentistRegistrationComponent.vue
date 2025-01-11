@@ -140,7 +140,12 @@ export default {
 
         // Emit success event to parent component
         this.isRegistered = true;
-        this.$emit('registrationSuccess');
+
+        // Automatically redirect to dentist login after 3 seconds
+        setTimeout(() => {
+          this.$emit('registrationSuccess');
+        }, 3000);
+
       } catch (error) {
         console.error('Registration Error:', error);
         if (error.response && error.response.data && error.response.data.message) {
