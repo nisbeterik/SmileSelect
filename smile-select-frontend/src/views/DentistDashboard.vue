@@ -21,7 +21,7 @@
       <!-- Bottom Row with Availability Page -->
       <div class="row justify-content-center">
         <div class="glass-card create-appointment col-12 col-md-8 col-lg-6 p-4 shadow rounded">
-          <create-appointment-component />
+          <create-appointment-component ></create-appointment-component>
         </div>
       </div>
     </div>

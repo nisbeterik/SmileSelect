@@ -46,12 +46,12 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('userRole');
       localStorage.removeItem('userId');
       localStorage.removeItem('firstName');
-      localStorage.removeItem('lastName')
-      localStorage.removeItem('clinicId')
+      localStorage.removeItem('lastName');
+      localStorage.removeItem('clinicId');
     },
   },
   getters: {
-    isAuthenticated: (state) => !!state.token,
+    isAuthenticated: state => !!state.token,
   },
 });
 

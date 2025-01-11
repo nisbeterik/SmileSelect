@@ -11,10 +11,10 @@
 
     <div v-if="validUser" class="top-row">
       <div class="preferred-date-picker">
-        <PreferredDateComponent />
+        <PreferredDateComponent ></PreferredDateComponent>
       </div>
       <div class="glass-card patient-current-appointment" style="z-index: -1">
-        <PatientAppointmentsComponent />
+        <PatientAppointmentsComponent ></PatientAppointmentsComponent>
       </div>
     </div>
 
@@ -26,7 +26,7 @@
         @updateClinics="updateClinics"
         @clinicLocation="handleClinicLocation"
         v-bind:selected-clinic-from-map="selectedClinicFromMap"
-      />
+      ></AvailableAppointmentComponent>
     </div>
     <div v-if="validUser & !listView" class="glass-card availability-page" ref="availabilitySection">
       <Button @click="flipView" class="button-primary">Switch to list view</Button>
@@ -35,18 +35,18 @@
         @updateClinics="updateClinics"
         @clinicLocation="handleClinicLocation"
         v-bind:selected-clinic-from-map="selectedClinicFromMap"
-      />
+      ></AvailableAppointmentsCalendarComponent>
     </div>
 
     <!-- Map Page (with clinic selection) -->
     <div v-if="validUser"
-        class="glass-card map-page"
-        ref="mapPageSection"
+         class="glass-card map-page"
+         ref="mapPageSection"
     >
       <MapPage
         @clinic-selected="handleClinicSelectionFromMap"
         v-bind:selected-clinic-name="selectedClinicName"
-      />
+      ></MapPage>
     </div>
 
     <div v-if="!validUser" class="glass-card not-auth">

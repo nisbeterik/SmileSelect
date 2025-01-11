@@ -4,12 +4,15 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="calendar-container">
-          <FullCalendar ref="calendar" :options="calendarOptions" @select="handleSelect" />
+          <FullCalendar ref="calendar" :options="calendarOptions" @select="handleSelect" ></FullCalendar>
         </div>
       </div>
     </div>
   </div>
-  <div v-if="showCreateAppointmentModal" class="modal fade show d-block" tabindex="-1" @click.self="closeCurrentModal()">
+  <div v-if="showCreateAppointmentModal"
+       class="modal fade show d-block"
+       tabindex="-1"
+       @click.self="closeCurrentModal()">
     <div class="modal-dialog modal-lg">
       <div class="modal-content p-3">
         <h3 class="text-center mb-4">Create Appointment</h3>
@@ -21,7 +24,11 @@
         <div class="mb-3">
           <label for="startTime" class="form-label">Start Time</label>
           <div class="input-group">
-            <input type="time" class="form-control" v-model="selectedSlot.startTime" step="300" required />
+            <input type="time"
+                   class="form-control"
+                   v-model="selectedSlot.startTime"
+                   step="300"
+                   required />
             <button class="btn btn-outline-secondary" @click="adjustTime('start', -5)">-5</button>
             <button class="btn btn-outline-secondary" @click="adjustTime('start', 5)">+5</button>
           </div>
@@ -30,7 +37,11 @@
         <div class="mb-3">
           <label for="endTime" class="form-label">End Time</label>
           <div class="input-group">
-            <input type="time" class="form-control" v-model="selectedSlot.endTime" step="300" required />
+            <input type="time"
+                   class="form-control"
+                   v-model="selectedSlot.endTime"
+                   step="300"
+                   required />
             <button class="btn btn-outline-secondary" @click="adjustTime('end', -5)">-5</button>
             <button class="btn btn-outline-secondary" @click="adjustTime('end', 5)">+5</button>
           </div>
@@ -39,7 +50,10 @@
         <div class="mb-3">
           <label for="assign-patient" class="form-label">Patient Email</label>
           <div class="input-group">
-            <input type="text" class="form-control" v-model="patientQuery" placeholder="Enter patient email" />
+            <input type="text"
+                   class="form-control"
+                   v-model="patientQuery"
+                   placeholder="Enter patient email" />
             <button class="btn btn-info" @click="findPatientByEmail()">Check</button>
           </div>
         </div>
@@ -51,7 +65,10 @@
       </div>
     </div>
   </div>
-  <div v-if="showAppointmentDetailsModal" class="modal fade show d-block" tabindex="-1" @click.self="closeCurrentModal()">
+  <div v-if="showAppointmentDetailsModal"
+       class="modal fade show d-block"
+       tabindex="-1"
+       @click.self="closeCurrentModal()">
     <div class="modal-dialog modal-lg">
       <div class="modal-content p-3">
         <h3 class="text-center mb-4">Appointment Details</h3>
@@ -71,7 +88,10 @@
         <div v-else class="mb-3">
           <label for="assign-patient" class="form-label">Add Patient</label>
           <div class="input-group">
-            <input type="text" class="form-control" v-model="patientQuery" placeholder="Enter patient email" />
+            <input type="text"
+                   class="form-control"
+                   v-model="patientQuery"
+                   placeholder="Enter patient email" />
             <button class="btn btn-primary" @click="addPatientToAppointment()">Add</button>
           </div>
         </div>

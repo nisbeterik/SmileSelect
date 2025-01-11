@@ -7,10 +7,10 @@
     <!-- Toggle between Login and Registration forms -->
     <div v-if="!isLoggedIn" class="card">
       <!-- Show Login Form -->
-      <LoginComponent v-if="showLogin" @loginSuccess="handleLoginSuccess" />
+      <LoginComponent v-if="showLogin" @loginSuccess="handleLoginSuccess" ></LoginComponent>
 
-      <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" />
-      <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" />
+      <DentistRegistrationComponent v-if="!showLogin && (selectedRole === 'DENTIST')" ></DentistRegistrationComponent>
+      <PatientRegistrationComponent v-if="!showLogin && (selectedRole === 'PATIENT')" ></PatientRegistrationComponent>
       <!-- Toggle button -->
       <button @click="toggleForm" class="button-secondary">
         {{
