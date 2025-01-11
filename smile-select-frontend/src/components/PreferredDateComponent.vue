@@ -3,13 +3,14 @@
     <h3>Select preferred appointment dates</h3>
     <p>You will be notified if an open appointment slot is published</p>
     <p :class="infoTextClass">{{ infoText }}</p>
-
-    <Datepicker v-model="selectedDates"
-                :multi-dates="{ limit: 5 }"
-                :enable-time-picker="false"
-                :disabled-dates="disableDatesBeforeToday"
-                @update:modelValue="handleDateSelection"
-                class="custom-datepicker" ></Datepicker>
+    <Datepicker
+      v-model="selectedDates"
+      :multi-dates="{ limit: 5 }"
+      :enable-time-picker="false"
+      :disabled-dates="disableDatesBeforeToday"
+      @update:modelValue="handleDateSelection"
+      class="custom-datepicker"
+    ></Datepicker>
 
     <button class="button-primary" @click="handleSelect" :disabled="selectedDates.length === 0">
       Save Dates
@@ -185,7 +186,7 @@ export default {
 @media (max-width: 1150px) {
   .glass-container{
     width: 90vw;
-    min-height: auto;
+    min-height: 500px;
   }
 }
 @media (max-width: 700px) {
