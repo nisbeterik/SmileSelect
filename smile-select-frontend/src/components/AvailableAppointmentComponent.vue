@@ -190,10 +190,10 @@ export default {
     },
   },
   created() {
-    EventBus.$on('appointment-updated', this.loadSelections);
+    EventBus.on('appointment-updated', this.loadSelections);
   },
   beforeUnmount() {
-    EventBus.$off('appointment-updated', this.loadSelections);
+    EventBus.off('appointment-updated', this.loadSelections);
   },
   computed: {
     formattedClinics() {
@@ -438,7 +438,7 @@ export default {
         this.isModalVisible = false;
         this.loadSelections();
         this.isBookingConfirmed = true;
-        EventBus.$emit('appointment-booked');
+        EventBus.emit('appointment-booked');
 
         console.log('Booking confirmed successfully!');
       } catch (error) {

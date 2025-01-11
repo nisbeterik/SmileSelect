@@ -71,10 +71,10 @@ export default {
     };
   },
   created() {
-    EventBus.$on('appointment-booked', this.loadAppointmentData);
+    EventBus.on('appointment-booked', this.loadAppointmentData);
   },
   beforeUnmount() {
-    EventBus.$off('appointment-booked', this.loadAppointmentData);
+    EventBus.off('appointment-booked', this.loadAppointmentData);
   },
   computed: {
     filteredAppointments() {
@@ -152,7 +152,7 @@ export default {
         this.infoText = "Appointment canceled successfully.";
         this.infoTextClass = "success-text";
         this.isModalVisible = false;
-        EventBus.$emit('appointment-updated');
+        EventBus.emit('appointment-updated');
       } catch (error) {
         console.error('Error cancelling appointment:', error);
         this.infoText = "Error canceling appointment.";
