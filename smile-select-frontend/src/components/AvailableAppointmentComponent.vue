@@ -678,7 +678,7 @@ export default {
     overflow: visible;
   }
   .custom-datepicker {
-    --dp-menu-min-width: 200px;
+    --dp-menu-min-width: 220px;
   }
 }
 
