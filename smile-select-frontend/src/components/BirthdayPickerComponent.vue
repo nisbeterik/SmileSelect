@@ -8,21 +8,21 @@
         placeholder="Year"
         class="dob-field"
         searchable
-      />
+      ></Multiselect>
       <Multiselect
         :options="months"
         v-model="selectedMonth"
         placeholder="Month"
         class="dob-field"
         searchable
-      />
+      ></Multiselect>
       <Multiselect
         :options="daysInMonth"
         v-model="selectedDay"
         placeholder="Day"
         class="dob-field"
         searchable
-      />
+      ></Multiselect>
     </div>
   </div>
 

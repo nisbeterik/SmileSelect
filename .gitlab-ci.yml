@@ -1,7 +1,9 @@
 stages:
+  - lint
   - compile
   - test
   
+
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
@@ -12,8 +14,43 @@ cache:
 default:
   image: maven:3.9.9-eclipse-temurin-21
 
-# Compile jobs for each microservice
+# Linting job for frontend
+lint_frontend:
+  stage: lint
+  image: node:18
+  cache:
+    paths:
+      - smile-select-frontend/node_modules
+  script:
+    - echo "Installing dependencies for linting..."
+    - cd smile-select-frontend
+    - npm install
+    - echo "Running linting on the frontend..."
+    - npm run lint
+  tags:
+    - docker
+  allow_failure: false
 
+# Job for frontend
+build_vue_frontend:
+  stage: compile
+  image: node:18
+  script:
+    - echo "Installing dependencies for Vue.js frontend..."
+    - cd smile-select-frontend
+    - npm install
+    - echo "Building Vue.js frontend..."
+    - npm run build
+  tags:
+    - docker
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - smile-select-frontend/dist
+  dependencies:
+    - lint_frontend
+
+# Compile jobs for each microservice
 compile_appointment_service:
   stage: compile
   script:
@@ -100,28 +137,27 @@ compile_patient_service:
 
 
 test_appointment_service:
-   stage: test
-   script:
-     - echo "Running tests for Appointment Service..."
-     - mvn -B test --file backend/services/appointment-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_appointment_service
+  stage: test
+  script:
+    - echo "Running tests for Appointment Service..."
+    - mvn -B test --file backend/services/appointment-service/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_appointment_service
 
 test_auth_service:
-   stage: test
-   script:
-     - echo "Running tests for Authentication Service..."
-     - mvn -B test --file backend/services/auth-service/pom.xml
-   tags:
-     - docker
-   dependencies:
+  stage: test
+  script:
+    - echo "Running tests for Authentication Service..."
+    - mvn -B test --file backend/services/auth-service/pom.xml
+  tags:
+    - docker
+  dependencies:
     - compile_auth_service
 
 test_dentist_service:
   stage: test
-  image: maven:3.9.9-eclipse-temurin-21
   script:
     - cd backend/services/dentist-service
     # Export the Spring profile to test
@@ -141,19 +177,19 @@ test_dentist_service:
 
 
 test_gateway_service:
-   stage: test
-   script:
-     - echo "Running tests for Gateway Service..."
-     - mvn -B test --file backend/services/gateway-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_gateway_service
+  stage: test
+  script:
+    - echo "Running tests for Gateway Service..."
+    - mvn -B test --file backend/services/gateway-service/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_gateway_service
 
 test_logging_service:
   stage: test
   script:
-    - echo "Running tests for Gateway Service..."
+    - echo "Running tests for Logging Service..."
     - mvn -B test --file backend/services/logging-service/pom.xml
   tags:
     - docker
@@ -161,14 +197,14 @@ test_logging_service:
     - compile_logging_service
 
 test_notification_service:
-   stage: test
-   script:
-     - echo "Running tests for Notification Service..."
-     - mvn -B test --file backend/services/notification-service/pom.xml
-   tags:
-     - docker
-   dependencies:
-     - compile_notification_service
+  stage: test
+  script:
+    - echo "Running tests for Notification Service..."
+    - mvn -B test --file backend/services/notification-service/pom.xml
+  tags:
+    - docker
+  dependencies:
+    - compile_notification_service
 
 test_patient_service:
    stage: test
@@ -189,19 +225,3 @@ test_patient_service:
    dependencies:
      - compile_patient_service
 
-# Job for frontend
-build_vue_frontend:
-  stage: compile
-  image: node:18
-  script:
-    - echo "Installing dependencies for Vue.js frontend..."
-    - cd smile-select-frontend
-    - npm install
-    - echo "Building Vue.js frontend..."
-    - npm run build
-  tags:
-    - docker
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - smile-select-frontend/dist

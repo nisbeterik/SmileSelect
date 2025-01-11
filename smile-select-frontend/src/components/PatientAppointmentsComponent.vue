@@ -22,8 +22,9 @@
                 <p><strong>Address:</strong> {{ appointment.address }}</p>
               </div>
               <div>
-                <button @click="cancelAppointment(appointment.id)" class="btn btn-danger"
-                  :disabled="isPast(appointment.startTime)">
+                <button @click="cancelAppointment(appointment.id)"
+                        class="btn btn-danger"
+                        :disabled="isPast(appointment.startTime)">
                   Cancel
                 </button>
               </div>

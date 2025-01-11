@@ -1,26 +1,26 @@
 <template>
   <LMap
-      ref="map"
-      :zoom="currentZoom"
-      :center="mapCenter"
-      :options="mapOptions"
-      style="height: 500px; width: 100%;"
+    ref="map"
+    :zoom="currentZoom"
+    :center="mapCenter"
+    :options="mapOptions"
+    style="height: 500px; width: 100%;"
   >
-    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" />
+    <LTileLayer :url="'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'" ></LTileLayer>
 
     <LMarker
-        v-for="clinic in clinics"
-        :key="clinic.id"
-        :lat-lng="[clinic.latitude, clinic.longitude]"
-        :visible="true"
-        @click="handleMarkerClick(clinic)"
+      v-for="clinic in clinics"
+      :key="clinic.id"
+      :lat-lng="[clinic.latitude, clinic.longitude]"
+      :visible="true"
+      @click="handleMarkerClick(clinic)"
     >
       <LTooltip :offset="[0, -30]" :opacity="tooltipOpacity">
         <div class="tooltip-box">{{ clinic.name }} <br />{{ clinic.street }}, {{ clinic.houseNumber }}</div>
       </LTooltip>
     </LMarker>
 
-    <l-control-scale position="topright" />
+    <l-control-scale position="topright" ></l-control-scale>
   </LMap>
 </template>
 
