@@ -647,7 +647,6 @@ export default {
   margin: 10px 0;
   width: 100%;
   --dp-primary-color: #206050;
-  z-index: 2000;
   --dp-menu-min-width: 500px;
 }
 
