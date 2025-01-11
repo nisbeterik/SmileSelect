@@ -48,7 +48,7 @@ build_vue_frontend:
     paths:
       - smile-select-frontend/dist
   dependencies:
-    lint_frontend
+    - lint_frontend
 
 # Compile jobs for each microservice
 compile_appointment_service:
