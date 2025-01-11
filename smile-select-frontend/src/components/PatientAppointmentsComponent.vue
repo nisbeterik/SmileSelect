@@ -52,6 +52,7 @@
 import { useAuthStore } from '@/stores/auth';
 import { format, differenceInMinutes, parseISO, isBefore } from 'date-fns';
 import '/src/CSS/global.css';
+import { EventBus } from '@/path-to/eventBus';
 
 export default {
   name: 'PatientAppointmentsComponent',
@@ -145,6 +146,7 @@ export default {
         this.infoText = "Appointment canceled successfully.";
         this.infoTextClass = "success-text";
         this.isModalVisible = false;
+        EventBus.$emit('appointment-updated');
       } catch (error) {
         console.error('Error cancelling appointment:', error);
         this.infoText = "Error canceling appointment.";
