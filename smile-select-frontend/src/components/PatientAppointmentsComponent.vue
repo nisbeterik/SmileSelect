@@ -22,12 +22,24 @@
                 <p><strong>Address:</strong> {{ appointment.address }}</p>
               </div>
               <div>
-                <button @click="cancelAppointment(appointment.id)"
+                <button @click="showCancelModal(appointment.id)"
                         class="btn btn-danger"
                         :disabled="isPast(appointment.startTime)">
                   Cancel
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="isModalVisible" class="availability-modal-overlay">
+          <div class="availability-modal">
+            <h2>Cencel Appointment</h2>
+            <p>Are you sure you want to cancel this appointment?</p>
+            <div class="modal-actions">
+              <button @click="cancelAppointment" class="btn-cancel">
+                Cancel
+              </button>
+              <button @click="closeModal" class="btn-confirm" style="background-color: #aaaaaa">Back</button>
             </div>
           </div>
         </div>
@@ -52,7 +64,9 @@ export default {
       appointmentText: "Your upcoming appointment(s)",
       showPastAppointments: false,
       infoText: "",
-      infoTextClass: ""
+      infoTextClass: "",
+      isModalVisible: false,
+      selectedEventId: null,
     };
   },
   computed: {
@@ -66,6 +80,13 @@ export default {
     },
   },
   methods: {
+    closeModal() {
+      this.isModalVisible = false;
+    },
+    showCancelModal(appointmentId){
+      this.isModalVisible = true;
+      this.selectedEventId = appointmentId
+    },
     async loadAppointmentData() {
       try {
         const response = await this.$axios.get(`/appointments/patient/${this.patientId}`);
@@ -113,9 +134,9 @@ export default {
     isPast(dateString) {
       return isBefore(parseISO(dateString), new Date());
     },
-    async cancelAppointment(appointmentId) {
+    async cancelAppointment() {
       try {
-        await this.$axios.patch(`/appointments/${appointmentId}/cancel`, {
+        await this.$axios.patch(`/appointments/${this.selectedEventId}/cancel`, {
           headers: {
             Authorization: `Bearer ${this.token}`,
           },
@@ -123,6 +144,7 @@ export default {
         this.loadAppointmentData();
         this.infoText = "Appointment canceled successfully.";
         this.infoTextClass = "success-text";
+        this.isModalVisible = false;
       } catch (error) {
         console.error('Error cancelling appointment:', error);
         this.infoText = "Error canceling appointment.";
