@@ -1,5 +1,12 @@
 # smile-select
 
+## Table of Contents
+1. [Project Setup](#project-setup)
+2. [Development](#compiles-and-hot-reloads-for-development)
+3. [Production Build](#compiles-and-minifies-for-production)
+4. [Linting](#lints-and-fixes-files)
+5. [Customization](#customize-configuration)
+
 ## Project setup
 ```
 npm install
