@@ -10,13 +10,13 @@
 ### First time setup
  #### setup `env.properties`
 1. Before running the service a new file needs to be added in the registry folder
-   2. create file `env.properties` in `/backend/appointment-service/src/main/resources`
-   3. add this to the file:
+   1. create file `env.properties` in `/backend/appointment-service/src/main/resources`
+   2. add this to the file:
       ```
       jwt.secret=<Replace-with-your-JWT-key>
       jwt.expiration=3600000
-   4. replace the *jwt.sercret* with a unique randomly generated secret key 
-   5. IMPORTANT! The jwt.secret key needs to be the same throughout the whole application. 
+   3. replace the *jwt.sercret* with a unique randomly generated secret key 
+   4. IMPORTANT! The jwt.secret key needs to be the same throughout the whole application. 
    
 ## Setup Steps
 
