@@ -1,10 +1,12 @@
 # SmileSelect
-<img  src="assets/images/SmileSelect.jpg" alt="SmileSelect Logo" width="300" height="150" vertical-align="center">
 
 **SmileSelect** is a **full-stack web distributed system** to help book and manage dentist
 appointments within Sweden. It is designed to allow for thousands of users to search and book appointments concurrently.
 Partnered Dentists can also manage their work by publishing appointments or booking re-visits together with patients.
 The system has a **microservices** architecture with focus on fault tolerance, scalability, maintainability and scalability.
+
+
+<img src="assets/images/SmileSelect-Teaser.png" alt="SmileSelect Teaser">
 
 ## Table of Contents
 
