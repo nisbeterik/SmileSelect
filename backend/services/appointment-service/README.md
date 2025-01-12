@@ -5,11 +5,10 @@
 1. **Docker**: Ensure Docker is installed and running on your machine.
 2. **Java**: Install Java 11 or higher.
 3. **Maven**: Install Maven for building and running the Spring Boot application.
-4. 
 
 ---
 ### First time setup
- #### setup env.properties 
+ #### setup `env.properties`
 1. Before running the service a new file needs to be added in the registry folder
    2. create file `env.properties` in `/backend/appointment-service/src/main/resources`
    3. add this to the file:
@@ -17,6 +16,7 @@
       jwt.secret=<Replace-with-your-JWT-key>
       jwt.expiration=3600000
    4. replace the *jwt.sercret* with a unique randomly generated secret key 
+   5. IMPORTANT! The jwt.secret key needs to be the same throughout the whole application. 
    
 ## Setup Steps
 
