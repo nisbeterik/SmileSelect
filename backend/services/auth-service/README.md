@@ -18,5 +18,5 @@ To run auth-service make sure all requirements and installations from [backend](
 - Open a new terminal in the root of the project
 - Navigate to the directory where auth-service pom.xml is located ``cd backend/services/auth-service``
 - Start the service by running ``mvn spring-boot:run``
-- Verify that no errors occured and that the service is running by observing the terminal console
+- Verify that no errors occurred and that the service is running by observing the terminal console
 
