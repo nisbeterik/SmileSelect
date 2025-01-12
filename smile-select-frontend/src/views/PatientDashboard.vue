@@ -14,7 +14,9 @@
         <PreferredDateComponent ></PreferredDateComponent>
       </div>
       <div class="glass-card patient-current-appointment">
-        <PatientAppointmentsComponent ></PatientAppointmentsComponent>
+        <PatientAppointmentsComponent >
+
+        </PatientAppointmentsComponent>
       </div>
     </div>
 
