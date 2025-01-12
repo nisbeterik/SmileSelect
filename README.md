@@ -58,16 +58,16 @@ Following is a list of the system's components and their `README.md` files.
 They should be read in the order listed.
 
 - [**frontend**](smile-select-frontend/README.md): client-side web interface
-- [**backend**]():  microservices spring boot backend
-- [**service-registry**](): registry of service instances
-- [**appointment-service**](): service handling appointments
-- [**auth-service**](): service that authenticates users with [JWT Authentication](https://jwt.io/)
-- [**dentist-service**](): service handling dentist operations
-- [**gateway-service**](): service routing client requests to service instances
-- [**logging-service**](): service logging errors and events
-- [**monitoring-service**](): service monitoring current stress on the system
-- [**notification-service**](): service handling email notifications to users
-- [**patient-service**](): service handling patient operations
+- [**backend**](backend/README.md):  microservices spring boot backend
+- [**service-registry**](backend/registry/service-registry/README.md): registry of service instances
+- [**appointment-service**](backend/services/appointment-service/README.md): service handling appointments
+- [**auth-service**](backend/services/auth-service/README.md): service that authenticates users with [JWT Authentication](https://jwt.io/)
+- [**dentist-service**](backend/services/dentist-service/README.md): service handling dentist operations
+- [**gateway-service**](backend/services/gateway-service/README.md): service routing client requests to service instances
+- [**logging-service**](backend/services/logging-service/README.md): service logging errors and events
+- [**monitoring-service**](backend/services/monitoring-service/README.md): service monitoring current stress on the system
+- [**notification-service**](backend/services/notification-service/README.md): service handling email notifications to users
+- [**patient-service**](backend/services/patient-service/README.md): service handling patient operations
 <br></br>
 - [**stress-testing**](backend/stress-test/README.md): stress-testing of the system to identify architectural bottlenecks
 
