@@ -24,6 +24,24 @@ SmileSelect is a web-based application designed to streamline the process of fin
 
 SmileSelect: Smile-tacular dental care, just book and prepare!
 
+## <a id="technology"></a>Technology
+
+#### Backend
+- [Java v.21](https://www.oracle.com/se/java/technologies/downloads/#java21)
+- [Apache Maven 4.0.0](https://maven.apache.org/download.cgi)
+- [Spring Boot 3.3.5](https://spring.io/)
+- [PostgreSQL 17](https://www.postgresql.org/)
+- [Spring Cloud Netflix](https://cloud.spring.io/spring-cloud-netflix/reference/html/)
+- [Mosquitto MQTT](https://mosquitto.org/)
+- [Docker](https://docs.docker.com/get-started/get-docker/)
+#### Frontend
+- [Vue 3](https://vuejs.org/)
+- [Node 18](https://nodejs.org/en)
+#### Testing
+- [JUnit 5 Unit testing](https://junit.org/junit5/)
+- [K6 Stress Test](https://k6.io/)
+- [Spring Boot Test Integration Testing](https://spring.io/guides/gs/testing-web)
+
 ## <a id="dependencies-requirements"></a>Dependencies & Requirements
 
  
