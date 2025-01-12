@@ -60,7 +60,7 @@ They should be read in the order listed.
 - [**frontend**](smile-select-frontend/README.md): client-side web interface
 - [**backend**]():  microservices spring boot backend
 - [**service-registry**](): registry of service instances
-- [**appointment-service**](): service handling appointments
+- [**appointment-service**](backend/services/appointment-service/README.md): service handling appointments
 - [**auth-service**](): service that authenticates users with [JWT Authentication](https://jwt.io/)
 - [**dentist-service**](): service handling dentist operations
 - [**gateway-service**](): service routing client requests to service instances
