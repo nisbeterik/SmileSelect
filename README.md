@@ -53,7 +53,7 @@ This repository contains all the components of the system with their own install
 Following is a list of the system's components and their `README.md` files.
 They should be read in the order listed.
 
-- [**frontend**](): client-side web interface
+- [**frontend**](smile-select-frontend/README.md): client-side web interface
 - [**backend**]():  microservices spring boot backend
 - [**service-registry**](): registry of service instances
 - [**appointment-service**](): service handling appointments
@@ -67,25 +67,35 @@ They should be read in the order listed.
 <br></br>
 - [**stress-testing**](backend/stress-test/README.md): stress-testing of the system to identify architectural bottlenecks
 
-## <a id="software-architechture"></a>Software Architechture 
+## <a id="software-architechture"></a>Software Architechture
+
+Open the separate tabs to see diagrams and Architecture Descriptions
 
 <details><summary>Component Diagram</summary>
 
 ![Component Diagram](assets/diagrams/component-diagram-milestone4.png)
 
-*This component diagram represents a microservice-based architecture for a distributed dental management system. The system is made up of multiple microservices, a central API Gateway access point, a Service Registry for service discovery, and an MQTT broker for asynchronous communication between services. Some details of the architecture are as follows:*
+*This component diagram represents a microservice-based architecture for a distributed dental management system. 
+The system is made up of multiple microservices, a central API Gateway access point, a Service Registry for service discovery, and an MQTT broker for asynchronous communication between services. 
+Some details of the architecture are as follows:*
 
 **User Interfaces:**
 
-The system has two frontends: Patient UI and Dentist UI, which interact with the backend via the API Gateway using RESTful HTTP communication. 
+The system has two frontends: Patient UI and Dentist UI, which interact 
+with the backend via the API Gateway using RESTful HTTP communication. 
 
 **API Gateway:**
 
-Acts as a single entry point for client requests and communication, forwarding user requests to the respective microservices (i.e. Appointment-Service, Dentist-Service).
+Acts as a single entry point for client requests and communication, 
+forwarding user requests to the respective microservices (i.e. Appointment-Service, 
+Dentist-Service).
 
 **Service Registry**
 
-The Service Registry (Eureka Server) is integrated to manage and maintain a dynamic registry of all running microservices. All microservices register themselves at the registry, enabling dynamic service discovery and removing the need for hardcoded endpoints.
+The Service Registry (Eureka Server) is integrated to manage and maintain a 
+dynamic registry of all running microservices and adhering to location transparency. 
+All microservices register themselves at the registry, 
+enabling dynamic service discovery and removing the need for hardcoded endpoints.
 
 **Microservices:**
 
