@@ -186,7 +186,7 @@ A dedicated service managing user authentication and security.
 
 </details>
 
-## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
+## <a id="development-team"></a>Development Team
 
 * **Erik Nisbet** (@eriknis)
 
@@ -197,6 +197,16 @@ A dedicated service managing user authentication and security.
 * **Love Carlander Strandäng** (@loveca)
 
 * **Martin Lidgren** (@marlidg)
+
+## <a id="acknowledgements"></a>Acknowledgements & Special Thanks
+
+A special thanks goes to:
+- Course teacher Hans-Martin Heyn for his invaluable supervision and advice throughout the project
+- Teaching assistant Adrian Hassa for his guidance
+- Artist [Maura Keulen](https://www.linkedin.com/in/maurakeulen/) for helping creating the SmileSelect logo
+- Course examiner Phillip Leitner
+- Course Co-Teacher Ranim Khojah
+
 
 
 
