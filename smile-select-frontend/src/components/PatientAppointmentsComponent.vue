@@ -33,7 +33,7 @@
         </div>
         <div v-if="isModalVisible" class="availability-modal-overlay">
           <div class="availability-modal">
-            <h2>Cencel Appointment</h2>
+            <h2>Cancel Appointment</h2>
             <p>Are you sure you want to cancel this appointment?</p>
             <div class="modal-actions">
               <button @click="cancelAppointment" class="btn-cancel">
