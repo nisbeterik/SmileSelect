@@ -14,6 +14,8 @@ Also make sure [service-registry](backend/registry/service-registry/README.md) i
    MAIL_PASSWORD=<replace with password>
 4. replace the fields with relevant email credentials
 
+The email address will send notifications regarding appointments etc. automatically
+
 ### Create a database in pgAdmin
 
 - Open pgAdmin
