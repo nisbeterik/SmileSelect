@@ -20,8 +20,9 @@ The system has a **microservices** architecture with focus on fault tolerance, s
    - [Entity-Relationship Diagram](#entity-relationship-diagram)
    - [Deployment Diagram](#deployment-diagram)
    - [Development View](#development-view)
-6. [Development Team](#development-team)
-7. [Acknowledgements & Special Thanks](#acknowledgements")
+6. [CI/CD Pipeline](#pipeline)
+7. [Development Team](#development-team)
+8. [Acknowledgements & Special Thanks](#acknowledgements")
 
 ## <a id="synopsis--motivation"></a>Synopsis & Motivation 
 
@@ -181,6 +182,19 @@ A dedicated service managing user authentication and security.
 *This Development View Diagram outlines a high-level structure of any given microservice. It shows the general layered architecture of the system's microservices with a controller-service-repository pattern.*
 
 </details>
+
+## <a id="pipeline"></a>CI/CD pipeline
+
+Existing in [.gitlab-ci.yml](.gitlab-ci.yml).
+
+The pipeline automatically runs on every push to the repository. It is used to automatically check linting in the frontend, build the frontend and microservices and run the unit & integration tests existing.
+The stages run in this order
+- lint: Runs a lint command in the frontend to check for linting issues
+- compile: builds and compiles frontend & backend services
+- test: runs unit tests & integration tests existing in backend services
+<br>
+The function of the pipeline is to streamline the team’s development process by standardizing code contributions and sanity checking for errors to ensure they do not get merged into the master branch. It also helps developers know that they do not break any existing functionality by confirming all tests pass.
+
 
 ## <a id="development-team"></a>Development Team
 
