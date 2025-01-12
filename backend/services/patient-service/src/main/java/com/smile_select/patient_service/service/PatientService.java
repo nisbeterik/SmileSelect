@@ -233,7 +233,7 @@ public class PatientService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(payload);
 
-            Long appointmentId = rootNode.path("id").asLong();
+            Long appointmentId = rootNode.path("appointmentId").asLong();
             Long patientId = rootNode.path("patientId").asLong();
             String startTime = rootNode.path("startTime").asText();
 
@@ -266,7 +266,7 @@ public class PatientService {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(payload);
 
-            Long appointmentId = rootNode.path("id").asLong();
+            Long appointmentId = rootNode.path("appointmentId").asLong();
             Long patientId = rootNode.path("patientId").asLong();
             String startTime = rootNode.path("startTime").asText();
 
