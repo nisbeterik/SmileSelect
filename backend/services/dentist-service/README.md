@@ -20,6 +20,7 @@ Also make sure [service-registry](backend/registry/service-registry/README.md) i
 - Create a new database called 'dentistDB' running on port 5432 with username: postgres password: postgres
 
 ### Usage
+- Start the database server in pgAdmin
 - Open a new terminal in the root of the project
 - Navigate to the directory where auth-service pom.xml is located ``cd backend/services/dentist-service``
 - Start the service by running ``mvn spring-boot:run``
