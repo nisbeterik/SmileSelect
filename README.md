@@ -201,11 +201,9 @@ A dedicated service managing user authentication and security.
 A special thanks goes to:
 - Course teacher Hans-Martin Heyn for his invaluable supervision and advice throughout the project
 - Teaching assistant Adrian Hassa for his guidance
-- Artist [Maura Keulen](https://www.linkedin.com/in/maurakeulen/) for helping creating the SmileSelect logo
+- Artist [Maura Keulen](https://www.linkedin.com/in/maurakeulen/) for help in creating the SmileSelect logo
 - Course examiner Phillip Leitner
 - Course Co-Teacher Ranim Khojah
-
-
 
 
     -------------------------------------------------------
