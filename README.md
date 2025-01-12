@@ -6,6 +6,9 @@ appointments within Sweden. It is designed to allow for thousands of users to se
 Partnered Dentists can also manage their work by publishing appointments or booking re-visits together with patients.
 The system has a **microservices** architecture with focus on fault tolerance, scalability, maintainability and scalability.
 
+
+<img src="assets/images/SmileSelect-Teaser.png" alt="SmileSelect Teaser">
+
 ## Table of Contents
 
 1. [SmileSelect](#smileselect)
