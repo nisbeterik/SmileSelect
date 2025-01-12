@@ -51,6 +51,17 @@ continue with each subsequent service linked above.
 - Install for your operating system
 - Make sure pgAdmin is installed
 
+### Docker
+
+- [Download and install Docker Desktop](https://docs.docker.com/desktop/)
+
+### Java 21
+
+- [Download and install Java 21](https://www.oracle.com/se/java/technologies/downloads/#java21)
+
+### Maven 4.0.0
+- [Download and install Apache Maven 4.0.0](https://maven.apache.org/download.cgi)
+
 ### Architecture
 
 <details><summary>Component Diagram</summary>
