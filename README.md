@@ -7,14 +7,22 @@ Partnered Dentists can also manage their work by publishing appointments or book
 The system has a **microservices** architecture with focus on fault tolerance, scalability, maintainability and scalability.
 
 
-<h3>Table of Content </h3>
+## Table of Contents
 
-- [SmileSelect](#smileselect)
-  * [Synopsis & Motivation](#synopsis-motivation)
-  * [Dependencies & Requirements](#dependencies-requirements)
-  * [Installation & Usage](#installation-usage)
-  * [Software Architechture](#software-architechture)
-  * [Authors & Acknowledgment](#authors-acknowledgment)
+1. [SmileSelect](#smileselect)
+2. [Synopsis & Motivation](#synopsis-motivation)
+3. [Technology](#technology)
+   - [Backend](#backend)
+   - [Frontend](#frontend)
+   - [Testing](#testing)
+4. [Dependencies & Requirements](#dependencies-requirements)
+5. [Installation & Usage](#installation-usage)
+6. [Software Architecture](#software-architecture)
+   - [Component Diagram](#component-diagram)
+   - [Entity-Relationship Diagram](#entity-relationship-diagram)
+   - [Deployment Diagram](#deployment-diagram)
+   - [Development View](#development-view)
+7. [Authors & Acknowledgment](#authors-acknowledgment)
 
 
 ## <a id="synopsis-motivation"></a>Synopsis & Motivation 
