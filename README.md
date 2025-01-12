@@ -21,7 +21,7 @@ The system has a **microservices** architecture with focus on fault tolerance, s
    - [Deployment Diagram](#deployment-diagram)
    - [Development View](#development-view)
 6. [Development Team](#development-team)
-7. 7. [Acknowledgements & Special Thanks](#acknowledgements")
+7. [Acknowledgements & Special Thanks](#acknowledgements")
 
 ## <a id="synopsis--motivation"></a>Synopsis & Motivation 
 
