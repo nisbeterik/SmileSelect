@@ -14,14 +14,14 @@ The system has a **microservices** architecture with focus on fault tolerance, s
    - [Backend](#backend)
    - [Frontend](#frontend)
    - [Testing](#testing)
-4. [Dependencies & Requirements](#dependencies--requirements)
-5. [Installation & Usage](#installation--usage)
-6. [Software Architecture](#software-architecture)
+4. [Installation & Usage](#installation--usage)
+5. [Software Architecture](#software-architecture)
    - [Component Diagram](#component-diagram)
    - [Entity-Relationship Diagram](#entity-relationship-diagram)
    - [Deployment Diagram](#deployment-diagram)
    - [Development View](#development-view)
-7. [Authors & Acknowledgment](#authors--acknowledgment)
+6. [Development Team](#development-team)
+7. 7. [Acknowledgements & Special Thanks](#acknowledgements")
 
 ## <a id="synopsis--motivation"></a>Synopsis & Motivation 
 
