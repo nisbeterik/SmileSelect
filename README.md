@@ -6,35 +6,32 @@ appointments within Sweden. It is designed to allow for thousands of users to se
 Partnered Dentists can also manage their work by publishing appointments or booking re-visits together with patients.
 The system has a **microservices** architecture with focus on fault tolerance, scalability, maintainability and scalability.
 
-
 ## Table of Contents
 
 1. [SmileSelect](#smileselect)
-2. [Synopsis & Motivation](#synopsis-motivation)
+2. [Synopsis & Motivation](#synopsis--motivation)
 3. [Technology](#technology)
    - [Backend](#backend)
    - [Frontend](#frontend)
    - [Testing](#testing)
-4. [Dependencies & Requirements](#dependencies-requirements)
-5. [Installation & Usage](#installation-usage)
+4. [Dependencies & Requirements](#dependencies--requirements)
+5. [Installation & Usage](#installation--usage)
 6. [Software Architecture](#software-architecture)
    - [Component Diagram](#component-diagram)
    - [Entity-Relationship Diagram](#entity-relationship-diagram)
    - [Deployment Diagram](#deployment-diagram)
    - [Development View](#development-view)
-7. [Authors & Acknowledgment](#authors-acknowledgment)
+7. [Authors & Acknowledgment](#authors--acknowledgment)
 
-
-## <a id="synopsis-motivation"></a>Synopsis & Motivation 
+## <a id="synopsis--motivation"></a>Synopsis & Motivation 
 
 SmileSelect is a web-based application designed to streamline the process of finding and booking dentist appointments for residents in Gothenburg. Given the high demand for dental care and limited availability at many clinics, patients often face a time-consuming process involving searches and phone calls with low success rates. SmileSelect simplifies this experience by offering a responsive interface where users can view available appointment slots on a navigable map, select their preferred time windows, and book or cancel appointments with ease. 
-
 
 SmileSelect: Smile-tacular dental care, just book and prepare!
 
 ## <a id="technology"></a>Technology
 
-#### Backend
+### <a id="backend"></a>Backend
 - [Java v.21](https://www.oracle.com/se/java/technologies/downloads/#java21)
 - [Apache Maven 4.0.0](https://maven.apache.org/download.cgi)
 - [Spring Boot 3.3.5](https://spring.io/)
@@ -42,20 +39,19 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 - [Spring Cloud Netflix](https://cloud.spring.io/spring-cloud-netflix/reference/html/)
 - [Mosquitto MQTT](https://mosquitto.org/)
 - [Docker](https://docs.docker.com/get-started/get-docker/)
-- [MongoDB](https://www.mongodb.com/)
-#### Frontend
+
+### <a id="frontend"></a>Frontend
 - [Vue 3](https://vuejs.org/)
 - [Node 18](https://nodejs.org/en)
-#### Testing
+
+### <a id="testing"></a>Testing
 - [JUnit 5 Unit testing](https://junit.org/junit5/)
 - [K6 Stress Test](https://k6.io/)
 - [Spring Boot Test Integration Testing](https://spring.io/guides/gs/testing-web)
 
-## <a id="dependencies-requirements"></a>Dependencies & Requirements
+## <a id="dependencies--requirements"></a>Dependencies & Requirements
 
-
- 
-## <a id="installation-usage"></a>Installation & Usage
+## <a id="installation--usage"></a>Installation & Usage
 
 This repository contains all the components of the system with their own installation and usage.
 Following is a list of the system's components and their `README.md` files.
@@ -75,8 +71,10 @@ They should be read in the order listed.
 <br></br>
 - [**stress-testing**](backend/stress-test/README.md): stress-testing of the system to identify architectural bottlenecks
 
-## <a id="software-architechture"></a>Software Architechture 
 
+## <a id="software-architecture"></a>Software Architecture 
+
+### <a id="component-diagram"></a>Component Diagram
 <details><summary>Component Diagram</summary>
 
 ![Component Diagram](assets/diagrams/component-diagram-milestone4.png)
@@ -107,8 +105,6 @@ Each microservice is designed for a specific functionality:
 * Notification-Service: Sends notifications via MQTT.
 * Patient-Service: Manages patient-related data.
 
-
-
 **Databases**:
 
 Each microservice (except Auth-Service and Monitoring-Service) has dedicated databases to store its data, ensuring modularity and scalability.
@@ -118,9 +114,9 @@ Each microservice (except Auth-Service and Monitoring-Service) has dedicated dat
 * Synchronous communication (REST) occurs between the API Gateway and microservices.
 * Asynchronous communication (MQTT) is used for inter-service messaging, improving decoupling and scalability.
 
-
 </details>
 
+### <a id="entity-relationship-diagram"></a>Entity-Relationship (ER) Diagram
 <details><summary>Entity-Relationship (ER) Diagram</summary>
 
 ![Entity-Relationship Diagram](assets/diagrams/er-diagram-milestone4.png)
@@ -130,6 +126,7 @@ Each microservice (except Auth-Service and Monitoring-Service) has dedicated dat
 
 </details>
 
+### <a id="deployment-diagram"></a>Deployment Diagram
 <details><summary>Deployment Diagram</summary>
 
 ![Deployment Diagram](assets/diagrams/deployment-diagram-milestone4.png)
@@ -168,6 +165,7 @@ A dedicated service managing user authentication and security.
 
 </details>
 
+### <a id="development-view"></a>Development View
 <details><summary>Development View</summary>
 
 ![Development-View](assets/diagrams/development-view-diagram.png)
@@ -176,7 +174,7 @@ A dedicated service managing user authentication and security.
 
 </details>
 
-## <a id="authors-acknowledgment"></a>Authors & Acknowledgment
+## <a id="authors--acknowledgment"></a>Authors & Acknowledgment
 
 * **Erik Nisbet** (@eriknis)
 
@@ -187,8 +185,6 @@ A dedicated service managing user authentication and security.
 * **Love Carlander Strandäng** (@loveca)
 
 * **Martin Lidgren** (@marlidg)
-
-
 
     -------------------------------------------------------
 
