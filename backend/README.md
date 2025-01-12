@@ -23,6 +23,29 @@ The SmileSelect backend consists of a number of microservices.
 
 ## Usage 
 
-To successfully run the backend. Start with [service-registry instructions]() and continue with each subsequent service.
+To successfully run the backend. Start with [service-registry instructions](), then continue with this document. After finishing setting up what is outlined here,
+continue with each subsequent service.
 
+### Mosquitto broker
 
+#### Install Mosquitto
+
+**Windows**
+
+- Go to https://mosquitto.org/download/ and download the binary.
+- Select run as a service in installation options
+- Verify the installation by running  ```mosquitto -v```
+- Verify that its running as a service with ```Win + R``` and typing ```services.msc```
+- Look for Mosquitto in the list
+- Verify that mosquitto is running on ```port 1883```
+
+**macOS**
+
+- Install with ``brew install mosquitto``
+- Run as a service
+- Verify that mosquitto runs on port 1883
+
+### PostgreSQL
+
+- [Download PostgreSQL](https://www.postgresql.org/download/)
+- Install for your operating system
