@@ -34,6 +34,7 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 - [Spring Cloud Netflix](https://cloud.spring.io/spring-cloud-netflix/reference/html/)
 - [Mosquitto MQTT](https://mosquitto.org/)
 - [Docker](https://docs.docker.com/get-started/get-docker/)
+- [MongoDB](https://www.mongodb.com/)
 #### Frontend
 - [Vue 3](https://vuejs.org/)
 - [Node 18](https://nodejs.org/en)
@@ -44,9 +45,27 @@ SmileSelect: Smile-tacular dental care, just book and prepare!
 
 ## <a id="dependencies-requirements"></a>Dependencies & Requirements
 
+
  
 ## <a id="installation-usage"></a>Installation & Usage
 
+This repository contains all the components of the system with their own installation and usage.
+Following is a list of the system's components and their `README.md` files.
+They should be read in the order listed.
+
+- [**frontend**](): client-side web interface
+- [**backend**]():  microservices spring boot backend
+- [**service-registry**](): registry of service instances
+- [**appointment-service**](): service handling appointments
+- [**auth-service**](): service that authenticates users with [JWT Authentication](https://jwt.io/)
+- [**dentist-service**](): service handling dentist operations
+- [**gateway-service**](): service routing client requests to service instances
+- [**logging-service**](): service logging errors and events
+- [**monitoring-service**](): service monitoring current stress on the system
+- [**notification-service**](): service handling email notifications to users
+- [**patient-service**](): service handling patient operations
+<br></br>
+- [**stress-testing**](backend/stress-test/README.md): stress-testing of the system to identify architectural bottlenecks
 
 ## <a id="software-architechture"></a>Software Architechture 
 
