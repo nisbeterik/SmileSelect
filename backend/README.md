@@ -2,7 +2,7 @@
 
 The SmileSelect backend consists of a number of microservices.
 
-- [**service-registry**]/backend/registry/service-registry/README.md): registry of service instances
+- [**service-registry**](/backend/registry/service-registry/README.md): registry of service instances
 - [**appointment-service**](/backend/services/appointment-service/README.md): service handling appointments
 - [**auth-service**](/backend/services/auth-service/README.md): service that authenticates users with [JWT Authentication](https://jwt.io/)
 - [**dentist-service**](/backend/services/dentist-service/README.md): service handling dentist operations
